@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/jonnew/Bonsai.ONI/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/jonnew/Bonsai.ONI</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>$description$</description>
+    <copyright>Jon Newman © 2020</copyright>
+    <tags>Bonsai Open-Ephys PCIe</tags>
+    <dependencies>
+      <dependency id="Bonsai.ONI" version="1.0.0" />
+      <dependency id="Bonsai.Design" version="2.4.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Bonsai.ONI.props" target="build\net45"/>
+    <file src="Bonsai.ONI.targets" target="build\net45"/>
+    <file src="..\Externals\clroni\net\**\*\net\**\*.dll" target="build\net45\bin"/>
+    <file src="..\Externals\clroni\native\**\*.dll" target="build\native\bin"/>
+  </files>
+</package>
