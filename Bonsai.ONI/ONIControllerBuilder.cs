@@ -5,17 +5,16 @@ using System.Linq.Expressions;
 using System.Reactive.Linq;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Reactive.Disposables;
 using System.Threading.Tasks;
 
 namespace Bonsai.ONI
 {
     // Used to hide hidden state (e.g. the oni.Context) into an expression tree that can be found by other nodes.
-    class HiddenStateExpression : Expression
+    class HiddenONIControllerExpression : Expression
     {
         readonly Expression proxy;
 
-        public HiddenStateExpression(Expression expression)
+        public HiddenONIControllerExpression(Expression expression)
         {
             proxy = expression;
         }
@@ -30,7 +29,7 @@ namespace Bonsai.ONI
 
         public override Expression Reduce()
         {
-            // this is called only in ACTUAL compile time (just before run),
+            // This is called only in ACTUAL compile time (just before run),
             // It defines the true transform of the node.
             return proxy;
         }
@@ -40,9 +39,12 @@ namespace Bonsai.ONI
     [Combinator(MethodName = "Generate")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [DefaultProperty("Controller")]
-    public class ONIControllerBuilder : ZeroArgumentExpressionBuilder
+    [Description("ONI-compliant hardware link.")]
+    public class ONIControllerBuilder : ZeroArgumentExpressionBuilder, IDisposable
     {
-        [Description("The hardware controller associated with this node.")]
+        bool disposed;
+
+        [Description("The hardware link used by this node.")]
         [Editor("Bonsai.ONI.Design.ONIControllerEditor, Bonsai.ONI.Design", typeof(UITypeEditor))]
         [Externalizable(false)]
         public ONIController Controller { get; set; }
@@ -54,7 +56,7 @@ namespace Bonsai.ONI
 
         public override Expression Build(IEnumerable<Expression> arguments)
         {
-            if (Controller.AcqContext == null) // If user has not explcitly connected already
+            if (Controller.AcqContext == null) // If user has not explicitly connected already
                 Controller.Refresh(); // This will throw if no connection can be made
 
             var sourceConstructor = Expression.Call(
@@ -63,7 +65,7 @@ namespace Bonsai.ONI
                 null,
                 new Expression[] { Expression.Constant(Controller) });
 
-            return new HiddenStateExpression(sourceConstructor) { Tag = Controller };
+            return new HiddenONIControllerExpression(sourceConstructor) { Tag = Controller };
         }
 
         static IObservable<oni.Frame> Generate(ONIController controller)
@@ -74,8 +76,9 @@ namespace Bonsai.ONI
                 {
                     try
                     {
-                        //controller.AcqContext.Reset(); // Riffa requires reset before start()
+                        //TODO: controller.AcqContext.ResetCounter();
                         controller.AcqContext.SetBlockReadSize(controller.BlockReadSize);
+                        controller.AcqContext.SetBlockWriteSize(controller.WritePreAllocSize);
                         controller.AcqContext.Start();
 
                         while (!cancellationToken.IsCancellationRequested)
@@ -96,35 +99,32 @@ namespace Bonsai.ONI
             .RefCount();
         }
 
-        //static IObservable<oni.Frame> Generate(ONIController controller)
-        //{
-        //    controller.AcqContext.Reset();
-        //    controller.AcqContext.SetBlockReadSize(controller.BlockReadSize);
-        //    controller.AcqContext.Start();
+        public void Close()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-        //    return Observable
-        //        .Generate<ONIController, oni.Frame>(
-        //        controller,
-        //        c => true, // This should react to the stop button somehow
-        //        c => c,
-        //        c => controller.AcqContext.ReadFrame())
-        //        .Finally(() => 
-        //            controller.AcqContext.Stop()
-        //        );
-        //}
+        ~ONIControllerBuilder()
+        {
+            Dispose(false);
+        }
 
-        //static IObservable<oni.Frame> Generate(ONIController controller)
-        //{
-        //    controller.AcqContext.Reset();
-        //    controller.AcqContext.SetBlockReadSize(controller.BlockReadSize);
-        //    controller.AcqContext.Start();
+        private void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    Controller.AcqContext.Dispose();
+                    disposed = true;
+                }
+            }
+        }
 
-        //    return Observable.Create<oni.Frame>(o =>
-        //    {
-        //        o.OnNext(controller.AcqContext.ReadFrame());
-        //        //o.OnCompleted(controller.AcqContext.Stop());
-        //        return Disposable.Empty;
-        //    });
-        //}
+        void IDisposable.Dispose()
+        {
+            Close();
+        }
     }
 }

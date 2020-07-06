@@ -5,17 +5,17 @@ using Bonsai.ONI;
 
 namespace Bonsai.Design
 {
-    public partial class DeviceIndexSelectionControl : UserControl
+    public partial class ControllerSelectionControl : UserControl
     {
         const float DefaultDpi = 96f;
         DeviceIndexSelectionEditorService editorService;
 
-        public DeviceIndexSelectionControl(DeviceIndexSelection selection)
+        public ControllerSelectionControl(ControllerSelection selection)
             : this(null, selection)
         {
         }
 
-        public DeviceIndexSelectionControl(IServiceProvider provider, DeviceIndexSelection selection)
+        public ControllerSelectionControl(IServiceProvider provider, ControllerSelection selection)
         {
             InitializeComponent();
             editorService = new DeviceIndexSelectionEditorService(this, provider);
@@ -24,26 +24,24 @@ namespace Bonsai.Design
             {
                 SuspendLayout();
 
-                if (selection.Indices != null) {
-                    foreach (var idx in selection.Indices)
+                foreach (var c in selection.Controllers)
+                {
+                    if (!string.IsNullOrWhiteSpace(c.ToString()))
                     {
-                        if (!string.IsNullOrWhiteSpace(selection.DevIndexToString(idx)))
-                        {
-                            deviceIndexListBox.Items.Add(selection.DevIndexToString(idx));
-                        }
+                        controllerListBox.Items.Add(c.ToString());
                     }
-                 }
+                }
 
                 var drawScale = graphics.DpiY / DefaultDpi;
-                deviceIndexListBox.Height = (int)Math.Ceiling(deviceIndexListBox.ItemHeight * deviceIndexListBox.Items.Count * drawScale);
+                controllerListBox.Height = (int)Math.Ceiling(controllerListBox.ItemHeight * controllerListBox.Items.Count * drawScale);
                 ResumeLayout();
             }
         }
 
         public object SelectedValue
         {
-            get { return deviceIndexListBox.SelectedItem; }
-            set { deviceIndexListBox.SelectedItem = value; }
+            get { return controllerListBox.SelectedItem; }
+            set { controllerListBox.SelectedItem = value; }
         }
 
         public event EventHandler SelectedValueChanged;
@@ -53,12 +51,12 @@ namespace Bonsai.Design
             SelectedValueChanged?.Invoke(this, e);
         }
 
-        private void deviceIndexListBox_SelectedValueChanged(object sender, EventArgs e)
+        private void controllerListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             OnSelectedValueChanged(e);
         }
 
-        private void deviceIndexListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void controllerListBox_SelectedValueChanged(object sender, EventArgs e)
         {
             OnSelectedValueChanged(e);
         }

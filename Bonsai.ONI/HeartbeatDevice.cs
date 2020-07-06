@@ -11,7 +11,6 @@ namespace Bonsai.ONI
     [Description("Heartbeat device")]
     public class HeartbeatDevice : ONIFrameReaderDeviceBuilder<HeartbeatDataFrame>
     {
-
         // Control registers (see onidevices.h)
         public enum Register
         {
@@ -24,25 +23,39 @@ namespace Bonsai.ONI
         public override IObservable<HeartbeatDataFrame> Process(IObservable<oni.Frame> source)
         {
             return source
-                .Where(f => f.DeviceIndices.Contains(DeviceIndex.SelectedIndex))
-                .Select(f => { return new HeartbeatDataFrame(f, DeviceIndex.SelectedIndex, 0); });
+                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
+                .Select(f => { return new HeartbeatDataFrame(f, ClockHz); });
         }
 
-        int beat_hz;
+        uint beat_hz;
+        [Category("Configuration")]
         [Range(0, 10e6)]
-        public int BeatHz
+        public uint BeatHz
         {
             get
             {
-                var val = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV);
-                return Controller.AcqContext.SystemClockHz / val;
+                //beat_hz = Controller?.AcqContext.SystemClockHz / Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV) ?? beat_hz;
+                //return beat_hz;
+
+                if (Controller != null)
+                {
+                    var val = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV);
+                    beat_hz = Controller.AcqContext.SystemClockHz / val;
+                    return beat_hz;
+                } else
+                {
+                    return beat_hz;
+                }
             }
             set
             {
-                beat_hz = value;
-                Controller.WriteRegister(DeviceIndex.SelectedIndex,
-                                         (int)Register.CLK_DIV,
-                                         Controller.AcqContext.SystemClockHz / value);
+                if (Controller != null)
+                {
+                    beat_hz = value;
+                    Controller.WriteRegister(DeviceIndex.SelectedIndex,
+                                             (int)Register.CLK_DIV,
+                                             Controller.AcqContext.SystemClockHz / beat_hz);
+                }
             }
         }
 

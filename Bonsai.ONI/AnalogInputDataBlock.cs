@@ -3,9 +3,9 @@
 namespace Bonsai.ONI
 {
     /// <summary>
-    /// Provides an low-level representation of a multi round-robbin sample of an AD7617 Chip
+    /// Provides an low-level representation of a multi round-robin sample of an AD7617 Chip
     /// </summary>
-    public class AD7617DataBlock
+    public class AnalogInputDataBlock
     {
         private int SamplesPerBlock;
         public readonly int NumChannels;
@@ -14,7 +14,7 @@ namespace Bonsai.ONI
         ulong[] clock;
         short[,] data;
 
-        public AD7617DataBlock(int num_channels, int samples_per_block = 250)
+        public AnalogInputDataBlock(int num_channels, int samples_per_block = 250)
         {
             NumChannels = num_channels;
             SamplesPerBlock = samples_per_block;
@@ -23,13 +23,13 @@ namespace Bonsai.ONI
             AllocateArray2D(ref data, num_channels, samples_per_block);
         }
 
-        public bool FillFromFrame(oni.Frame frame, int device_index)
+        public bool FillFromFrame(oni.Frame frame)
         {
             if (index >= SamplesPerBlock)
-            throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException();
 
-            // [uint64_t local_clock, uint16_t ephys1, uint16_t ephys2, ... , uint16_t aux1, uint16_t aux2, ...]
-            var raw = frame.Data<ushort>(device_index);
+            // [uint64_t local_clock, uint16 chan0, ... , uint16 chanN]
+            var raw = frame.Data<ushort>();
 
             clock[index] = ((ulong)raw[0] << 48) | ((ulong)raw[1] << 32) | ((ulong)raw[2] << 16) | ((ulong)raw[3] << 0);
 

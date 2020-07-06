@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listBoxDeviceTable = new System.Windows.Forms.ListBox();
             this.buttonRefreshContext = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -43,21 +42,21 @@
             this.comboBoxDriver = new System.Windows.Forms.ComboBox();
             this.okButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
+            this.dataGridViewDeviceTable = new System.Windows.Forms.DataGridView();
+            this.TableIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.HubIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeviceIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeviceID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ReadSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.WriteSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.numericUpDownWriteAlloc = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDeviceTable)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
             this.SuspendLayout();
-            // 
-            // listBoxDeviceTable
-            // 
-            this.listBoxDeviceTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBoxDeviceTable.FormattingEnabled = true;
-            this.listBoxDeviceTable.HorizontalScrollbar = true;
-            this.listBoxDeviceTable.Location = new System.Drawing.Point(15, 25);
-            this.listBoxDeviceTable.Name = "listBoxDeviceTable";
-            this.listBoxDeviceTable.Size = new System.Drawing.Size(577, 329);
-            this.listBoxDeviceTable.TabIndex = 1;
             // 
             // buttonRefreshContext
             // 
@@ -116,7 +115,7 @@
             0,
             0});
             this.numericUpDownReadSize.Name = "numericUpDownReadSize";
-            this.numericUpDownReadSize.Size = new System.Drawing.Size(107, 20);
+            this.numericUpDownReadSize.Size = new System.Drawing.Size(120, 20);
             this.numericUpDownReadSize.TabIndex = 10;
             this.toolTipReadSize.SetToolTip(this.numericUpDownReadSize, "The block read size (bytes). Smaller values have shorter latencies. Larger values" +
         " support higher bandwidth. Defaults to minimum.");
@@ -128,9 +127,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(304, 367);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(94, 13);
+            this.label4.Size = new System.Drawing.Size(124, 13);
             this.label4.TabIndex = 9;
-            this.label4.Text = "Read Size (Bytes):";
+            this.label4.Text = "Block Read Size (Bytes):\r\n";
             // 
             // labelConnected
             // 
@@ -158,7 +157,7 @@
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(517, 381);
+            this.okButton.Location = new System.Drawing.Point(618, 381);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 13;
@@ -176,11 +175,115 @@
             this.label5.TabIndex = 14;
             this.label5.Text = "Driver:";
             // 
+            // dataGridViewDeviceTable
+            // 
+            this.dataGridViewDeviceTable.AllowUserToAddRows = false;
+            this.dataGridViewDeviceTable.AllowUserToDeleteRows = false;
+            this.dataGridViewDeviceTable.AllowUserToOrderColumns = true;
+            this.dataGridViewDeviceTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewDeviceTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dataGridViewDeviceTable.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+            this.dataGridViewDeviceTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.TableIndex,
+            this.HubIndex,
+            this.DeviceIndex,
+            this.DeviceID,
+            this.ReadSize,
+            this.WriteSize,
+            this.Description});
+            this.dataGridViewDeviceTable.Location = new System.Drawing.Point(15, 25);
+            this.dataGridViewDeviceTable.Name = "dataGridViewDeviceTable";
+            this.dataGridViewDeviceTable.ReadOnly = true;
+            this.dataGridViewDeviceTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.dataGridViewDeviceTable.Size = new System.Drawing.Size(678, 329);
+            this.dataGridViewDeviceTable.TabIndex = 15;
+            this.dataGridViewDeviceTable.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridViewDeviceTable_KeyDown);
+            // 
+            // TableIndex
+            // 
+            this.TableIndex.HeaderText = "Table Index";
+            this.TableIndex.Name = "TableIndex";
+            this.TableIndex.ReadOnly = true;
+            this.TableIndex.Width = 88;
+            // 
+            // HubIndex
+            // 
+            this.HubIndex.HeaderText = "Hub Index";
+            this.HubIndex.Name = "HubIndex";
+            this.HubIndex.ReadOnly = true;
+            this.HubIndex.Width = 81;
+            // 
+            // DeviceIndex
+            // 
+            this.DeviceIndex.HeaderText = "Device Index";
+            this.DeviceIndex.Name = "DeviceIndex";
+            this.DeviceIndex.ReadOnly = true;
+            this.DeviceIndex.Width = 95;
+            // 
+            // DeviceID
+            // 
+            this.DeviceID.HeaderText = "ID";
+            this.DeviceID.Name = "DeviceID";
+            this.DeviceID.ReadOnly = true;
+            this.DeviceID.Width = 43;
+            // 
+            // ReadSize
+            // 
+            this.ReadSize.HeaderText = "Read Size";
+            this.ReadSize.Name = "ReadSize";
+            this.ReadSize.ReadOnly = true;
+            this.ReadSize.Width = 81;
+            // 
+            // WriteSize
+            // 
+            this.WriteSize.HeaderText = "WriteSize";
+            this.WriteSize.Name = "WriteSize";
+            this.WriteSize.ReadOnly = true;
+            this.WriteSize.Width = 77;
+            // 
+            // Description
+            // 
+            this.Description.HeaderText = "Description";
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            this.Description.Width = 85;
+            // 
+            // numericUpDownWriteAlloc
+            // 
+            this.numericUpDownWriteAlloc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.numericUpDownWriteAlloc.Location = new System.Drawing.Point(433, 384);
+            this.numericUpDownWriteAlloc.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numericUpDownWriteAlloc.Name = "numericUpDownWriteAlloc";
+            this.numericUpDownWriteAlloc.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownWriteAlloc.TabIndex = 17;
+            this.toolTipReadSize.SetToolTip(this.numericUpDownWriteAlloc, "The size of pre-allocated write memory (bytes). Larger values will require less f" +
+        "requent allocations.");
+            this.numericUpDownWriteAlloc.ValueChanged += new System.EventHandler(this.numericUpDownWriteAlloc_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(430, 367);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(122, 13);
+            this.label6.TabIndex = 16;
+            this.label6.Text = "Write Alloc. Size (Bytes):\r\n";
+            // 
             // ONIControllerEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(604, 416);
+            this.ClientSize = new System.Drawing.Size(705, 416);
+            this.Controls.Add(this.numericUpDownWriteAlloc);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.dataGridViewDeviceTable);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.comboBoxDriver);
@@ -192,20 +295,19 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonRefreshContext);
-            this.Controls.Add(this.listBoxDeviceTable);
             this.Name = "ONIControllerEditorDialog";
             this.ShowIcon = false;
             this.Text = "ONI Controller Configuration";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDeviceTable)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox listBoxDeviceTable;
         private System.Windows.Forms.Button buttonRefreshContext;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
@@ -219,5 +321,15 @@
         private System.Windows.Forms.ComboBox comboBoxDriver;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DataGridView dataGridViewDeviceTable;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TableIndex;
+        private System.Windows.Forms.DataGridViewTextBoxColumn HubIndex;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIndex;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DeviceID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ReadSize;
+        private System.Windows.Forms.DataGridViewTextBoxColumn WriteSize;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Description;
+        private System.Windows.Forms.NumericUpDown numericUpDownWriteAlloc;
+        private System.Windows.Forms.Label label6;
     }
 }

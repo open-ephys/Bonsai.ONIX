@@ -6,9 +6,9 @@ namespace Bonsai.ONI
     /// <summary>
     /// Provides Bonsai-friendly version of an AD7617DataBlock
     /// </summary>
-    public class AD7617DataFrame
+    public class AnalogInputDataFrame
     {
-        public AD7617DataFrame(AD7617DataBlock dataBlock, double hardware_clock_hz)
+        public AnalogInputDataFrame(AnalogInputDataBlock dataBlock, double hardware_clock_hz)
         {
             Clock = GetClock(dataBlock.Clock);
             Time = GetTime(dataBlock.Clock, hardware_clock_hz);
