@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Title>Bonsai - ONIX Library</Title>
+    <Description>Bonsai Library for controlling ONIX hardware.</Description>
+    <PackageTags>Bonsai Rx Open Ephys ONI Neural Interface ONIX Electrophysiology Miniscope</PackageTags>
+    <TargetFramework>net472</TargetFramework>
+    <Version>1.1.0</Version>
+    <Authors>Jon Newman</Authors>
+    <Company>MIT</Company>
+    <Copyright>Copyright © Jonathan Newman 2020</Copyright>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <PackageProjectUrl>https://github.com/jonnew/Bonsai.ONIX</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Platforms>AnyCPU;x64</Platforms>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Product>Bonsai.ONIX</Product>
+    <PackageId>Bonsai.ONIX</PackageId>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageIcon>onix_open_ephys_logo.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DeviceIndexSelectionTypeConverter.cs" />
+    <Compile Remove="ElectricalStimulationDownStreamDevice.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Bonsai.ONIX.svg" />
+    <None Include="..\resources\onix_open_ephys_logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Bonsai.ONIX.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.5.0" />
+    <PackageReference Include="clroni" Version="4.1.1" />
+    <PackageReference Include="OpenCV.Net" Version="3.3.1" />
+  </ItemGroup>
+
+</Project>

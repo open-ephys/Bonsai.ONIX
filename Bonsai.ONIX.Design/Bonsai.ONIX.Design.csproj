@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Title>Bonsai - ONI Design Library</Title>
+    <Description>Bonsai design library for Bonsai.ONIX.</Description>
+    <PackageTags>Bonsai Rx Open Ephys ONI Neural Interface ONIX Electrophysiology Miniscope</PackageTags>
+    <TargetFramework>net472</TargetFramework>
+    <Version>1.1.0</Version>
+    <Authors>Jon Newman</Authors>
+    <Company>MIT</Company>
+    <Copyright>Copyright © Jonathan Newman 2020</Copyright>
+    <PackageProjectUrl>https://github.com/jonnew/Bonsai.ONIX</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Platforms>AnyCPU;x64</Platforms>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageIcon>onix_open_ephys_logo.png</PackageIcon>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="HubConfigurationEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="HubConfigurationEditor.Designer.cs">
+      <DependentUpon>HubConfigurationEditor.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="..\resources\onix_open_ephys_logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="clroni" Version="4.1.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ONIX\Bonsai.ONIX.csproj" />
+  </ItemGroup>
+  
+</Project>
