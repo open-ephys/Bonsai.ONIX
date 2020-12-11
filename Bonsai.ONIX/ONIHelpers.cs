@@ -5,7 +5,7 @@ namespace Bonsai.ONIX
 {
     public static class ONIHelpers
     {
-        public static Dictionary<uint, oni.lib.device_t> FindMachingDevices(oni.Context ctx, oni.Device.DeviceID dev_id)
+        public static Dictionary<uint, oni.lib.device_t> FindMachingDevices(oni.Context ctx, ONIXDevices.ID dev_id)
         {
             // Find all matching devices
             return ctx.DeviceTable.Where(

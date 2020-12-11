@@ -1,8 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.ComponentModel;
-using System.Runtime.Remoting.Messaging;
 
 namespace Bonsai.ONIX
 {
@@ -15,7 +14,7 @@ namespace Bonsai.ONIX
             MESSAGE,
         }
 
-        public TestDevice() : base(oni.Device.DeviceID.TEST) { }
+        public TestDevice() : base(ONIXDevices.ID.TEST) { }
 
         public override IObservable<TestDataFrame> Process(IObservable<oni.Frame> source)
         {
@@ -30,7 +29,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return  (short?)Controller?.ReadRegister(DeviceIndex.SelectedIndex, (uint)Register.MESSAGE);
+                return (short?)Controller?.ReadRegister(DeviceIndex.SelectedIndex, (uint)Register.MESSAGE);
             }
             set
             {

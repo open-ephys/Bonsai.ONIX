@@ -18,11 +18,6 @@ namespace Bonsai.ONIX
             return Mat.FromArray(data, 1, data.Length, Depth.F64, 1); // TODO: abusing double to fit uint64_t
         }
 
-        Mat GetTime(double[] data)
-        {
-            return Mat.FromArray(data, 1, data.Length, Depth.F64, 1);
-        }
-
         protected ushort[] sample;
 
         public double FrameClockHz { get; private set; }

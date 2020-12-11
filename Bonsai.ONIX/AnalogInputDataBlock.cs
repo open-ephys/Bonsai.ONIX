@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Bonsai.ONIX
+﻿namespace Bonsai.ONIX
 {
     /// <summary>
     /// Provides an low-level representation of a multi round-robin sample of an AD7617 Chip
@@ -10,7 +8,7 @@ namespace Bonsai.ONIX
         readonly int num_channels;
         short[,] raw;
 
-        public AnalogInputDataBlock(int num_channels, int samples_per_block) 
+        public AnalogInputDataBlock(int num_channels, int samples_per_block)
             : base(samples_per_block)
         {
             this.num_channels = num_channels;

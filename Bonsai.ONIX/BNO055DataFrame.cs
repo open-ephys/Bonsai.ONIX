@@ -1,11 +1,11 @@
-﻿using System.Linq;
-using OpenCV.Net;
+﻿using OpenCV.Net;
+using System.Linq;
 
 namespace Bonsai.ONIX
 {
     public class BNO055DataFrame : DataFrame
     {
-        public BNO055DataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz) 
+        public BNO055DataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz)
             : base(frame, acq_clk_hz, data_clk_hz)
         {
             // Convert data packet (output format is hard coded right now)
@@ -59,12 +59,13 @@ namespace Bonsai.ONIX
             const double scale = (1.0 / (1 << 14));
             var vec = new double[4];
 
-            for (int i = 0; i < vec.Count(); i++) {
+            for (int i = 0; i < vec.Count(); i++)
+            {
                 var tmp = (short)sample[i + begin];
                 vec[i] = scale * tmp;
-             }
+            }
 
-            return Mat.FromArray(vec, vec.Length, 1,  Depth.F64, 1);
+            return Mat.FromArray(vec, vec.Length, 1, Depth.F64, 1);
         }
     }
 }

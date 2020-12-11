@@ -8,26 +8,32 @@ namespace Bonsai.ONIX
     public class ControllerSelection
     {
         [Description("The selected device index.")]
-        public ONIController SelectedController {
-            get {
+        public ONIController SelectedController
+        {
+            get
+            {
                 if (SelectedKey != null && controllers.ContainsKey(SelectedKey))
                     return controllers[SelectedKey];
                 else
                     return null;
-            } 
-            set {
+            }
+            set
+            {
                 if (controllers.ContainsKey(value.ToString()))
-                    SelectedKey = value.ToString(); 
+                    SelectedKey = value.ToString();
             }
         }
 
         private Dictionary<string, ONIController> controllers;
         [Description("Available hardware controllers.")]
-        public List<ONIController> Controllers {
-            get {
-                return controllers.Values.ToList(); 
+        public List<ONIController> Controllers
+        {
+            get
+            {
+                return controllers.Values.ToList();
             }
-            set {
+            set
+            {
                 controllers = new Dictionary<string, ONIController>();
                 foreach (var c in value)
                 {

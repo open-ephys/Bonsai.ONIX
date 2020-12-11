@@ -1,17 +1,16 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.ComponentModel;
 
 namespace Bonsai.ONIX
 {
-    // TODO: More abstract control over chip's registers
+    // TODO: More abstract control over chip's registers?
 
     [Description("Acquires data from a single RHD2164 bioamplifier chip.")]
     public class RHD2164Device : ONIFrameReaderDeviceBuilder<RHDDataFrame>
     {
 
-        // Control registers (see oedevices.h)
         // see http://intantech.com/files/Intan_RHD2164_datasheet.pdf
         public enum Register
         {
@@ -39,10 +38,7 @@ namespace Bonsai.ONIX
             PWR7,
         }
 
-        public RHD2164Device() : base(oni.Device.DeviceID.RHD2164)
-        {
-            // Nothing
-        }
+        public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
 
         public override IObservable<RHDDataFrame> Process(IObservable<oni.Frame> source)
         {

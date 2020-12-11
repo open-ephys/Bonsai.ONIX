@@ -5,7 +5,7 @@ namespace Bonsai.ONIX
     /// <summary>
     /// Provides an low-level representation of a multi round-robin sample of a Neuropixels6B Chip
     /// </summary>
-    public class Neuropixels1R0DataBlock
+    public class NeuropixelsV1DataBlock
     {
         private int HyperFramesPerBlock;
         public const int NumChannels = 384;
@@ -50,7 +50,7 @@ namespace Bonsai.ONIX
         readonly ushort[,] spike_data;
         readonly ushort[,] lfp_data;
 
-        public Neuropixels1R0DataBlock(int hyper_frames_per_block = 1)
+        public NeuropixelsV1DataBlock(int hyper_frames_per_block = 1)
         {
             HyperFramesPerBlock = hyper_frames_per_block;
 
@@ -98,7 +98,9 @@ namespace Bonsai.ONIX
                     lfp_data[chan + super_cnt * 32, hyper_cnt] = data[chan_map[chan] + data_offset]; // Start at index 6
                 }
 
-            } else { // Spike data
+            }
+            else
+            { // Spike data
 
                 if (frame_cnt == 1) // Use the first frame in superframe as time of this spike-data round robin
                 {

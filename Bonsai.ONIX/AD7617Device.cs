@@ -1,14 +1,14 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.ComponentModel;
 
 namespace Bonsai.ONIX
 {
     [Description("Acquires data from a single AD7617 analog to digital converter.")]
     public class AD7617Device : ONIFrameReaderDeviceBuilder<AnalogInputDataFrame>
     {
-        public AD7617Device() : base(oni.Device.DeviceID.AD7617) { }
+        public AD7617Device() : base(ONIXDevices.ID.AD7617) { }
 
         public override IObservable<AnalogInputDataFrame> Process(IObservable<oni.Frame> source)
         {
@@ -37,6 +37,6 @@ namespace Bonsai.ONIX
         [System.Xml.Serialization.XmlIgnore]
         [Category("Configuration")]
         [Description("Number of channels begin used.")]
-        public int NumChannels { get; private set; } = 12; 
+        public int NumChannels { get; private set; } = 12;
     }
 }

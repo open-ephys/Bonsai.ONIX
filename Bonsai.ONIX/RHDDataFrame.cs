@@ -1,4 +1,4 @@
-﻿    using OpenCV.Net;
+﻿using OpenCV.Net;
 
 namespace Bonsai.ONIX
 {
@@ -7,7 +7,7 @@ namespace Bonsai.ONIX
     /// </summary>
     public class RHDDataFrame : DataBlockFrame
     {
-        public RHDDataFrame(RHDDataBlock data_block, double acq_clk_hz, double data_clk_hz) 
+        public RHDDataFrame(RHDDataBlock data_block, double acq_clk_hz, double data_clk_hz)
             : base(data_block, acq_clk_hz, data_clk_hz)
         {
             EphysData = GetEphysData(data_block.EphysData);

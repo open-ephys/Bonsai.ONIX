@@ -6,7 +6,7 @@ namespace Bonsai.ONIX
     [WorkflowElementCategory(ElementCategory.Sink)]
     public abstract class ONIFrameWriterDeviceBuilder<TSource> : ONIDownStreamDeviceBuilder<TSource, TSource>
     {
-        public ONIFrameWriterDeviceBuilder(oni.Device.DeviceID dev_id) : base(dev_id) { }
+        public ONIFrameWriterDeviceBuilder(ONIXDevices.ID dev_id) : base(dev_id) { }
 
         public override abstract IObservable<TSource> Process(IObservable<TSource> source);
     }

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Linq;
+using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
@@ -16,7 +16,7 @@ namespace Bonsai.ONIX
             BREAKDIG1R3_LEDLVL = 2, // 0-255 overall LED brightness value.
         }
 
-        public BreakoutDigitalInputDevice() : base(oni.Device.DeviceID.BREAKDIG1R3) { }
+        public BreakoutDigitalInputDevice() : base(ONIXDevices.ID.BREAKDIG1R3) { }
 
         public override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<oni.Frame> source)
         {

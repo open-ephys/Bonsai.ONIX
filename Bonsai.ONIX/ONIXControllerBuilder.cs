@@ -1,15 +1,15 @@
 ﻿using Bonsai.Expressions;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reactive.Linq;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Linq.Expressions;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace Bonsai.ONIX
 {
-    // Used to hide hidden state (e.g. the oni.Context) into an expression tree that can be found by other nodes.
+    // Used to pack hidden state (e.g. the oni.Context) into an expression tree that can be found by other nodes.
     class HiddenONIControllerExpression : Expression
     {
         readonly Expression proxy;
@@ -29,8 +29,6 @@ namespace Bonsai.ONIX
 
         public override Expression Reduce()
         {
-            // This is called only in ACTUAL compile time (just before run),
-            // It defines the true transform of the node.
             return proxy;
         }
     }
@@ -56,8 +54,7 @@ namespace Bonsai.ONIX
 
         public override Expression Build(IEnumerable<Expression> arguments)
         {
-            if (Controller.AcqContext == null) // If user has not explicitly connected already
-                Controller.Refresh(); // This will throw if no connection can be made
+            Controller.Refresh(); // This will throw if no connection can be made
 
             var sourceConstructor = Expression.Call(
                 typeof(ONIXControllerBuilder),

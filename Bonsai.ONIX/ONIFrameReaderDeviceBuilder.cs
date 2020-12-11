@@ -13,50 +13,43 @@ namespace Bonsai.ONIX
     [WorkflowElementCategory(ElementCategory.Combinator)]
     public abstract class ONIFrameReaderDeviceBuilder<TResult> : SingleArgumentExpressionBuilder
     {
+
         // Selected Index within device table.
-        DeviceIndexSelection idx;
-        [Category("ONI Config.")]
+        [Category("ONIX Config.")]
         [Editor("Bonsai.ONIX.Design.DeviceIndexCollectionEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         [Description("The fully specified device index within the device table.")]
-        public DeviceIndexSelection DeviceIndex {
-            get { return idx; }
-            set { 
-                idx = value;
-                UpdateClocks();
-            } 
-        }
+        public DeviceIndexSelection DeviceIndex { get; set; }
 
-        private void UpdateClocks()
+        protected void UpdateClocks()
         {
             if (Controller != null)
             {
                 FrameClockHz = Controller.AcqContext.AcquisitionClockHz;
-                try
-                {
-                    DataClockHz = Controller.HubDataClock((uint)DeviceIndex.SelectedIndex & 0x0000FF00);
-                } catch
-                {
-                    DataClockHz = 0;
-                }
+                DataClockHz = Controller.HubDataClock((uint)DeviceIndex.SelectedIndex & 0x0000FF00);
+            }
+            else
+            {
+                FrameClockHz = 0;
+                DataClockHz = 0;
             }
         }
 
-        [Category("ONI Config.")]
+        [Category("ONIX Config.")]
         [Description("The hardware controller supplying data to this node.")]
         [System.Xml.Serialization.XmlIgnore] // Must be recreated
         public ONIController Controller { get; private set; }
 
-        [Category("ONI Config.")]
+        [Category("ONIX Config.")]
         [System.Xml.Serialization.XmlIgnore] // Must be recreated
         public double FrameClockHz { get; private set; }
 
-        [Category("ONI Config.")]
+        [Category("ONIX Config.")]
         [System.Xml.Serialization.XmlIgnore] // Must be recreated
         public double DataClockHz { get; private set; }
 
-        public readonly oni.Device.DeviceID ID = oni.Device.DeviceID.NULL;
+        public readonly ONIXDevices.ID ID = ONIXDevices.ID.NULL;
 
-        public ONIFrameReaderDeviceBuilder(oni.Device.DeviceID dev_id)
+        public ONIFrameReaderDeviceBuilder(ONIXDevices.ID dev_id)
         {
             DeviceIndex = new DeviceIndexSelection();
             ID = dev_id;
@@ -79,11 +72,14 @@ namespace Bonsai.ONIX
 
             // Find valid device indices
             var devices = ONIHelpers.FindMachingDevices(Controller.AcqContext, ID);
-            if (devices.Count == 0) throw new oni.ONIException(oni.lib.Error.DEVID);
+            if (devices.Count == 0) throw new Bonsai.WorkflowBuildException("Device was not found in device table.");
             DeviceIndex.Indices = devices.Keys.ToArray();
 
-            // Update internal parameters
+            // Update device-specific clocks
             UpdateClocks();
+
+            // Schedule clock update if device index changes
+            DeviceIndex.IndexChanged += UpdateClocks;
 
             // Create combinator
             var thisType = GetType();

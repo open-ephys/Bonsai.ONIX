@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using OpenCV.Net;
+﻿using OpenCV.Net;
 
 namespace Bonsai.ONIX
 {

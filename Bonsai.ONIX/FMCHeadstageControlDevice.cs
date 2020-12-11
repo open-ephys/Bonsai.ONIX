@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Linq;
+using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
@@ -21,7 +21,7 @@ namespace Bonsai.ONIX
             SAVELINKVOLTAGE = 3,
         }
 
-        public FMCHeadstageControlDevice() : base(oni.Device.DeviceID.FMCLINKCTRL) { }
+        public FMCHeadstageControlDevice() : base(ONIXDevices.ID.FMCLINKCTRL) { }
 
         public override IObservable<FMCHeadstageControlFrame> Process(IObservable<oni.Frame> source)
         {
@@ -55,7 +55,7 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Description("Type \"BE CAREFUL\" here to enable the extended link voltage range.")]
-        public string EnableExtendedVoltageRange { get; set; } 
+        public string EnableExtendedVoltageRange { get; set; }
 
         bool link_enabled = false;
         [Category("Acquisition")]
@@ -80,12 +80,14 @@ namespace Bonsai.ONIX
         [Precision(1, 0.1)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
         [Description("Headstage link voltage.")]
-        public double LinkVoltage {
+        public double LinkVoltage
+        {
             get
             {
                 return link_v;
             }
-            set {
+            set
+            {
                 if (Controller != null)
                 {
                     link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;

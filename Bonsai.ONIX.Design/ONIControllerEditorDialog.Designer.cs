@@ -42,21 +42,23 @@
             this.okButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.dataGridViewDeviceTable = new System.Windows.Forms.DataGridView();
+            this.label6 = new System.Windows.Forms.Label();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hubsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.DeviceIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeviceID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FirmwareVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ReadSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.WriteSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label6 = new System.Windows.Forms.Label();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hubsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDeviceTable)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonRefreshContext
@@ -203,48 +205,6 @@
             this.dataGridViewDeviceTable.TabIndex = 15;
             this.dataGridViewDeviceTable.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridViewDeviceTable_KeyDown);
             // 
-            // DeviceIndex
-            // 
-            this.DeviceIndex.HeaderText = "Device Index (Hub.Device)";
-            this.DeviceIndex.Name = "DeviceIndex";
-            this.DeviceIndex.ReadOnly = true;
-            this.DeviceIndex.Width = 161;
-            // 
-            // DeviceID
-            // 
-            this.DeviceID.HeaderText = "ID";
-            this.DeviceID.Name = "DeviceID";
-            this.DeviceID.ReadOnly = true;
-            this.DeviceID.Width = 43;
-            // 
-            // FirmwareVersion
-            // 
-            this.FirmwareVersion.HeaderText = "Firmware Version";
-            this.FirmwareVersion.Name = "FirmwareVersion";
-            this.FirmwareVersion.ReadOnly = true;
-            this.FirmwareVersion.Width = 112;
-            // 
-            // ReadSize
-            // 
-            this.ReadSize.HeaderText = "Read Size";
-            this.ReadSize.Name = "ReadSize";
-            this.ReadSize.ReadOnly = true;
-            this.ReadSize.Width = 81;
-            // 
-            // WriteSize
-            // 
-            this.WriteSize.HeaderText = "WriteSize";
-            this.WriteSize.Name = "WriteSize";
-            this.WriteSize.ReadOnly = true;
-            this.WriteSize.Width = 77;
-            // 
-            // Description
-            // 
-            this.Description.HeaderText = "Description";
-            this.Description.Name = "Description";
-            this.Description.ReadOnly = true;
-            this.Description.Width = 85;
-            // 
             // label6
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -280,6 +240,53 @@
             this.hubsToolStripMenuItem.Text = "Hubs...";
             this.hubsToolStripMenuItem.Click += new System.EventHandler(this.hubsToolStripMenuItem_Click);
             // 
+            // fileSystemWatcher1
+            // 
+            this.fileSystemWatcher1.EnableRaisingEvents = true;
+            this.fileSystemWatcher1.SynchronizingObject = this;
+            // 
+            // DeviceIndex
+            // 
+            this.DeviceIndex.HeaderText = "Device Index (Hub.Device)";
+            this.DeviceIndex.Name = "DeviceIndex";
+            this.DeviceIndex.ReadOnly = true;
+            this.DeviceIndex.Width = 161;
+            // 
+            // DeviceID
+            // 
+            this.DeviceID.HeaderText = "ID";
+            this.DeviceID.Name = "DeviceID";
+            this.DeviceID.ReadOnly = true;
+            this.DeviceID.Width = 43;
+            // 
+            // FirmwareVersion
+            // 
+            this.FirmwareVersion.HeaderText = "Firmware Version";
+            this.FirmwareVersion.Name = "FirmwareVersion";
+            this.FirmwareVersion.ReadOnly = true;
+            this.FirmwareVersion.Width = 112;
+            // 
+            // ReadSize
+            // 
+            this.ReadSize.HeaderText = "Read Size (Bytes)";
+            this.ReadSize.Name = "ReadSize";
+            this.ReadSize.ReadOnly = true;
+            this.ReadSize.Width = 116;
+            // 
+            // WriteSize
+            // 
+            this.WriteSize.HeaderText = "Write Size (Bytes)";
+            this.WriteSize.Name = "WriteSize";
+            this.WriteSize.ReadOnly = true;
+            this.WriteSize.Width = 115;
+            // 
+            // Description
+            // 
+            this.Description.HeaderText = "Description";
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            this.Description.Width = 85;
+            // 
             // ONIControllerEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -307,6 +314,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDeviceTable)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -330,6 +338,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hubsToolStripMenuItem;
+        private System.IO.FileSystemWatcher fileSystemWatcher1;
         private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIndex;
         private System.Windows.Forms.DataGridViewTextBoxColumn DeviceID;
         private System.Windows.Forms.DataGridViewTextBoxColumn FirmwareVersion;

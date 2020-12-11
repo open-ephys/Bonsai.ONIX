@@ -1,9 +1,9 @@
-﻿using System;
+﻿using OpenCV.Net;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.ComponentModel;
-using OpenCV.Net;
 
 // TODO: Sweep frequency needs to be in terms of DataClock cycles for this to work or we need to convert the pulse width etc to time in seconds
 namespace Bonsai.ONIX
@@ -127,17 +127,17 @@ namespace Bonsai.ONIX
             // B = [b1]
             //     [b2]
             var b1 = CV.DotProduct(u, d);
-            var b2  = CV.DotProduct(v, d);
+            var b2 = CV.DotProduct(v, d);
 
             // Solve Ax = B
             var x2 = (b2 - b1 * a21 / a11) / (a22 - (a12 * a21) / a11);
             var x1 = (b1 - a12 * x2) / a11;
-                
+
             // TODO: If non-singular solution else send NaNs
             //if (x)
             //{
-                var p1 = p + x1 * u;
-                var q1 = q + x2 * v;
+            var p1 = p + x1 * u;
+            var q1 = q + x2 * v;
             //}
 
             // Or single matrix with columns as results

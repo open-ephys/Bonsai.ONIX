@@ -1,15 +1,14 @@
-﻿    using System.Linq;
-    using OpenCV.Net;
+﻿using OpenCV.Net;
+using System.Linq;
 
 namespace Bonsai.ONIX
 {
-
     /// <summary>
-    /// Provides Bonsai-friendly version of an Neuropixels6BBlock
+    /// Provides Bonsai-friendly version of an Neuropixels 1.0 Hyperframe
     /// </summary>
-    public class Neuropixels1R0DataFrame
+    public class NeuropixelsV1DataFrame
     {
-        public Neuropixels1R0DataFrame(Neuropixels1R0DataBlock dataBlock, double acq_clk_hz, double data_clk_hz)
+        public NeuropixelsV1DataFrame(NeuropixelsV1DataBlock dataBlock, double acq_clk_hz, double data_clk_hz)
         {
             SpikeFrameClock = GetClock(dataBlock.SpikeDataClock);
             LFPFrameClock = GetClock(dataBlock.LFPDataClock);
@@ -40,10 +39,10 @@ namespace Bonsai.ONIX
             var ts = new double[data.Count()];
             double period_sec = 1.0 / (double)hardware_clock_hz;
 
-            for(int i = 0; i < data.Count(); i++)
+            for (int i = 0; i < data.Count(); i++)
                 ts[i] = period_sec * (double)data[i];
 
-            return Mat.FromArray(ts, 1, data.Length, Depth.F64, 1); 
+            return Mat.FromArray(ts, 1, data.Length, Depth.F64, 1);
         }
 
         Mat GetEphysData(ushort[,] data)

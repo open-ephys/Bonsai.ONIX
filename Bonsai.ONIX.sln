@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.ONIX", "Bonsai.ONIX\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.ONIX.Design", "Bonsai.ONIX.Design\Bonsai.ONIX.Design.csproj", "{78AFE38F-56C2-46C5-B435-AE877277ADDD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.ONIX.Testing", "Bonsai.ONIX.Testing\Bonsai.ONIX.Testing.csproj", "{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{78AFE38F-56C2-46C5-B435-AE877277ADDD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{78AFE38F-56C2-46C5-B435-AE877277ADDD}.Release|x64.ActiveCfg = Release|x64
 		{78AFE38F-56C2-46C5-B435-AE877277ADDD}.Release|x64.Build.0 = Release|x64
+		{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}.Debug|x64.ActiveCfg = Debug|x64
+		{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}.Debug|x64.Build.0 = Debug|x64
+		{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}.Release|x64.ActiveCfg = Release|x64
+		{1661246D-8AC1-4E87-AE9E-032DF1DDFB6E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

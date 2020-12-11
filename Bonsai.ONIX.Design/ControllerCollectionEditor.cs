@@ -1,7 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms.Design;
-using System.ComponentModel;
 
 namespace Bonsai.ONIX.Design
 {
@@ -15,7 +15,7 @@ namespace Bonsai.ONIX.Design
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
             var editorService = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
-            
+
             if (editorService != null)
             {
                 var control = new ControllerSelectionControl((ControllerSelection)value);

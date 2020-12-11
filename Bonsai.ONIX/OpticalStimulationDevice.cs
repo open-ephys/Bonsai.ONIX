@@ -27,7 +27,7 @@ namespace Bonsai.ONIX
         }
 
         // Setup context etc
-        public OpticalStimulationDevice() : base(oni.Device.DeviceID.OSTIM) { }
+        public OpticalStimulationDevice() : base(ONIXDevices.ID.OSTIM) { }
 
         // Fit from Fig. 10 of CAT4016 datasheet
         // x = (y/a)^(1/b)
@@ -36,7 +36,7 @@ namespace Bonsai.ONIX
         private uint current_to_pot_setting(double current)
         {
             double R = Math.Pow(current / 3.833e+05, 1 / -0.9632);
-            double s =  256 * (R - MinRheostatResistance) / PotResistance ;
+            double s = 256 * (R - MinRheostatResistance) / PotResistance;
             if (s > 255)
                 return 255;
             else if (s < 0)
@@ -82,7 +82,8 @@ namespace Bonsai.ONIX
         [Range(0, 800)]
         public double? MaxCurrent
         {
-            get {
+            get
+            {
                 var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.MAXCURRENT);
                 if (val != null) return pot_setting_to_current((uint)val);
                 return null;
@@ -134,7 +135,7 @@ namespace Bonsai.ONIX
                 {
                     var val = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEMASK);
                     var ub = val & 0x0000FF00;
-                    var lb = (bool)value ?  (uint)0x000000FF :  (uint)0x00000000;
+                    var lb = (bool)value ? (uint)0x000000FF : (uint)0x00000000;
                     val = ub | lb;
                     Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEMASK, val);
                 }

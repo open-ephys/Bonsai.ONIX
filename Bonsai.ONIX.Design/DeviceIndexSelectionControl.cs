@@ -7,7 +7,7 @@ namespace Bonsai.ONIX.Design
     public partial class DeviceIndexSelectionControl : UserControl
     {
         const float DefaultDpi = 96f;
-        DeviceIndexSelectionEditorService editorService;
+        //DeviceIndexSelectionEditorService editorService;
 
         public DeviceIndexSelectionControl(DeviceIndexSelection selection)
             : this(null, selection)
@@ -17,13 +17,14 @@ namespace Bonsai.ONIX.Design
         public DeviceIndexSelectionControl(IServiceProvider provider, DeviceIndexSelection selection)
         {
             InitializeComponent();
-            editorService = new DeviceIndexSelectionEditorService(this, provider);
+            //editorService = new DeviceIndexSelectionEditorService(this, provider);
 
             using (var graphics = Graphics.FromHwnd(IntPtr.Zero))
             {
                 SuspendLayout();
 
-                if (selection.Indices != null) {
+                if (selection.Indices != null)
+                {
                     foreach (var idx in selection.Indices)
                     {
                         if (!string.IsNullOrWhiteSpace(selection.DevIndexToString(idx)))
@@ -31,7 +32,7 @@ namespace Bonsai.ONIX.Design
                             deviceIndexListBox.Items.Add(selection.DevIndexToString(idx));
                         }
                     }
-                 }
+                }
 
                 var drawScale = graphics.DpiY / DefaultDpi;
                 deviceIndexListBox.Height = (int)Math.Ceiling(deviceIndexListBox.ItemHeight * deviceIndexListBox.Items.Count * drawScale);

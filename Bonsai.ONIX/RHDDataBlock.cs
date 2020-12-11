@@ -24,14 +24,14 @@
 
         protected override void FillFromData(ushort[] data)
         {
-            int chan = 0; 
+            int chan = 0;
             for (; chan < NumChannels; chan++)
             {
                 ephysData[chan, index] = data[chan + 4]; // Start at index 4
             }
             for (int k = 0; k < NumAuxInChannels; k++)
             {
-                auxiliaryData[k, index] = data[4 + chan++]; 
+                auxiliaryData[k, index] = data[4 + chan++];
             }
         }
 

@@ -54,27 +54,29 @@ namespace Bonsai.ONIX
             if (reg == null)
             {
                 return null;
-            } else
+            }
+            else
             {
                 io_reg = (uint)reg;
-                return (InputOutput)((io_reg >> channel) &(uint)1);
+                return (InputOutput)((io_reg >> channel) & (uint)1);
             }
         }
 
 
-        public FMCAnalogOutputDevice() : base(oni.Device.DeviceID.FMCANALOG1R3)
+        public FMCAnalogOutputDevice() : base(ONIXDevices.ID.FMCANALOG1R3)
         {
             io_reg = 0;
         }
 
         public override IObservable<Arr> Process(IObservable<Arr> source)
         {
-            return source.Do(x => {
+            return source.Do(x =>
+            {
 
                 var m = x.GetMat();
 
                 // Check dims
-                if (m.Rows * m.Cols != Rows * Cols) 
+                if (m.Rows * m.Cols != Rows * Cols)
                 {
                     throw new IndexOutOfRangeException("Source must be a 12 element vector.");
                 }

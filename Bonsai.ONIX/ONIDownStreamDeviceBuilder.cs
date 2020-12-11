@@ -17,14 +17,16 @@ namespace Bonsai.ONIX
         [Category("ONI Config.")]
         [Editor("Bonsai.ONIX.Design.ControllerCollectionEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         [Description("The hardware controller this node will write frames to.")]
-        public ControllerSelection Controller {
+        public ControllerSelection Controller
+        {
             get { return Controllers; }
-            set { 
+            set
+            {
                 Controllers = value;
                 if (value.SelectedController != null)
                 {
                     var devices = ONIHelpers.FindMachingDevices(value.SelectedController.AcqContext, ID);
-                    if (devices.Count == 0) throw new oni.ONIException(oni.lib.Error.DEVID);
+                    if (devices.Count == 0) throw new Bonsai.WorkflowBuildException("Device was not found in device table."); ;
                     DeviceIndex.Indices = devices.Keys.ToArray();
                 }
             }
@@ -36,9 +38,9 @@ namespace Bonsai.ONIX
         [Description("The fully specified device index within the device table.")]
         public DeviceIndexSelection DeviceIndex { get; set; }
 
-        public readonly oni.Device.DeviceID ID = oni.Device.DeviceID.NULL;
+        public readonly ONIXDevices.ID ID = ONIXDevices.ID.NULL;
 
-        public ONIDownStreamDeviceBuilder(oni.Device.DeviceID dev_id)
+        public ONIDownStreamDeviceBuilder(ONIXDevices.ID dev_id)
         {
             Controller = new ControllerSelection();
             DeviceIndex = new DeviceIndexSelection();
@@ -59,9 +61,10 @@ namespace Bonsai.ONIX
 
             Controller.Controllers = visitor.Controllers;
 
-            if (Controller.SelectedController != null) {
+            if (Controller.SelectedController != null)
+            {
                 var devices = ONIHelpers.FindMachingDevices(Controller.SelectedController.AcqContext, ID);
-                if (devices.Count == 0) throw new oni.ONIException(oni.lib.Error.DEVID);
+                if (devices.Count == 0) throw new Bonsai.WorkflowBuildException("Device was not found in device table.");
                 DeviceIndex.Indices = devices.Keys.ToArray();
             }
 

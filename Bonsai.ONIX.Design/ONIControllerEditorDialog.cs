@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Bonsai.ONIX.Design
@@ -13,7 +8,7 @@ namespace Bonsai.ONIX.Design
     public partial class ONIControllerEditorDialog : Form
     {
         // Hold reference to the controller being manipulated
-        public Bonsai.ONIX.ONIController CtrlRef; 
+        public Bonsai.ONIX.ONIController CtrlRef;
 
         public ONIControllerEditorDialog(Bonsai.ONIX.ONIController controller)
         {
@@ -46,19 +41,20 @@ namespace Bonsai.ONIX.Design
             if (CtrlRef.TryRefresh())
             {
 
-                for (int i = 0; i < CtrlRef.AcqContext.DeviceTable.Count; i++) {
+                for (int i = 0; i < CtrlRef.AcqContext.DeviceTable.Count; i++)
+                {
 
                     var d = CtrlRef.AcqContext.DeviceTable.Values.ElementAt(i);
 
-                    if (d.id != (int)oni.Device.DeviceID.NULL)
+                    if (d.id != (int)ONIXDevices.ID.NULL)
                     {
 
                         var ri = dataGridViewDeviceTable.Rows.Add(
                             d.idx.ToString() + $@" (0x{(byte)(d.idx >> 8):X2}.0x{(byte)(d.idx >> 0):X2})",
-                            d.id, 
+                            d.id,
                             d.version,
-                            d.read_size, 
-                            d.write_size, 
+                            d.read_size,
+                            d.write_size,
                             d.Description());
 
                         dataGridViewDeviceTable.Rows[ri].HeaderCell.Value = ri.ToString();
@@ -72,7 +68,9 @@ namespace Bonsai.ONIX.Design
                 updateReadSize();
                 updateWriteSize();
 
-            } else {
+            }
+            else
+            {
                 labelConnected.Text = "✘";
                 labelConnected.ForeColor = Color.Red;
             }
@@ -80,7 +78,7 @@ namespace Bonsai.ONIX.Design
 
         private void updateReadSize()
         {
-             CtrlRef.BlockReadSize = (int)numericUpDownReadSize.Value;
+            CtrlRef.BlockReadSize = (int)numericUpDownReadSize.Value;
         }
 
         private void updateWriteSize()

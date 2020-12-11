@@ -7,15 +7,36 @@ namespace Bonsai.ONIX
     // This class cannot have a constructor with parameters because we want to automatically serialize to XML
     public class DeviceIndexSelection
     {
+
+        public event Action IndexChanged;
+
+        protected virtual void OnIndexChanged()
+        {
+            IndexChanged?.Invoke();
+        }
+
+        uint? idx = null;
         [Description("The selected device index.")]
-        [Range(0, uint.MaxValue)]
-        public uint? SelectedIndex { get; set; } = null;
+        public uint? SelectedIndex
+        {
+            get
+            {
+                return idx;
+            }
+            set
+            {
+                idx = value;
+                OnIndexChanged();
+            }
+        }
 
         private uint[] indices;
         [Description("The valid device indices.")]
-        public uint[] Indices {
+        public uint[] Indices
+        {
             get { return indices; }
-            set {
+            set
+            {
                 indices = value;
                 if (SelectedIndex == null && value.Count() > 0)
                 {
@@ -35,7 +56,7 @@ namespace Bonsai.ONIX
         }
 
         public override string ToString() => DevIndexToString(SelectedIndex);
-           
+
         public string DevIndexToString(uint? idx)
         {
             if (idx == null)

@@ -37,9 +37,10 @@ namespace Bonsai.ONIX
             try
             {
                 Refresh();
-            } catch (oni.ONIException)
+            }
+            catch (oni.ONIException)
             {
-                Dispose(); 
+                Dispose();
                 return false;
             }
             return true;
@@ -48,9 +49,14 @@ namespace Bonsai.ONIX
         // Safe ReadRegister
         public uint ReadRegister(uint? dev_index, uint register_address)
         {
-            if (AcqContext == null || AcqContext.IsClosed || dev_index == null)
+            if (AcqContext == null || AcqContext.IsClosed)
             {
-                throw new oni.ONIException(oni.lib.Error.READFAILURE);
+                throw new InvalidOperationException("Acquisition context is closed.");
+            }
+
+            if (dev_index == null)
+            {
+                throw new ArgumentNullException("dev_index");
             }
 
             return AcqContext.ReadRegister((uint)dev_index, register_address);
@@ -59,9 +65,14 @@ namespace Bonsai.ONIX
         // Safe WriteRegister
         public void WriteRegister(uint? dev_index, uint register_address, uint value)
         {
-            if (AcqContext == null || AcqContext.IsClosed || dev_index == null)
+            if (AcqContext == null || AcqContext.IsClosed)
             {
-                throw new oni.ONIException(oni.lib.Error.WRITEFAILURE);
+                throw new InvalidOperationException("Acquisition context is closed.");
+            }
+
+            if (dev_index == null)
+            {
+                throw new ArgumentNullException("dev_index");
             }
 
             AcqContext.WriteRegister((uint)dev_index, register_address, value);

@@ -31,7 +31,7 @@ namespace Bonsai.ONIX
         }
 
         // Setup context etc
-        public ElectricalStimulationDevice() : base(oni.Device.DeviceID.ESTIM) { }
+        public ElectricalStimulationDevice() : base(ONIXDevices.ID.ESTIM) { }
 
         private uint currentK(double currentuA)
         {
@@ -62,7 +62,8 @@ namespace Bonsai.ONIX
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
         public double? Phase1CurrentuA
         {
-            get {
+            get
+            {
                 var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT1);
                 if (val != null) return inv_currentK((uint)val);
                 return null;

@@ -2,7 +2,7 @@
 {
     public class TS4231V1DataFrame : DataFrame
     {
-        public TS4231V1DataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz) 
+        public TS4231V1DataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz)
             : base(frame, acq_clk_hz, data_clk_hz)
         {
             // Data

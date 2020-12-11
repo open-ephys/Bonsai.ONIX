@@ -1,8 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.ComponentModel;
-using System.Collections.Generic;
 
 namespace Bonsai.ONIX
 {
@@ -53,7 +52,7 @@ namespace Bonsai.ONIX
             return (VoltageRange?)Controller?.ReadRegister(DeviceIndex.SelectedIndex, (uint)channel);
         }
 
-        public FMCAnalogInputDevice() : base(oni.Device.DeviceID.FMCANALOG1R3) { }
+        public FMCAnalogInputDevice() : base(ONIXDevices.ID.FMCANALOG1R3) { }
 
         public override IObservable<AnalogInputDataFrame> Process(IObservable<oni.Frame> source)
         {
