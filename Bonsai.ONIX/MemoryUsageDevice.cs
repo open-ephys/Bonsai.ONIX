@@ -13,6 +13,7 @@ namespace Bonsai.ONIX
             NULLPARM = 0,  // No command
             CLK_DIV = 1,  // Update clock divider ratio.Default results in 10 Hz heartbeat. Values less than CLK_HZ / 10e6 Hz will result in 1kHz.
             CLK_HZ = 2, // The frequency parameter, CLK_HZ, used in the calculation of CLK_DIV
+            TOTAL_MEM = 3, //Total memory in 32bit words
         }
 
         public MemoryUsageDevice() : base(ONIXDevices.ID.MEMUSAGE) { }
@@ -21,7 +22,7 @@ namespace Bonsai.ONIX
         {
             return source
                 .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Select(f => { return new MemoryUsageDataFrame(f, FrameClockHz, DataClockHz); });
+                .Select(f => { return new MemoryUsageDataFrame(f, FrameClockHz, DataClockHz, total_words); });
         }
 
         uint update_hz;
@@ -53,6 +54,27 @@ namespace Bonsai.ONIX
                                              Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / update_hz);
                 }
             }
+        }
+
+        uint total_words;
+        [System.Xml.Serialization.XmlIgnore]
+        [Category("Information")]
+        [Description("Memory size in 32bit words.")]
+        public uint MemorySize
+        {
+            get
+            {
+                if (Controller != null)
+                {
+                    total_words = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TOTAL_MEM);
+                    return total_words;
+                }
+                else
+                {
+                    return total_words;
+                }
+            }
+            private set { }
         }
     }
 }

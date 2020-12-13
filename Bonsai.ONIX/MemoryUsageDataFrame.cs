@@ -5,12 +5,16 @@ namespace Bonsai.ONIX
 {
     public class MemoryUsageDataFrame : DataFrame
     {
-        public MemoryUsageDataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz)
+        public MemoryUsageDataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz, uint total_words)
             : base(frame, acq_clk_hz, data_clk_hz)
         {
-            MemoryUsageBytes = ((ulong)sample[4] << 48) | ((ulong)sample[5] << 32) | ((ulong)sample[6] << 16) | ((ulong)sample[7] << 0);
+            uint words = ((uint)sample[4] << 16) | ((uint)sample[5] << 0);
+            MemoryUsagePercentage = 100.0 * (double)words / (double)total_words;
+            MemoryUsageBytes = words * sizeof(uint);
         }
 
         public ulong MemoryUsageBytes { get; private set; }
+        public double MemoryUsagePercentage { get; private set; }
+        
     }
 }
