@@ -31,7 +31,8 @@
             DS90UB9X = 24,
             TS4231V1ARR = 25,
             MAX10ADCCORE = 26,
-            LOADTEST = 27
+            LOADTEST = 27,
+            MEMUSAGE = 28
         }
     }
 }
