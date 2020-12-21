@@ -76,10 +76,23 @@ namespace Bonsai.ONIX
                         controller.AcqContext.BlockReadSize = controller.BlockReadSize;
                         controller.AcqContext.BlockWriteSize = controller.WritePreAllocSize;
                         controller.AcqContext.Start();
-
+                        System.Collections.Concurrent.BlockingCollection<oni.Frame> queue = new System.Collections.Concurrent.BlockingCollection<oni.Frame>();
+                        var acquireTask = Task.Factory.StartNew(() =>
+                        {
+                            while (!cancellationToken.IsCancellationRequested)
+                            {
+                                queue.Add(controller.AcqContext.ReadFrame());
+                            }
+                        },
+                        cancellationToken,
+                        TaskCreationOptions.LongRunning,
+                        TaskScheduler.Default
+                        );
                         while (!cancellationToken.IsCancellationRequested)
                         {
-                            observer.OnNext(controller.AcqContext.ReadFrame());
+                            oni.Frame nextFrame = queue.Take();
+                            observer.OnNext(nextFrame);
+                            nextFrame.Dispose();
                         }
                     }
                     finally
