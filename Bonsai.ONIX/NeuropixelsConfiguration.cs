@@ -16,12 +16,14 @@ namespace Bonsai.ONIX
         public int? GetElectrode(int channel)
         {
             if (Channels[channel].Bank == NeuropixelsChannel.ElectrodeBank.DISCONNECTED)
+            {
                 return null;
+            }
             else
+            {
                 return ((int)Channels[channel].Bank * Channels.Length) + channel;
+            }
         }
-
-
 
         [System.Xml.Serialization.XmlIgnore]
         public string ProbeType { get; set; }

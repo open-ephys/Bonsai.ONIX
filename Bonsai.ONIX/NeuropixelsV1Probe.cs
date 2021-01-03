@@ -35,11 +35,10 @@ namespace Bonsai.ONIX
         // where these parameters are actually used.
         const int PROBE_SRBASECONFIG_BIT_ADCBASE = 2114;
 
-        public NeuropixelsV1Probe(ONIController controller, uint? device_index)
-            : base(controller, device_index, 0x70)
+        public NeuropixelsV1Probe(ONIHardwareSlot slot, uint? device_index)
+            : base(slot, device_index, 0x70)
         {
-            if (controller != null)
-                ResetProbe();
+            ResetProbe();
         }
 
         public void ResetProbe()
@@ -66,13 +65,19 @@ namespace Bonsai.ONIX
         public void WriteConfiguration(NeuropixelsConfiguration config, bool read_check = false)
         {
             if (config.Channels.Length != CHANNEL_COUNT)
+            {
                 throw new ArgumentException("Incorrect number of channels for this probe.", "config");
+            }
 
             if (config.ADCs.Length != ADC_COUNT)
+            {
                 throw new ArgumentException("Incorrect number of ADCs for this probe.", "config");
+            }
 
             if (config.Channels.ToList().GetRange(192, 192).Any(c => c.Bank == Channel.ElectrodeBank.TWO))
+            {
                 throw new ArgumentException("Electrode selection is out of bounds. Only bank 0 and 1 are valid for channels in range 192..383.", "config");
+            }
 
             // Turn on calibration if necessary
             if (config.Mode != NeuropixelsConfiguration.OperationMode.RECORD)
@@ -144,7 +149,9 @@ namespace Bonsai.ONIX
             {
                 // Reference bits always remain zero
                 if (i == INTERNAL_REF_CHANNEL)
+                {
                     continue;
+                }
 
                 var e = config.GetElectrode(i);
                 if (e != null)
@@ -200,17 +207,34 @@ namespace Bonsai.ONIX
             foreach (var adc in config.ADCs)
             {
                 if (adc.CompP < 0 || adc.CompP > 0x1F)
+                {
                     throw new ArgumentOutOfRangeException(String.Format("ADC calibration parameter CompP value of {0} is invalid.", adc.CompP));
+                }
+
                 if (adc.CompN < 0 || adc.CompN > 0x1F)
+                {
                     throw new ArgumentOutOfRangeException(String.Format("ADC calibration parameter CompN value of {0} is invalid.", adc.CompN));
+                }
+
                 if (adc.Cfix < 0 || adc.Cfix > 0xF)
+                {
                     throw new ArgumentOutOfRangeException(String.Format("ADC calibration parameter Cfix value of {0} is invalid.", adc.Cfix));
+                }
+
                 if (adc.Slope < 0 || adc.Slope > 0x7)
+                {
                     throw new ArgumentOutOfRangeException(String.Format("ADC calibration parameter Slope value of {0} is invalid.", adc.Slope));
+                }
+
                 if (adc.Coarse < 0 || adc.Coarse > 0x3)
+                {
                     throw new ArgumentOutOfRangeException(String.Format("ADC calibration parameter Coarse value of {0} is invalid.", adc.Coarse));
+                }
+
                 if (adc.Fine < 0 || adc.Fine > 0x3)
+                {
                     throw new ArgumentOutOfRangeException(String.Format("ADC calibration parameter Fine value of {0} is invalid.", adc.Fine));
+                }
 
                 var config_idx = k % 2;
                 int d = k++ / 2;
@@ -260,7 +284,9 @@ namespace Bonsai.ONIX
         static byte[] BitArrayToBytes(BitArray bits)
         {
             if (bits.Length == 0)
+            {
                 throw new ArgumentException("Shift register data is empty", "data");
+            }
 
             var bytes = new byte[(bits.Length - 1) / 8 + 1];
             bits.CopyTo(bytes, 0);
@@ -280,11 +306,15 @@ namespace Bonsai.ONIX
                 WriteByte((uint)RegAddr.SR_LENGTH2, (uint)bytes.Length / 0x100);
 
                 foreach (var b in bytes)
+                {
                     WriteByte(sr_addr, b);
+                }
             }
 
             if (read_check && ReadByte((uint)RegAddr.STATUS) != (uint)Status.SR_OK)
+            {
                 throw new IOException("Shift register programming check failed.");
+            }
         }
 
         #region Hardware types

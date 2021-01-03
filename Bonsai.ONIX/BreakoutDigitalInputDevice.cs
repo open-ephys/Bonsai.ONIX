@@ -9,10 +9,10 @@ namespace Bonsai.ONIX
     [Description("Acquires digital data from an Open-Ephys FMC Breakout Board.")]
     public class BreakoutDigitalInputDevice : ONIFrameReaderDeviceBuilder<BreakoutDigitalInputDataFrame>
     {
-        public enum Register
+        enum Register
         {
             BREAKDIG1R3_NULLPARM = 0, // No command
-            BREAKDIG1R3_LEDMODE = 1, //0 = All off, 1 = Power and Running only, 3 = normal, else undefined
+            BREAKDIG1R3_LEDMODE = 1, // 0 = All off, 1 = Power and Running only, 3 = normal, else undefined
             BREAKDIG1R3_LEDLVL = 2, // 0-255 overall LED brightness value.
         }
 
@@ -20,12 +20,10 @@ namespace Bonsai.ONIX
 
         public override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<oni.Frame> source)
         {
-            return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Select(f => { return new BreakoutDigitalInputDataFrame(f, FrameClockHz, DataClockHz); });
+            return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
         }
 
-        uint led_level;
+
         [Category("Configuration")]
         [Range(0, 255)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
@@ -33,24 +31,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                if (Controller != null)
-                {
-                    return Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BREAKDIG1R3_LEDLVL);
-                }
-                else
-                {
-                    return led_level;
-                }
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BREAKDIG1R3_LEDLVL);
             }
             set
             {
-                if (Controller != null)
-                {
-                    led_level = value;
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex,
-                                             (int)Register.BREAKDIG1R3_LEDLVL,
-                                             led_level);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.BREAKDIG1R3_LEDLVL, value);
             }
         }
 
@@ -62,32 +47,17 @@ namespace Bonsai.ONIX
             UNDEFINED
         }
 
-        LEDModes led_mode;
         [Category("Configuration")]
         public LEDModes LEDMode
         {
             get
             {
-                if (Controller != null)
-                {
-                    return (LEDModes)Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BREAKDIG1R3_LEDMODE);
-                }
-                else
-                {
-                    return led_mode;
-                }
+                return (LEDModes)ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BREAKDIG1R3_LEDMODE);
             }
             set
             {
-                if (Controller != null)
-                {
-                    led_mode = value;
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex,
-                                             (uint)Register.BREAKDIG1R3_LEDMODE,
-                                             (uint)led_mode);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (uint)Register.BREAKDIG1R3_LEDMODE, (uint)value);
             }
         }
-
     }
 }

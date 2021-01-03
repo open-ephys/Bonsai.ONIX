@@ -7,8 +7,8 @@ namespace Bonsai.ONIX
         protected int SamplesPerBlock;
         protected int index = 0;
 
-        ulong[] frame_clock;
-        ulong[] data_clock;
+        readonly ulong[] frame_clock;
+        readonly ulong[] data_clock;
 
         public DataBlock(int samples_per_block)
         {
@@ -23,9 +23,11 @@ namespace Bonsai.ONIX
         public bool FillFromFrame(oni.Frame frame)
         {
             if (index >= SamplesPerBlock)
+            {
                 throw new IndexOutOfRangeException();
+            }
 
-            var data = frame.Data<ushort>();
+            var data = frame.DataU16();
 
             frame_clock[index] = frame.Clock();
             data_clock[index] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);

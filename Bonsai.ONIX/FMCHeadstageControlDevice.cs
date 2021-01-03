@@ -9,11 +9,10 @@ namespace Bonsai.ONIX
     [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. THIS NODE CAN DAMAGE YOUR HEADSTAGE: BE CAREFUL!")]
     public class FMCHeadstageControlDevice : ONIFrameReaderDeviceBuilder<FMCHeadstageControlFrame>
     {
-        const double VLIM = 6.3;
+        const double VLIM = 6.5;
 
-        // Control registers (see oedevices.h)
         // NB: registers for this device are all write only.
-        public enum Register
+        enum Register
         {
             GPOSTATE = 0,
             DESERIALIZERPOWER = 1,
@@ -25,9 +24,7 @@ namespace Bonsai.ONIX
 
         public override IObservable<FMCHeadstageControlFrame> Process(IObservable<oni.Frame> source)
         {
-            return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Select(f => { return new FMCHeadstageControlFrame(f, FrameClockHz, DataClockHz); });
+            return source.Select(f => { return new FMCHeadstageControlFrame(f); });
         }
 
         //[Description("Save link A voltage to internal EEPROM.")]
@@ -36,20 +33,15 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Description("Headstage deserializer power enabled or disabled.")]
-        public bool? DeserializerPowerEnabled
+        public bool DeserializerPowerEnabled
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.DESERIALIZERPOWER);
-                if (val != null) return val > 0;
-                return null;
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.DESERIALIZERPOWER) > 0;
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.DESERIALIZERPOWER, (bool)value ? (uint)1 : 0);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.DESERIALIZERPOWER, (uint)(value ? 1 : 0));
             }
         }
 
@@ -57,7 +49,7 @@ namespace Bonsai.ONIX
         [Description("Type \"BE CAREFUL\" here to enable the extended link voltage range.")]
         public string EnableExtendedVoltageRange { get; set; }
 
-        bool link_enabled = false;
+        bool link_enabled = true;
         [Category("Acquisition")]
         [Description("Headstage power enabled or disabled.")]
         public bool LinkPowerEnabled
@@ -74,7 +66,7 @@ namespace Bonsai.ONIX
         }
 
         // TODO: reading voltage does not work with current firmware
-        double link_v = 5.0;
+        double link_v = 5.5;
         [Category("Acquisition")]
         [Range(3.3, 10.0)]
         [Precision(1, 0.1)]
@@ -88,12 +80,19 @@ namespace Bonsai.ONIX
             }
             set
             {
-                if (Controller != null)
-                {
-                    link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
-                    link_v = link_enabled ? link_v : 0.0;
-                    Controller.AcqContext.WriteRegister((uint)DeviceIndex.SelectedIndex, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
-                }
+
+                link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
+                link_v = link_enabled ? link_v : 0.0;
+
+                //// TODO: HACK HACK HACK
+                //// The idea here is that on headstages that use the ds9033/9034 SERDES pair, there is some POR issue 
+                //// in our circuit that is preventing a lock. If we quickly power cycle, the caps on the HS hold charge where
+                //// it needs to be long enough to get the POR sequence right.
+                //WriteRegister(DeviceIndex.SelectedIndex, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
+                //Thread.Sleep(100);
+                //WriteRegister(DeviceIndex.SelectedIndex, (int)Register.LINKVOLTAGE, 0);
+                //Thread.Sleep(500);
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
             }
         }
 
@@ -105,17 +104,15 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE);
-                if (val != null) { gpo_register = (uint)val; return (gpo_register & 0x01) > 0; };
-                return null;
+                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE);
+                gpo_register = val;
+                return (gpo_register & 0x01) > 0;
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    gpo_register = (gpo_register & ~((uint)1 << 0)) | (((bool)value ? (uint)1 : (uint)0) << 0);
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE, gpo_register);
-                }
+
+                gpo_register = (gpo_register & ~((uint)1 << 0)) | (((bool)value ? 1 : (uint)0) << 0);
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE, gpo_register);
             }
         }
 

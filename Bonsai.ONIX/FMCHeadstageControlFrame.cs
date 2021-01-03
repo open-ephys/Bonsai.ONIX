@@ -3,8 +3,8 @@ namespace Bonsai.ONIX
 {
     public class FMCHeadstageControlFrame : DataFrame
     {
-        public FMCHeadstageControlFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz)
-            : base(frame, acq_clk_hz, data_clk_hz)
+        public FMCHeadstageControlFrame(oni.Frame frame)
+            : base(frame)
         {
             Lock = (sample[4] & 0x0001) == 1;
             Pass = (sample[4] & 0x0002) == 2;

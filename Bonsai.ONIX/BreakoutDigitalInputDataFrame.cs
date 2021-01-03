@@ -5,8 +5,8 @@
     /// </summary>
     public class BreakoutDigitalInputDataFrame : DataFrame
     {
-        public BreakoutDigitalInputDataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz)
-            : base(frame, acq_clk_hz, data_clk_hz)
+        public BreakoutDigitalInputDataFrame(oni.Frame frame)
+            : base(frame)
         {
             Port = sample[4];
             Buttons = (ushort)(0x00FF & sample[5]);

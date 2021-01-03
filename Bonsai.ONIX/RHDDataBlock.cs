@@ -8,8 +8,8 @@
         public readonly int NumChannels;
         public readonly int NumAuxInChannels;
 
-        ushort[,] ephysData;
-        int[,] auxiliaryData;
+        readonly ushort[,] ephysData;
+        readonly int[,] auxiliaryData;
 
         public RHDDataBlock(int num_ephys_channels,
                             int samples_per_block,

@@ -7,8 +7,8 @@ namespace Bonsai.ONIX
     /// </summary>
     public class RHDDataFrame : DataBlockFrame
     {
-        public RHDDataFrame(RHDDataBlock data_block, double acq_clk_hz, double data_clk_hz)
-            : base(data_block, acq_clk_hz, data_clk_hz)
+        public RHDDataFrame(RHDDataBlock data_block)
+            : base(data_block)
         {
             EphysData = GetEphysData(data_block.EphysData);
             AuxiliaryData = GetAuxiliaryData(data_block.AuxiliaryData);
@@ -16,7 +16,11 @@ namespace Bonsai.ONIX
 
         Mat GetEphysData(ushort[,] data)
         {
-            if (data.Length == 0) return null;
+            if (data.Length == 0)
+            {
+                return null;
+            }
+
             var numChannels = data.GetLength(0);
             var numSamples = data.GetLength(1);
 
@@ -31,7 +35,11 @@ namespace Bonsai.ONIX
 
         Mat GetAuxiliaryData(int[,] data)
         {
-            if (data.Length == 0) return null;
+            if (data.Length == 0)
+            {
+                return null;
+            }
+
             var numChannels = data.GetLength(0);
             var numSamples = data.GetLength(1);
 

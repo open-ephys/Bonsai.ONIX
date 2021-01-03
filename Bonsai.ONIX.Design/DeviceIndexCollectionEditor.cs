@@ -18,8 +18,10 @@ namespace Bonsai.ONIX.Design
 
             if (editorService != null)
             {
-                var control = new DeviceIndexSelectionControl((DeviceIndexSelection)value);
-                control.SelectedValue = value;
+                var control = new DeviceIndexSelectionControl((DeviceIndexSelection)value)
+                {
+                    SelectedValue = value
+                };
                 control.SelectedValueChanged += delegate { editorService.CloseDropDown(); };
                 editorService.DropDownControl(control);
                 ((DeviceIndexSelection)value).StringToSelection((string)control.SelectedValue);

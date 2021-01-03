@@ -10,7 +10,7 @@ namespace Bonsai.ONIX
     [Description("Heartbeat device")]
     public class HeartbeatDevice : ONIFrameReaderDeviceBuilder<HeartbeatDataFrame>
     {
-        public enum Register
+        enum Register
         {
             NULLPARM = 0,  // No command
             CLK_DIV = 1,  // Heartbeat clock divider ratio. Default results in 10 Hz heartbeat. Values less than CLK_HZ / 10e6 Hz will result in 1kHz.
@@ -21,9 +21,7 @@ namespace Bonsai.ONIX
 
         public override IObservable<HeartbeatDataFrame> Process(IObservable<oni.Frame> source)
         {
-            return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Select(f => { return new HeartbeatDataFrame(f, FrameClockHz, DataClockHz); });
+            return source.Select(f => { return new HeartbeatDataFrame(f); });
         }
 
 
@@ -35,26 +33,17 @@ namespace Bonsai.ONIX
         {
             get
             {
-                if (Controller != null)
-                {
-                    var val = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV);
-                    beat_hz = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / val;
-                    return beat_hz;
-                }
-                else
-                {
-                    return beat_hz;
-                }
+
+                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV);
+                beat_hz = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / val;
+                return beat_hz;
             }
             set
             {
-                if (Controller != null)
-                {
-                    beat_hz = value;
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex,
-                                             (int)Register.CLK_DIV,
-                                             Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / beat_hz);
-                }
+                beat_hz = value;
+                WriteRegister(DeviceIndex.SelectedIndex,
+                                            (int)Register.CLK_DIV,
+                                            ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / beat_hz);
             }
         }
     }

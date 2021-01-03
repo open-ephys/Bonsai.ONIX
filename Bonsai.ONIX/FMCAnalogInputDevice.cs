@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     [Description("Acquires data from the twelve 14-bit analog inputs on the Open Ephys FMC Host. Used in concert with FMCAnalogOutputDevice.")]
     public class FMCAnalogInputDevice : ONIFrameReaderDeviceBuilder<AnalogInputDataFrame>
     {
-        public enum Register
+        enum Register
         {
             NULLPARM = 0,
             CHDIR = 1,
@@ -26,6 +26,12 @@ namespace Bonsai.ONIX
             CH11INRANGE = 13,
         }
 
+        public enum InputOutput
+        {
+            Input = 0,
+            Output = 1
+        }
+
         public enum VoltageRange
         {
             [Description("+/-10.0 V")]
@@ -36,21 +42,29 @@ namespace Bonsai.ONIX
             FiveVolts,
         }
 
-        void SetVoltageRange(Register channel, VoltageRange? range)
+        void SetVoltageRange(Register channel, VoltageRange range)
         {
-            if (Controller != null)
-            {
-                var val = range ?? VoltageRange.TenVolts;
-                Controller.WriteRegister(DeviceIndex.SelectedIndex,
-                                         (uint)channel,
-                                         (uint)val);
-            }
+            WriteRegister(DeviceIndex.SelectedIndex, (uint)channel, (uint)range);
         }
 
-        VoltageRange? GetVoltageRange(Register channel)
+        VoltageRange GetVoltageRange(Register channel)
         {
-            return (VoltageRange?)Controller?.ReadRegister(DeviceIndex.SelectedIndex, (uint)channel);
+            return (VoltageRange)ReadRegister(DeviceIndex.SelectedIndex, (uint)channel);
         }
+
+        uint io_reg = 0;
+
+        void SetIO(int channel, InputOutput io)
+        {
+            io_reg = (io_reg & ~((uint)1 << channel)) | ((uint)(io) << channel);
+            WriteRegister(DeviceIndex.SelectedIndex, (uint)Register.CHDIR, io_reg);
+        }
+        InputOutput GetIO(int channel)
+        {
+            var io_reg = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CHDIR);
+            return (InputOutput)((io_reg >> channel) & 1);
+        }
+
 
         public FMCAnalogInputDevice() : base(ONIXDevices.ID.FMCANALOG1R3) { }
 
@@ -59,18 +73,39 @@ namespace Bonsai.ONIX
             var data_block = new AnalogInputDataBlock(NumChannels, BlockSize);
 
             return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
                 .Where(f =>
                 {
                     return data_block.FillFromFrame(f);
                 })
                 .Select(f =>
                 {
-                    var sample = new AnalogInputDataFrame(data_block, FrameClockHz, DataClockHz);
+                    var sample = new AnalogInputDataFrame(data_block);
                     data_block = new AnalogInputDataBlock(NumChannels, BlockSize);
                     return sample;
                 });
         }
+
+        //public override IObservable<Arr> Process(IObservable<Arr> source)
+        //{
+        //    return source.Do(x =>
+        //    {
+
+        //        var m = x.GetMat();
+
+        //        // Check dims
+        //        if (m.Rows * m.Cols != Rows * Cols)
+        //        {
+        //            throw new IndexOutOfRangeException("Source must be a 12 element vector.");
+        //        }
+
+        //        if (m.Depth != Depth.U16)
+        //        {
+        //            throw new InvalidOperationException("Source elements must be unsigned 16 bit integers");
+        //        }
+
+        //        Controller.SelectedController.AcqContext.Write((uint)DeviceIndex.SelectedIndex, m.Data, 2 * Rows);
+        //    });
+        //}
 
         [Category("Acquisition")]
         [Range(1, 10000)]
@@ -84,7 +119,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 0.")]
-        public VoltageRange? InputRange00
+        public VoltageRange InputRange00
         {
             get
             {
@@ -98,7 +133,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 1.")]
-        public VoltageRange? InputRange01
+        public VoltageRange InputRange01
         {
             get
             {
@@ -112,7 +147,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 2.")]
-        public VoltageRange? InputRange02
+        public VoltageRange InputRange02
         {
             get
             {
@@ -126,7 +161,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 3.")]
-        public VoltageRange? InputRange03
+        public VoltageRange InputRange03
         {
             get
             {
@@ -140,7 +175,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 4.")]
-        public VoltageRange? InputRange04
+        public VoltageRange InputRange04
         {
             get
             {
@@ -154,7 +189,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 5.")]
-        public VoltageRange? InputRange05
+        public VoltageRange InputRange05
         {
             get
             {
@@ -168,7 +203,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 6.")]
-        public VoltageRange? InputRange06
+        public VoltageRange InputRange06
         {
             get
             {
@@ -182,7 +217,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 7.")]
-        public VoltageRange? InputRange07
+        public VoltageRange InputRange07
         {
             get
             {
@@ -196,7 +231,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 8.")]
-        public VoltageRange? InputRange08
+        public VoltageRange InputRange08
         {
             get
             {
@@ -210,7 +245,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 9.")]
-        public VoltageRange? InputRange09
+        public VoltageRange InputRange09
         {
             get
             {
@@ -224,7 +259,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 10.")]
-        public VoltageRange? InputRange10
+        public VoltageRange InputRange10
         {
             get
             {
@@ -238,7 +273,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 11.")]
-        public VoltageRange? InputRange11
+        public VoltageRange InputRange11
         {
             get
             {
@@ -250,5 +285,173 @@ namespace Bonsai.ONIX
             }
         }
 
+        [Category("Acquisition")]
+        [Description("The direction of channel 0.")]
+        public InputOutput Direction00
+        {
+            get
+            {
+                return GetIO(0);
+            }
+            set
+            {
+                SetIO(0, value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 1.")]
+        public InputOutput Direction01
+        {
+            get
+            {
+                return GetIO(1);
+            }
+            set
+            {
+                SetIO(1, value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 2.")]
+        public InputOutput Direction02
+        {
+            get
+            {
+                return GetIO(2);
+            }
+            set
+            {
+                SetIO(2, value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 3.")]
+        public InputOutput Direction03
+        {
+            get
+            {
+                return GetIO(3);
+            }
+            set
+            {
+                SetIO(3, value);
+            }
+        }
+
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 4.")]
+        public InputOutput Direction04
+        {
+            get
+            {
+                return GetIO(4);
+            }
+            set
+            {
+                SetIO(4, value);
+            }
+        }
+
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 5.")]
+        public InputOutput Direction05
+        {
+            get
+            {
+                return GetIO(5);
+            }
+            set
+            {
+                SetIO(5, value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 6.")]
+        public InputOutput Direction06
+        {
+            get
+            {
+                return GetIO(6);
+            }
+            set
+            {
+                SetIO(6, value);
+            }
+        }
+        [Category("Acquisition")]
+        [Description("The direction of channel 7.")]
+        public InputOutput Direction07
+        {
+            get
+            {
+                return GetIO(7);
+            }
+            set
+            {
+                SetIO(7, value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 8.")]
+        public InputOutput Direction08
+        {
+            get
+            {
+                return GetIO(8);
+            }
+            set
+            {
+                SetIO(8, value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 9.")]
+        public InputOutput Direction09
+        {
+            get
+            {
+                return GetIO(9);
+            }
+            set
+            {
+                SetIO(9, value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 10.")]
+        public InputOutput Direction10
+        {
+            get
+            {
+                return GetIO(10);
+            }
+            set
+            {
+                SetIO(10, value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("The direction of channel 11.")]
+        public InputOutput Direction11
+        {
+            get
+            {
+                return GetIO(11);
+            }
+            set
+            {
+                SetIO(11, value);
+            }
+        }
     }
 }

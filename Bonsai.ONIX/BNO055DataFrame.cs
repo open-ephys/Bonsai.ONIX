@@ -5,8 +5,8 @@ namespace Bonsai.ONIX
 {
     public class BNO055DataFrame : DataFrame
     {
-        public BNO055DataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz)
-            : base(frame, acq_clk_hz, data_clk_hz)
+        public BNO055DataFrame(oni.Frame frame)
+            : base(frame)
         {
             // Convert data packet (output format is hard coded right now)
             Euler = GetEuler(sample, 4);
@@ -36,7 +36,9 @@ namespace Bonsai.ONIX
             var vec = new double[3];
 
             for (int i = 0; i < vec.Count(); i++)
+            {
                 vec[i] = scale * (short)sample[i + begin];
+            }
 
             return Mat.FromArray(vec, vec.Length, 1, Depth.F64, 1);
         }
@@ -48,7 +50,9 @@ namespace Bonsai.ONIX
             var vec = new double[3];
 
             for (int i = 0; i < vec.Count(); i++)
+            {
                 vec[i] = scale * (short)sample[i + begin];
+            }
 
             return Mat.FromArray(vec, vec.Length, 1, Depth.F64, 1);
         }

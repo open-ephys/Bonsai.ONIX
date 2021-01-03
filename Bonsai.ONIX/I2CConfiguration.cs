@@ -9,28 +9,50 @@ namespace Bonsai.ONIX
     public class I2CConfiguration
     {
 
-        ONIController ctrl;
-        uint? dev_idx;
+        readonly ONIHardwareSlot slot;
+        readonly uint? dev_idx;
 
         public readonly uint I2C_ADDR;
 
-        public I2CConfiguration(ONIController controller, uint? device_index, uint i2c_addr)
+        public I2CConfiguration(ONIHardwareSlot hw_slot, uint? device_index, uint i2c_addr)
         {
-            ctrl = controller;
+            slot = hw_slot;
             dev_idx = device_index;
             I2C_ADDR = i2c_addr;
+        }
+
+        uint ReadRegister(uint? dev_index, uint register_address)
+        {
+            using (var c = ONIContextManager.ReserveContext(slot))
+            {
+                return c.Context.ReadRegister(dev_index, register_address);
+            }
+        }
+
+        void WriteRegister(uint? dev_index, uint register_address, uint? value)
+        {
+            if (value == null)
+            {
+                return;
+            }
+
+            using (var c = ONIContextManager.ReserveContext(slot))
+            {
+                c.Context.WriteRegister(dev_index, register_address, (uint)value);
+            }
         }
 
         public byte? ReadByte(uint addr)
         {
             uint reg_addr = (addr << 8) | I2C_ADDR;
-            return (byte?)ctrl?.ReadRegister(dev_idx, reg_addr);
+
+            return (byte?)ReadRegister(dev_idx, reg_addr);
         }
 
         public void WriteByte(uint addr, uint value)
         {
             uint reg_addr = (addr << 8) | I2C_ADDR;
-            ctrl?.WriteRegister(dev_idx, reg_addr, value);
+            WriteRegister(dev_idx, reg_addr, value);
         }
 
         public byte[] ReadBytes(uint offset, int size)
@@ -40,11 +62,7 @@ namespace Bonsai.ONIX
             for (uint i = 0; i < size; i++)
             {
                 uint reg_addr = ((offset + i) << 8) | I2C_ADDR;
-                var val = ctrl?.ReadRegister(dev_idx, reg_addr);
-
-                if (val == null)
-                    return null;
-
+                var val = ReadRegister(dev_idx, reg_addr);
                 data[i] = (byte)val;
 
             }

@@ -4,11 +4,10 @@ using System.Drawing.Design;
 
 namespace Bonsai.ONIX
 {
-    [Description("Controls a single microstimulator circuit.")]
-    public sealed class ElectricalStimulationDevice : ONIRegisterOnlyDeviceBuilder
+    [Description("Controls a single microstimulator circuit. True = Stimulation triggered, False = Stimulation untriggered.")]
+    public sealed class ElectricalStimulationDevice : ONIRegisterOnlyDeviceBuilder<bool>
     {
-        // Control registers (see onidevices.h)
-        public enum Register
+        enum Register
         {
             NULLPARM = 0,  // No command
             BIPHASIC = 1,  // Biphasic pulse (0 = monophasic, 1 = biphasic; NB: currently ignored)
@@ -33,26 +32,26 @@ namespace Bonsai.ONIX
         // Setup context etc
         public ElectricalStimulationDevice() : base(ONIXDevices.ID.ESTIM) { }
 
-        private uint currentK(double currentuA)
+        private uint CurrentK(double currentuA)
         {
-            double k = 3000 / (Math.Pow(2, DACResolution ?? double.NaN) - 1);
+            double k = 3000 / (Math.Pow(2, DACResolution) - 1);
             return (uint)((currentuA + 1500) / k);
         }
 
-        private double inv_currentK(uint current_k)
+        private double InvCurrent(uint current_k)
         {
-            double k = 3000 / (Math.Pow(2, DACResolution ?? double.NaN) - 1);
+            double k = 3000 / (Math.Pow(2, DACResolution) - 1);
             return current_k * k - 1500;
         }
 
         [System.Xml.Serialization.XmlIgnore]
         [Category("Configuration")]
         [Description("Resolution of stimulation waveform generation DAC in bits.")]
-        public uint? DACResolution
+        public uint DACResolution
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.REZ);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.REZ);
             }
         }
 
@@ -60,20 +59,16 @@ namespace Bonsai.ONIX
         [Description("Phase 1 pulse current (uA).")]
         [Range(-1500, 1500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        public double? Phase1CurrentuA
+        public double Phase1CurrentuA
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT1);
-                if (val != null) return inv_currentK((uint)val);
-                return null;
+                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT1);
+                return InvCurrent(val);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT1, currentK((double)value));
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT1, CurrentK((double)value));
             }
         }
 
@@ -81,19 +76,18 @@ namespace Bonsai.ONIX
         [Description("Phase 2 pulse current (uA).")]
         [Range(-1500, 1500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        public double? Phase2CurrentuA
+        public double Phase2CurrentuA
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT2);
-                if (val != null) return inv_currentK((uint)val);
-                return null;
+                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT2);
+                return InvCurrent(val);
             }
             set
             {
-                if (Controller != null && value != null)
+
                 {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT2, currentK((double)value));
+                    WriteRegister(DeviceIndex.SelectedIndex, (int)Register.CURRENT2, CurrentK((double)value));
                 }
             }
         }
@@ -102,183 +96,151 @@ namespace Bonsai.ONIX
         [Description("Resting current between pulse phases(uA).")]
         [Range(-1500, 1500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        public double? RestingCurrentuA
+        public double RestingCurrentuA
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.RESTCURR);
-                if (val != null) return inv_currentK((uint)val);
-                return null;
+                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.RESTCURR);
+                return InvCurrent(val);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.RESTCURR, currentK((double)value));
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.RESTCURR, CurrentK((double)value));
             }
         }
 
         [Category("Acquisition")]
         [Description("Phase 1 pulse duration (usec).")]
         [Range(0, int.MaxValue)]
-        public uint? PulsePhase1DurationuSec
+        public uint PulsePhase1DurationuSec
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR1);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR1);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR1, (uint)value);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR1, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Inter-pulse phase duration (usec).")]
         [Range(0, int.MaxValue)]
-        public uint? InterPulsePhaseDurationuSec
+        public uint InterPulsePhaseDurationuSec
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.IPI);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.IPI);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.IPI, (uint)value);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.IPI, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Phase 2 pulse duration (usec).")]
         [Range(0, int.MaxValue)]
-        public uint? PulsePhase2DurationuSec
+        public uint PulsePhase2DurationuSec
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR2);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR2);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR2, (uint)value);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR2, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Pulse period (usec).")]
         [Range(0, int.MaxValue)]
-        public uint? PulsePerioduSec
+        public uint PulsePerioduSec
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEPERIOD);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEPERIOD);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEPERIOD, (uint)value);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEPERIOD, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Number of pulses to deliver in a burst.")]
         [Range(0, int.MaxValue)]
-        public uint? BurstPulseCount
+        public uint BurstPulseCount
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BURSTCOUNT);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BURSTCOUNT);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.BURSTCOUNT, (uint)value);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.BURSTCOUNT, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Interburst interval (usec).")]
         [Range(0, int.MaxValue)]
-        public uint? InterBurstIntervaluSec
+        public uint InterBurstIntervaluSec
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.IBI);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.IBI);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.IBI, (uint)value);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.IBI, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Number of bursts to deliver in a train.")]
         [Range(0, int.MaxValue)]
-        public uint? TrainBurstCount
+        public uint TrainBurstCount
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINCOUNT);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINCOUNT);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINCOUNT, (uint)value);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINCOUNT, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Delay between issue of trigger and start of train (usec).")]
         [Range(0, int.MaxValue)]
-        public uint? TrainDelayuSec
+        public uint TrainDelayuSec
         {
             get
             {
-                return Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINDELAY);
+                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINDELAY);
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINDELAY, (uint)value);
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINDELAY, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Stimulation sub-circuit power (True = On, False = Off).")]
-        public bool? PowerOn
+        public bool PowerOn
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.POWERON);
-                if (val != null) return val != 0;
-                return null;
+                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.POWERON);
+                return val != 0;
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.POWERON, (uint)((bool)value ? 1 : 0));
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.POWERON, (uint)(value ? 1 : 0));
             }
         }
 
@@ -288,36 +250,33 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.ENABLE);
-                if (val != null) return val != 0;
-                return null;
+                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.ENABLE);
+                return val != 0;
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.ENABLE, (uint)((bool)value ? 1 : 0));
-                }
+                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.ENABLE, (uint)((bool)value ? 1 : 0));
             }
         }
 
-        [Category("Acquisition")]
-        [Description("Triggered (True = Stimulation triggered, False = Stimulation untriggered,).")]
-        public bool? Triggered
+        //[Category("Acquisition")]
+        //[Description("Triggered (True = Stimulation triggered, False = Stimulation untriggered).")]
+        //public bool Triggered
+        //{
+        //    get
+        //    {
+        //        var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRIGGER);
+        //        return val != 0;
+        //    }
+        //    set
+        //    {
+        //        WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRIGGER, (uint)(value ? 1 : 0));
+        //    }
+        //}
+
+        public override void DoIt(bool triggered)
         {
-            get
-            {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRIGGER);
-                if (val != null) return val != 0;
-                return null;
-            }
-            set
-            {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRIGGER, (uint)((bool)value ? 1 : 0));
-                }
-            }
+            WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRIGGER, (uint)(triggered ? 1 : 0));
         }
     }
 }

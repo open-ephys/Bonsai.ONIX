@@ -45,7 +45,9 @@ namespace Bonsai.ONIX
                 else if (value.Count() > 0)
                 {
                     if (!value.Contains((uint)SelectedIndex))
+                    {
                         SelectedIndex = value[0];
+                    }
                     // else no change
                 }
                 else
@@ -60,9 +62,13 @@ namespace Bonsai.ONIX
         public string DevIndexToString(uint? idx)
         {
             if (idx == null)
+            {
                 return "";
+            }
             else
+            {
                 return $@"0x{idx:X4} ({(byte)(idx >> 8):D3}.{(byte)(idx >> 0):D3})";
+            }
         }
 
         public void StringToSelection(string str_idx)

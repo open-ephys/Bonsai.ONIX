@@ -10,49 +10,53 @@ namespace Bonsai.ONIX
 {
     [Description("Acquires data from a single Neuropixels v1.0 probe.")]
     [DefaultProperty("Configuration")]
-    public class NeuropixelsV1Device : ONIFrameReaderDeviceBuilder<NeuropixelsV1DataFrame>
+    public class NeuropixelsV1DeviceBuilder : ONIFrameReaderDeviceBuilder<NeuropixelsV1DataFrame>
     {
-
         // Flex configuration reader
         NeuropixelsV1Flex flex;
 
-        public NeuropixelsV1Device() : base(ONIXDevices.ID.NEUROPIX1R0)
+        public NeuropixelsV1DeviceBuilder() : base(ONIXDevices.ID.NEUROPIX1R0)
         {
-            Configuration = new NeuropixelsConfiguration();
-            Configuration.Channels = new NeuropixelsChannel[NeuropixelsV1Probe.CHANNEL_COUNT];
-            Configuration.ADCs = new NeuropixelsADC[NeuropixelsV1Probe.ADC_COUNT];
-            Configuration.Electrodes = new NeuropixelsElectrode[NeuropixelsV1Probe.ELECTRODE_COUNT];
+            Configuration = new NeuropixelsConfiguration
+            {
+                Channels = new NeuropixelsChannel[NeuropixelsV1Probe.CHANNEL_COUNT],
+                ADCs = new NeuropixelsADC[NeuropixelsV1Probe.ADC_COUNT],
+                Electrodes = new NeuropixelsElectrode[NeuropixelsV1Probe.ELECTRODE_COUNT]
+            };
 
             for (int i = 0; i < Configuration.Channels.Length; i++)
+            {
                 Configuration.Channels[i] = new NeuropixelsChannel();
+            }
 
             Configuration.InternalReferenceChannels = new int[] { NeuropixelsV1Probe.INTERNAL_REF_CHANNEL };
 
             for (int i = 0; i < Configuration.ADCs.Length; i++)
+            {
                 Configuration.ADCs[i] = new NeuropixelsADC();
+            }
 
             for (int i = 0; i < Configuration.Electrodes.Length; i++)
+            {
                 Configuration.Electrodes[i] = new NeuropixelsElectrode();
-
+            }
         }
 
         public override IObservable<NeuropixelsV1DataFrame> Process(IObservable<oni.Frame> source)
         {
             // Configure probe
-            var probe = new NeuropixelsV1Probe(Controller, DeviceIndex.SelectedIndex);
+            var probe = new NeuropixelsV1Probe(HardwareSlot, DeviceIndex.SelectedIndex);
             probe.WriteConfiguration(Configuration, PerformReadCheck);
 
             var data_block = new NeuropixelsV1DataBlock(BlockSize);
 
-            return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Where(f =>
+            return source.Where(f =>
                 {
                     return data_block.FillFromFrame(f);
                 })
                 .Select(f =>
                 {
-                    var sample = new NeuropixelsV1DataFrame(data_block, FrameClockHz, DataClockHz);
+                    var sample = new NeuropixelsV1DataFrame(data_block);
                     data_block = new NeuropixelsV1DataBlock(BlockSize);
                     return sample;
                 });
@@ -62,7 +66,7 @@ namespace Bonsai.ONIX
         {
             var r = base.Build(arguments);
 
-            flex = new NeuropixelsV1Flex(Controller, DeviceIndex.SelectedIndex);
+            flex = new NeuropixelsV1Flex(HardwareSlot, DeviceIndex.SelectedIndex);
             Configuration.ProbeSN = flex.ProbeSN;
             Configuration.ProbeType = flex.ProbePartNo;
 

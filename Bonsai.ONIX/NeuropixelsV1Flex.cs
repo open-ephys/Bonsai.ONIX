@@ -4,11 +4,11 @@ namespace Bonsai.ONIX
 {
     public class NeuropixelsV1Flex : I2CConfiguration
     {
-        public NeuropixelsV1Flex(ONIController controller, uint? device_index)
-            : base(controller, device_index, 0x50)
+        public NeuropixelsV1Flex(ONIHardwareSlot slot, uint? device_index)
+            : base(slot, device_index, 0x50)
         {
-            if (controller != null)
-                Update();
+            //if (slot != null)
+            Update();
         }
 
         public void Update()

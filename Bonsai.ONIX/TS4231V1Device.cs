@@ -12,9 +12,7 @@ namespace Bonsai.ONIX
 
         public override IObservable<TS4231V1DataFrame> Process(IObservable<oni.Frame> source)
         {
-            return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Select(f => { return new TS4231V1DataFrame(f, FrameClockHz, DataClockHz); });
+            return source.Select(f => { return new TS4231V1DataFrame(f); });
         }
     }
 }

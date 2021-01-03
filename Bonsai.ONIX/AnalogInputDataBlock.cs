@@ -6,7 +6,7 @@
     public class AnalogInputDataBlock : DataBlock
     {
         readonly int num_channels;
-        short[,] raw;
+        readonly short[,] raw;
 
         public AnalogInputDataBlock(int num_channels, int samples_per_block)
             : base(samples_per_block)

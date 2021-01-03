@@ -7,8 +7,8 @@ namespace Bonsai.ONIX.Design
 {
     class DeviceIndexSelectionEditorService : IWindowsFormsEditorService, IServiceProvider, ITypeDescriptorContext
     {
-        Control ownerControl;
-        IServiceProvider parentProvider;
+        readonly Control ownerControl;
+        readonly IServiceProvider parentProvider;
 
         public DeviceIndexSelectionEditorService(Control owner, IServiceProvider provider)
         {
