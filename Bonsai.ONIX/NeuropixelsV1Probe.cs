@@ -35,13 +35,10 @@ namespace Bonsai.ONIX
         // where these parameters are actually used.
         const int PROBE_SRBASECONFIG_BIT_ADCBASE = 2114;
 
-        public NeuropixelsV1Probe(ONIHardwareSlot slot, uint? device_index)
-            : base(slot, device_index, 0x70)
-        {
-            ResetProbe();
-        }
+        public NeuropixelsV1Probe(ONIDeviceAddress device) : base(device, 0x70)
+        { }
 
-        public void ResetProbe()
+        public void Reset()
         {
             // Set memory map and test configuration registers to default values
             WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.CAL_OFF);
@@ -57,7 +54,10 @@ namespace Bonsai.ONIX
 
             // Change operation state to Recording
             WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD);
+        }
 
+        public void Start()
+        {
             // Release resets
             WriteByte((uint)RegAddr.REC_MOD, (uint)RecMod.ACTIVE);
         }
@@ -84,19 +84,15 @@ namespace Bonsai.ONIX
             {
                 switch (config.Mode)
                 {
-
                     case NeuropixelsConfiguration.OperationMode.CALIBRATE_ADCS:
-                        WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE);
                         WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_ADC_CAL);
                         WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
                         break;
                     case NeuropixelsConfiguration.OperationMode.CALIBRATE_CHANNELS:
-                        WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE);
                         WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_CH_CAL);
                         WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
                         break;
                     case NeuropixelsConfiguration.OperationMode.CALIBRATE_PIXELS:
-                        WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE);
                         WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_PIX_CAL);
                         WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
                         break;
@@ -377,7 +373,7 @@ namespace Bonsai.ONIX
         public enum CalMod : uint
         {
             CAL_OFF = 0,
-            OSC_ACTIVE = 1 << 4, // 0 = external osc inactive, 1 = activate the external oscillator
+            OSC_ACTIVE = 1 << 4, // 0 = external osc inactive, 1 = activate the external calibration oscillator
             ADC_CAL = 1 << 5, // Enable ADC calibration
             CH_CAL = 1 << 6, // Enable channel gain calibration
             PIX_CAL = 1 << 7, // Enable pixel + channel gain calibration

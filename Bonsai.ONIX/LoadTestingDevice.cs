@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("Variable load testing device")]
-    public class LoadTestingDevice : ONIFrameReaderDeviceBuilder<LoadTestingDataFrame>
+    public class LoadTestingDevice : ONIFrameReader<LoadTestingDataFrame>
     {
         enum Register
         {
@@ -20,7 +20,7 @@ namespace Bonsai.ONIX
 
         public LoadTestingDevice() : base(ONIXDevices.ID.LOADTEST) { }
 
-        public override IObservable<LoadTestingDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<LoadTestingDataFrame> Process(IObservable<oni.Frame> source)
         {
             return source.Select(f => { return new LoadTestingDataFrame(f); });
         }
@@ -32,13 +32,13 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.FRAME_WORDS);
+                return ReadRegister(DeviceAddress.Address, (int)Register.FRAME_WORDS);
             }
             set
             {
                 var max_size = ValidSize();
                 var bounded = value > max_size ? max_size : value;
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.FRAME_WORDS, bounded);
+                WriteRegister(DeviceAddress.Address, (int)Register.FRAME_WORDS, bounded);
             }
         }
 
@@ -48,22 +48,27 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV);
-                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / val;
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
+                return ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val;
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex,
+                WriteRegister(DeviceAddress.Address,
                                             (int)Register.CLK_DIV,
-                                             ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / value);
+                                             ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / value);
+                var max_size = ValidSize();
+                if (FrameWords > max_size)
+                {
+                    FrameWords = max_size;
+                }
             }
         }
 
         // Assumes 8-byte timer
         uint ValidSize()
         {
-            var clk_div = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV);
-            return clk_div - 4;
+            var clk_div = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
+            return clk_div - 4 - 10; // -10 is overhead hack
         }
 
     }

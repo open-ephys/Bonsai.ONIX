@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("ONI Test device.")]
-    public class TestDevice : ONIFrameReaderDeviceBuilder<TestDataFrame>
+    public class TestDevice : ONIFrameReader<TestDataFrame>
     {
         enum Register
         {
@@ -16,7 +16,7 @@ namespace Bonsai.ONIX
 
         public TestDevice() : base(ONIXDevices.ID.TEST) { }
 
-        public override IObservable<TestDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<TestDataFrame> Process(IObservable<oni.Frame> source)
         {
             return source.Select(f => { return new TestDataFrame(f); });
         }
@@ -27,11 +27,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return (short)ReadRegister(DeviceIndex.SelectedIndex, (uint)Register.MESSAGE);
+                return (short)ReadRegister(DeviceAddress.Address, (uint)Register.MESSAGE);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (uint)Register.MESSAGE, (uint)value);
+                WriteRegister(DeviceAddress.Address, (uint)Register.MESSAGE, (uint)value);
             }
         }
     }

@@ -27,9 +27,9 @@ namespace Bonsai.ONIX
                 throw new IndexOutOfRangeException();
             }
 
-            var data = frame.DataU16();
+            var data = frame.Data<ushort>();
 
-            frame_clock[index] = frame.Clock();
+            frame_clock[index] = frame.Clock;
             data_clock[index] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);
 
             FillFromData(data);

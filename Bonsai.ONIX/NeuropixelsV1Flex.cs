@@ -4,16 +4,11 @@ namespace Bonsai.ONIX
 {
     public class NeuropixelsV1Flex : I2CConfiguration
     {
-        public NeuropixelsV1Flex(ONIHardwareSlot slot, uint? device_index)
-            : base(slot, device_index, 0x50)
+        public NeuropixelsV1Flex(ONIDeviceAddress device) : base(device, 0x50)
         {
-            //if (slot != null)
-            Update();
-        }
 
-        public void Update()
-        {
-            ProbeSN = BitConverter.ToUInt64(ReadBytes((uint)EEPROM.OFFSET_ID, 8), 0);
+            var sn = ReadBytes((uint)EEPROM.OFFSET_ID, 8);
+            ProbeSN = (sn == null) ? null : (ulong?)BitConverter.ToUInt64(sn, 0);
             Version = ReadByte((uint)EEPROM.OFFSET_VERSION).ToString() + "." + ReadByte((uint)EEPROM.OFFSET_REVISION).ToString();
             PartNo = ReadASCIIString((uint)EEPROM.OFFSET_FLEXPN, 20);
             ProbePartNo = ReadASCIIString((uint)EEPROM.OFFSET_PROBEPN, 20);

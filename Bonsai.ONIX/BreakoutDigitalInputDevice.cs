@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("Acquires digital data from an Open-Ephys FMC Breakout Board.")]
-    public class BreakoutDigitalInputDevice : ONIFrameReaderDeviceBuilder<BreakoutDigitalInputDataFrame>
+    public class BreakoutDigitalInputDevice : ONIFrameReader<BreakoutDigitalInputDataFrame>
     {
         enum Register
         {
@@ -18,24 +18,23 @@ namespace Bonsai.ONIX
 
         public BreakoutDigitalInputDevice() : base(ONIXDevices.ID.BREAKDIG1R3) { }
 
-        public override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<oni.Frame> source)
         {
             return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
         }
 
-
-        [Category("Configuration")]
+        [Category("Acquisition")]
         [Range(0, 255)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
         public uint LEDBrightness
         {
             get
             {
-                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BREAKDIG1R3_LEDLVL);
+                return ReadRegister(DeviceAddress.Address, (int)Register.BREAKDIG1R3_LEDLVL);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.BREAKDIG1R3_LEDLVL, value);
+                WriteRegister(DeviceAddress.Address, (int)Register.BREAKDIG1R3_LEDLVL, value);
             }
         }
 
@@ -47,16 +46,16 @@ namespace Bonsai.ONIX
             UNDEFINED
         }
 
-        [Category("Configuration")]
+        [Category("Acquisition")]
         public LEDModes LEDMode
         {
             get
             {
-                return (LEDModes)ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BREAKDIG1R3_LEDMODE);
+                return (LEDModes)ReadRegister(DeviceAddress.Address, (int)Register.BREAKDIG1R3_LEDMODE);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (uint)Register.BREAKDIG1R3_LEDMODE, (uint)value);
+                WriteRegister(DeviceAddress.Address, (uint)Register.BREAKDIG1R3_LEDMODE, (uint)value);
             }
         }
     }

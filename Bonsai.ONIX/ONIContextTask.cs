@@ -12,8 +12,8 @@ namespace Bonsai.ONIX
         Task CollectFrames;
 
         // TODO: Multi-writer, thread safe FIFO for oni_write()'s
-        private Task WriteData;
-        System.Collections.Concurrent.BlockingCollection<oni.Frame> write_queue = new System.Collections.Concurrent.BlockingCollection<oni.Frame>();
+        // private Task WriteData;
+        // System.Collections.Concurrent.BlockingCollection<oni.Frame> write_queue = new System.Collections.Concurrent.BlockingCollection<oni.Frame>();
 
         CancellationTokenSource TokenSource;
         CancellationToken CollectFramesToken;
@@ -24,10 +24,12 @@ namespace Bonsai.ONIX
         public readonly uint AcquisitionClockHz;
         public readonly uint MaxReadFrameSize;
         public readonly uint MaxWriteFrameSize;
-        public readonly Dictionary<uint, oni.device_t> DeviceTable;
+        public readonly Dictionary<uint, oni.Device> DeviceTable;
 
         public static readonly string DefaultDriver = "riffa";
         public static readonly int DefaultIndex = 0;
+
+        private readonly object hw_lock = new object();
 
         public ONIContextTask(string driver, int index)
         {
@@ -41,23 +43,20 @@ namespace Bonsai.ONIX
 
         internal void Start()
         {
-            if (CollectFrames == null || CollectFrames.Status == TaskStatus.RanToCompletion)
-            {
-                ctx.Start(true);
-                TokenSource = new CancellationTokenSource();
-                CollectFramesToken = TokenSource.Token;
+            ctx.Start(true);
+            TokenSource = new CancellationTokenSource();
+            CollectFramesToken = TokenSource.Token;
 
-                CollectFrames = Task.Factory.StartNew(() =>
+            CollectFrames = Task.Factory.StartNew(() =>
+            {
+                while (!CollectFramesToken.IsCancellationRequested)
                 {
-                    while (!CollectFramesToken.IsCancellationRequested)
-                    {
-                        OnFrameReceived(new FrameReceivedEventArgs(ctx.ReadFrame()));
-                    }
-                },
-                CollectFramesToken,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
-            }
+                    OnFrameReceived(new FrameReceivedEventArgs(ReadFrame()));
+                }
+            },
+            CollectFramesToken,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default);
         }
 
         internal void Stop()
@@ -66,8 +65,9 @@ namespace Bonsai.ONIX
             {
                 TokenSource.Cancel();
                 Task.WaitAll(CollectFrames);
-                ctx.Stop();
             }
+
+            ctx.Stop();
         }
 
         #region oni.Context delegates
@@ -131,50 +131,53 @@ namespace Bonsai.ONIX
             }
         }
 
-
-        private readonly object reg_lock = new object();
-
-        internal uint ReadRegister(uint? dev_index, uint register_address)
+        internal uint ReadRegister(uint dev_index, uint register_address)
         {
-            lock (reg_lock)
+            lock (hw_lock)
             {
                 return ctx.ReadRegister(dev_index, register_address);
             }
         }
 
-        internal void WriteRegister(uint? dev_index, uint register_address, uint value)
+        internal void WriteRegister(uint dev_index, uint register_address, uint value)
         {
-            lock (reg_lock)
+            lock (hw_lock)
             {
                 ctx.WriteRegister(dev_index, register_address, value);
             }
         }
 
-        private readonly object write_lock = new object();
-
-        public void Write<T>(uint dev_idx, T data) where T : struct
+        public oni.Frame ReadFrame()
         {
-            lock (write_lock)
+            lock (hw_lock)
+            {
+                return ctx.ReadFrame();
+            }
+        }
+
+        public void Write<T>(uint dev_idx, T data) where T : unmanaged
+        {
+            lock (hw_lock)
             {
                 ctx.Write(dev_idx, data);
             }
         }
-        public void Write<T>(uint dev_idx, T[] data) where T : struct
+        public void Write<T>(uint dev_idx, T[] data) where T : unmanaged
         {
-            lock (write_lock)
+            lock (hw_lock)
             {
                 ctx.Write(dev_idx, data);
             }
         }
         public void Write(uint dev_idx, IntPtr data, int data_size)
         {
-            lock (write_lock)
+            lock (hw_lock)
             {
                 ctx.Write(dev_idx, data, data_size);
             }
         }
 
-        internal Func<uint, uint?> HubDataClock => ctx.HubDataClock;
+        public Func<uint, oni.Hub> GetHub => ctx.GetHub;
         #endregion
 
         void OnFrameReceived(FrameReceivedEventArgs e)
@@ -184,8 +187,8 @@ namespace Bonsai.ONIX
 
         public void Dispose()
         {
+            Stop();
             ctx?.Dispose();
-
         }
     }
 }

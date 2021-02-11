@@ -27,7 +27,7 @@ namespace Bonsai.ONIX
             return Observable.Using(
                () =>
                {
-                   var c = ONIContextManager.ReserveContext(ContextConfiguration.Slot);
+                   var c = ONIContextManager.ReserveContext(ContextConfiguration.Slot, true);
                    c.Context.BlockReadSize = ContextConfiguration.ReadSize;
                    c.Context.BlockWriteSize = ContextConfiguration.WriteSize;
                    c.Context.Start();

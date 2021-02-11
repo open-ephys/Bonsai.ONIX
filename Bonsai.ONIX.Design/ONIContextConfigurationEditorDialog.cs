@@ -1,5 +1,6 @@
 ﻿using Bonsai.ONIX.Design.Properties;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -22,12 +23,20 @@ namespace Bonsai.ONIX.Design
 
             comboBoxDriver.SelectedItem = Configuration.Slot.Driver;
             numericUpDownPCIeIndex.Value = Configuration.Slot.Index;
+
+            TypeDescriptor.GetProperties(typeof(ONIDevice))[nameof(ONIDevice.DeviceAddress)].SetReadOnlyAttribute(true);
         }
 
         protected override void OnLoad(EventArgs e)
         {
             AttemptToConnect();
             base.OnLoad(e);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            TypeDescriptor.GetProperties(typeof(ONIDevice))[nameof(ONIDevice.DeviceAddress)].SetReadOnlyAttribute(false);
+            base.OnClosed(e);
         }
 
         private void AttemptToConnect()
@@ -44,19 +53,20 @@ namespace Bonsai.ONIX.Design
                     for (int i = 0; i < context.DeviceTable.Count; i++)
                     {
 
-                        var d = context.DeviceTable.Values.ElementAt(i);
+                        var dev = context.DeviceTable.Values.ElementAt(i);
+                        var idx = context.DeviceTable.Keys.ElementAt(i);
 
-                        if (d.id != (int)ONIXDevices.ID.NULL)
+                        if (dev.ID != (int)ONIXDevices.ID.NULL)
                         {
 
                             var ri = dataGridViewDeviceTable.Rows.Add(
-                                d.idx,
-                                $@" 0x{(byte)(d.idx >> 8):X2}.0x{(byte)(d.idx >> 0):X2}",
-                                ((ONIXDevices.ID)d.id).ToString(),
-                                d.version,
-                                d.read_size,
-                                d.write_size,
-                                d.Description());
+                                idx,
+                                $@" 0x{(byte)(idx >> 8):X2}.0x{(byte)(idx >> 0):X2}",
+                                ((ONIXDevices.ID)dev.ID).ToString(),
+                                dev.Version,
+                                dev.ReadSize,
+                                dev.WriteSize,
+                                dev.Description);
 
                             dataGridViewDeviceTable.Rows[ri].HeaderCell.Value = ri.ToString();
                         }
@@ -65,9 +75,11 @@ namespace Bonsai.ONIX.Design
                     toolStripSplitButton.Text = Resources.ONIConnectionSuccess;
                     toolStripSplitButton.ForeColor = Color.Black;
 
-                    Configuration.ReadSize = (int)context.MaxReadFrameSize;
+                    if (Configuration.ReadSize < context.MaxReadFrameSize)
+                    {
+                        Configuration.ReadSize = (int)context.MaxReadFrameSize;
+                    }
                     numericUpDownReadSize.Minimum = context.MaxReadFrameSize;
-
                 }
             }
             catch (Exception err)
@@ -124,15 +136,16 @@ namespace Bonsai.ONIX.Design
             {
 
                 var context = c.Context;
-                if (context.DeviceTable.TryGetValue(dev_idx, out oni.device_t dev))
+                if (context.DeviceTable.TryGetValue(dev_idx, out oni.Device dev))
                 {
-                    var device = ONIDeviceExpressionBuilderFactory.Make((ONIXDevices.ID)dev.id);
+                    var device = ONIDeviceExpressionBuilderFactory.Make((ONIXDevices.ID)dev.ID);
                     if (device != null)
                     {
-                        device.HardwareSlot = Configuration.Slot;
-                        device.HardwareSlot = Configuration.Slot;
-                        device.DeviceIndex.SelectedIndex = dev.idx;
+                        // Hacky "back door" into ONIDeviceIndexTypeConverter's functionality
+                        device.DeviceAddress = new ONIDeviceAddress { HardwareSlot = Configuration.Slot, Address = dev_idx };
                         propertyGrid.SelectedObject = device;
+                        device.FrameClockHz = c.Context.AcquisitionClockHz;
+                        device.Hub = c.Context.GetHub(device.DeviceAddress.Address);
                     }
                     else
                     {

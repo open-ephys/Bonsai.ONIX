@@ -6,6 +6,7 @@
         {
             Message = (sample[4] << 16) | (sample[5] << 0);
         }
+
         public int Message { get; private set; }
 
     }

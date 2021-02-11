@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Acquires data from a single Neuropixels v1.0 probe.")]
+    [Description("Acquires a stream of \"ultra-frames\" from a single Neuropixels v1.0 probe.")]
     [DefaultProperty("Configuration")]
-    public class NeuropixelsV1DeviceBuilder : ONIFrameReaderDeviceBuilder<NeuropixelsV1DataFrame>
+    public class NeuropixelsV1Device : ONIFrameReader<NeuropixelsV1DataFrame>
     {
-        // Flex configuration reader
-        NeuropixelsV1Flex flex;
-
-        public NeuropixelsV1DeviceBuilder() : base(ONIXDevices.ID.NEUROPIX1R0)
+        public NeuropixelsV1Device() : base(ONIXDevices.ID.NEUROPIX1R0)
         {
             Configuration = new NeuropixelsConfiguration
             {
@@ -42,15 +38,28 @@ namespace Bonsai.ONIX
             }
         }
 
-        public override IObservable<NeuropixelsV1DataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<oni.Frame> source)
         {
-            // Configure probe
-            var probe = new NeuropixelsV1Probe(HardwareSlot, DeviceIndex.SelectedIndex);
-            probe.WriteConfiguration(Configuration, PerformReadCheck);
 
             var data_block = new NeuropixelsV1DataBlock(BlockSize);
 
-            return source.Where(f =>
+            return Observable.Concat(
+
+                // First sequence is Empty but starts the probe after context reset so that data is aligned
+                Observable.Create<NeuropixelsV1DataFrame>(observer =>
+                {
+                    using (var probe = new NeuropixelsV1Probe(DeviceAddress))
+                    {
+                        probe.Reset();
+                        probe.WriteConfiguration(Configuration, PerformReadCheck);
+                        probe.Start();
+                    }
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }),
+
+                // Second sequence filters resulting frame stream
+                source.Where(f =>
                 {
                     return data_block.FillFromFrame(f);
                 })
@@ -59,41 +68,48 @@ namespace Bonsai.ONIX
                     var sample = new NeuropixelsV1DataFrame(data_block);
                     data_block = new NeuropixelsV1DataBlock(BlockSize);
                     return sample;
-                });
+                })
+                .Finally(() =>
+                {
+                    using (var probe = new NeuropixelsV1Probe(DeviceAddress))
+                    {
+                        probe.Reset();
+                    }
+                })
+            );
         }
 
-        public override Expression Build(IEnumerable<Expression> arguments)
+        protected override void DeviceIndexChanged()
         {
-            var r = base.Build(arguments);
+            using (var flex = new NeuropixelsV1Flex(DeviceAddress))
+            {
+                Configuration.ProbeSN = flex.ProbeSN;
+                Configuration.ProbePartNo = flex.ProbePartNo;
 
-            flex = new NeuropixelsV1Flex(HardwareSlot, DeviceIndex.SelectedIndex);
-            Configuration.ProbeSN = flex.ProbeSN;
-            Configuration.ProbeType = flex.ProbePartNo;
-
-            DeviceIndex.IndexChanged += flex.Update;
-
-            return r;
+                Configuration.FlexPartNo = flex.PartNo;
+                Configuration.FlexVersion = flex.Version;
+            }
         }
 
-        [Category("Metadata")]
+        [Category("Configuration")]
         [Description("The probe serial number.")]
         [System.Xml.Serialization.XmlIgnore]
-        public ulong? ProbeSN => flex?.ProbeSN;
+        public ulong? ProbeSN => Configuration.ProbeSN;
 
-        [Category("Metadata")]
+        [Category("Configuration")]
+        [Description("The probe part number.")]
+        [System.Xml.Serialization.XmlIgnore]
+        public string ProbePartNo => Configuration.ProbePartNo;
+
+        [Category("Configuration")]
         [Description("The flex cable version.")]
         [System.Xml.Serialization.XmlIgnore]
-        public string FlexVersion => flex?.Version;
+        public string FlexVersion => Configuration.FlexVersion;
 
-        [Category("Metadata")]
+        [Category("Configuration")]
         [Description("The probe part number.")]
         [System.Xml.Serialization.XmlIgnore]
-        public string FlexPartNo => flex?.PartNo;
-
-        [Category("Metadata")]
-        [Description("The probe part number.")]
-        [System.Xml.Serialization.XmlIgnore]
-        public string ProbePartNo => flex?.ProbePartNo;
+        public string FlexPartNo => Configuration.FlexPartNo;
 
         [Category("Configuration")]
         [Description("Neuropixels probe hardware configuration.")]
@@ -107,8 +123,8 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Range(1, 1e6)]
-        [Description("The size of data blocks, in units of \"hyper-frames\", that are propagated in the observable sequence.")]
-        public int BlockSize { get; set; } = 100;
+        [Description("The size of data blocks, in units of \"ultra-frames\", that are propagated in the observable sequence.")]
+        public int BlockSize { get; set; } = 1;
 
     }
 }

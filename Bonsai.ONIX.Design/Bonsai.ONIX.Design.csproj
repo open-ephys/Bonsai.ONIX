@@ -5,7 +5,7 @@
     <Description>Bonsai design library for Bonsai.ONIX.</Description>
     <PackageTags>Bonsai Rx Open Ephys ONI Neural Interface ONIX Electrophysiology Miniscope</PackageTags>
     <TargetFramework>net472</TargetFramework>
-    <Version>1.2.0</Version>
+    <Version>1.0.0-beta</Version>
     <Authors>Jon Newman</Authors>
     <Company>MIT</Company>
     <Copyright>Copyright © Jonathan Newman 2020</Copyright>
@@ -13,18 +13,27 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Platforms>AnyCPU;x64</Platforms>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>onix_open_ephys_logo.png</PackageIcon>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/jonnew/Bonsai.ONIX</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="ControllerCollectionEditor.cs" />
     <Compile Remove="ControllerSelectionControl.cs" />
     <Compile Remove="ControllerSelectionControl.Designer.cs" />
+    <Compile Remove="DeviceIndexCollectionEditor.cs" />
+    <Compile Remove="DeviceIndexSelectionControl.cs" />
+    <Compile Remove="DeviceIndexSelectionControl.Designer.cs" />
+    <Compile Remove="DeviceIndexSelectionEditorService.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="ControllerSelectionControl.resx" />
+    <EmbeddedResource Remove="DeviceIndexSelectionControl.resx" />
   </ItemGroup>
   
   <ItemGroup>
@@ -60,7 +69,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="clroni" Version="4.2.0" />
+    <PackageReference Include="clroni" Version="4.3.2" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
     <PackageReference Include="TinyCsvParser" Version="2.6.0" />
   </ItemGroup>

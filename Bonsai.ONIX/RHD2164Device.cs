@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     // TODO: More abstract control over chip's registers?
 
     [Description("Acquires data from a single RHD2164 bioamplifier chip.")]
-    public class RHD2164Device : ONIFrameReaderDeviceBuilder<RHDDataFrame>
+    public class RHD2164Device : ONIFrameReader<RHDDataFrame>
     {
         // see http://intantech.com/files/Intan_RHD2164_datasheet.pdf
         enum Register
@@ -39,7 +39,7 @@ namespace Bonsai.ONIX
 
         public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
 
-        public override IObservable<RHDDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<RHDDataFrame> Process(IObservable<oni.Frame> source)
         {
             var data_block = new RHDDataBlock(64, BlockSize);
 
@@ -58,7 +58,7 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Range(10, 10000)]
-        [Description("The size of data blocks, in samples, that are propagated in the observable sequence.")]
+        [Description("The number of frames making up a single data block that is propagated in the observable sequence.")]
         public int BlockSize { get; set; } = 250;
 
         [Category("Configuration")]
@@ -243,12 +243,12 @@ namespace Bonsai.ONIX
 
         void SetRawRegister(uint reg_addr, uint val)
         {
-            WriteRegister(DeviceIndex.SelectedIndex, reg_addr, val);
+            WriteRegister(DeviceAddress.Address, reg_addr, val);
         }
 
         byte GetRawRegister(uint reg_addr)
         {
-            return (byte)ReadRegister(DeviceIndex.SelectedIndex, reg_addr);
+            return (byte)ReadRegister(DeviceAddress.Address, reg_addr);
         }
     }
 }

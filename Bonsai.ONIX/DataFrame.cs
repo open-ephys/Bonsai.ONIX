@@ -4,9 +4,9 @@
     {
         public DataFrame(oni.Frame frame)
         {
-            sample = frame.DataU16();
+            sample = frame.Data<ushort>();
 
-            FrameClock = frame.Clock();
+            FrameClock = frame.Clock;
             DataClock = ((ulong)sample[0] << 48) | ((ulong)sample[1] << 32) | ((ulong)sample[2] << 16) | ((ulong)sample[3] << 0);
         }
 

@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. THIS NODE CAN DAMAGE YOUR HEADSTAGE: BE CAREFUL!")]
-    public class FMCHeadstageControlDevice : ONIFrameReaderDeviceBuilder<FMCHeadstageControlFrame>
+    public class FMCHeadstageControlDevice : ONIFrameReader<FMCHeadstageControlFrame>
     {
         const double VLIM = 6.5;
 
@@ -22,14 +22,14 @@ namespace Bonsai.ONIX
 
         public FMCHeadstageControlDevice() : base(ONIXDevices.ID.FMCLINKCTRL) { }
 
-        public override IObservable<FMCHeadstageControlFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<FMCHeadstageControlFrame> Process(IObservable<oni.Frame> source)
         {
             return source.Select(f => { return new FMCHeadstageControlFrame(f); });
         }
 
         //[Description("Save link A voltage to internal EEPROM.")]
         //public bool SaveLinkAVoltage { get; set; } = false;
-        //        if (SaveLinkAVoltage) ctx.Environment.AcqContext.WriteRegister((uint)DeviceIndex.SelectedIndex, (int)Register.SAVELINKA, 0);
+        //        if (SaveLinkAVoltage) ctx.Environment.AcqContext.WriteRegister((uint)DeviceIndex.Index, (int)Register.SAVELINKA, 0);
 
         [Category("Acquisition")]
         [Description("Headstage deserializer power enabled or disabled.")]
@@ -37,11 +37,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.DESERIALIZERPOWER) > 0;
+                return ReadRegister(DeviceAddress.Address, (int)Register.DESERIALIZERPOWER) > 0;
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.DESERIALIZERPOWER, (uint)(value ? 1 : 0));
+                WriteRegister(DeviceAddress.Address, (int)Register.DESERIALIZERPOWER, (uint)(value ? 1 : 0));
             }
         }
 
@@ -88,11 +88,11 @@ namespace Bonsai.ONIX
                 //// The idea here is that on headstages that use the ds9033/9034 SERDES pair, there is some POR issue 
                 //// in our circuit that is preventing a lock. If we quickly power cycle, the caps on the HS hold charge where
                 //// it needs to be long enough to get the POR sequence right.
-                //WriteRegister(DeviceIndex.SelectedIndex, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
+                //WriteRegister(DeviceIndex.Index, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
                 //Thread.Sleep(100);
-                //WriteRegister(DeviceIndex.SelectedIndex, (int)Register.LINKVOLTAGE, 0);
+                //WriteRegister(DeviceIndex.Index, (int)Register.LINKVOLTAGE, 0);
                 //Thread.Sleep(500);
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
+                WriteRegister(DeviceAddress.Address, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
             }
         }
 
@@ -104,7 +104,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE);
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.GPOSTATE);
                 gpo_register = val;
                 return (gpo_register & 0x01) > 0;
             }
@@ -112,7 +112,7 @@ namespace Bonsai.ONIX
             {
 
                 gpo_register = (gpo_register & ~((uint)1 << 0)) | (((bool)value ? 1 : (uint)0) << 0);
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE, gpo_register);
+                WriteRegister(DeviceAddress.Address, (int)Register.GPOSTATE, gpo_register);
             }
         }
 
@@ -123,7 +123,7 @@ namespace Bonsai.ONIX
         //{
         //    get
         //    {
-        //        var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE);
+        //        var val = Controller?.ReadRegister(DeviceIndex.Index, (int)Register.GPOSTATE);
         //        if (val != null) return new bool[] { (val & 0x01) > 0, (val & 0x02) > 0, (val & 0x04) > 0 };
         //        return null;
         //    }
@@ -132,7 +132,7 @@ namespace Bonsai.ONIX
         //        if (Controller != null && value != null)
         //        {
         //            var val = (value[0] ? 0x01 : 0x00) | (value[1] ? 0x02 : 0x00) | (value[2] ? 0x04 : 0x00);
-        //            Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE, (uint)val);
+        //            Controller.WriteRegister(DeviceIndex.Index, (int)Register.GPOSTATE, (uint)val);
         //        }
         //    }
         //}

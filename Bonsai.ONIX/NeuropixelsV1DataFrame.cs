@@ -3,7 +3,9 @@
 namespace Bonsai.ONIX
 {
     /// <summary>
-    /// Provides Bonsai-friendly version of a Neuropixels 1.0 Hyperframe
+    /// One or more Neuropixels 1.0 "ultra-frames" each of which
+    /// contains 12, 30kHz, spike samples and 1, 2.5 kHz LFP sample from each
+    /// of the 384 electrodes.
     /// </summary>
     public class NeuropixelsV1DataFrame
     {
@@ -19,8 +21,6 @@ namespace Bonsai.ONIX
             LFPData = GetEphysData(dataBlock.LFPData);
 
             FrameCounter = GetCounter(dataBlock.CounterData);
-            //FrameType = GetFrameType(dataBlock.FrameType);
-
         }
 
         Mat GetClock(ulong[] data)

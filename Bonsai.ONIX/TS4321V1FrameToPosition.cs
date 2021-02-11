@@ -80,11 +80,12 @@ namespace Bonsai.ONIX
             var source = arguments.First();
 
             // TODO: needs to do this using visitor searching for upstream node. This is brittle and will fail if immediately upstream node is not TS4231
-            DataClockHz = ((((source
+            DataClockHz = (((((source
                 as MethodCallExpression).Object
                 as ConstantExpression).Value
                 as InspectBuilder).Builder
-                as TS4231V1Device).DataClockHz;
+                as CombinatorBuilder).Combinator
+                as ONIDevice).Hub.ClockHz;
 
             var thisType = GetType();
             var method = thisType.GetMethod(nameof(Process));

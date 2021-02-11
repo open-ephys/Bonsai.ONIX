@@ -34,7 +34,7 @@ namespace Bonsai.ONIX.Design
                 HeaderText = "Bank",
                 DataPropertyName = "Bank",
                 ValueType = typeof(NeuropixelsChannel.ElectrodeBank),
-                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.ElectrodeBank))
+                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.ElectrodeBank)),
             };
             dataGridView_Channels.Columns.Add(col);
 
@@ -64,6 +64,9 @@ namespace Bonsai.ONIX.Design
                 DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Ref))
             };
             dataGridView_Channels.Columns.Add(col);
+
+            // Immediate update
+            dataGridView_Channels.CellEndEdit += dataGridView_Channels_CellEndEdit;
 
             // Bind the data grids
             dataGridView_Channels.DataSource = Config.Channels; // ch_source;
@@ -103,7 +106,7 @@ namespace Bonsai.ONIX.Design
             {
                 Filter = "JSON file|*.json|XML file|*.xml",
                 Title = "Export neuropixels configuration",
-                FileName = Config.ProbeType + "_sn-" + Config.ProbeSN.ToString()
+                FileName = Config.ProbePartNo + "_sn-" + Config.ProbeSN.ToString()
             };
             var result = fd.ShowDialog();
 
@@ -328,6 +331,11 @@ namespace Bonsai.ONIX.Design
             var box = sender as ComboBox;
             Enum.TryParse(box.SelectedValue.ToString(), out NeuropixelsConfiguration.OperationMode mode);
             Config.Mode = mode;
+        }
+
+        private void dataGridView_Channels_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridView_Channels.BindingContext[dataGridView_Channels.DataSource].EndCurrentEdit();
         }
     }
 }

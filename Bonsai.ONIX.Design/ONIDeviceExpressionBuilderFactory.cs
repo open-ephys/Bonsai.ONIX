@@ -2,11 +2,10 @@
 {
     internal static class ONIDeviceExpressionBuilderFactory
     {
-        public static ONIDeviceExpressionBuilder Make(ONIXDevices.ID device)
+        public static ONIDevice Make(ONIXDevices.ID device)
         {
             switch (device)
             {
-
                 //case ONIXDevices.ID.NULL:
                 //case ONIXDevices.ID.INFO:
                 //case ONIXDevices.ID.RHD2132:
@@ -24,7 +23,7 @@
                 case ONIXDevices.ID.TEST:
                     return new TestDevice();
                 case ONIXDevices.ID.NEUROPIX1R0:
-                    return new NeuropixelsV1DeviceBuilder();
+                    return new NeuropixelsV1Device();
                 case ONIXDevices.ID.HEARTBEAT:
                 //case ONIXDevices.ID.AD51X2:
                 //case ONIXDevices.ID.FMCVCTRL:
@@ -39,7 +38,7 @@
                 case ONIXDevices.ID.TS4231V2ARR:
                     return new TS4231V2Device();
                 case ONIXDevices.ID.FMCANALOG1R3:
-                    return new FMCAnalogInputDevice();
+                    return new FMCAnalogIODevice();
                 case ONIXDevices.ID.FMCLINKCTRL:
                     return new FMCHeadstageControlDevice();
                 //case ONIXDevices.ID.DS90UB9X:

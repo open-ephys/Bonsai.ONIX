@@ -26,11 +26,19 @@ namespace Bonsai.ONIX
         }
 
         [System.Xml.Serialization.XmlIgnore]
-        public string ProbeType { get; set; }
-
-        [System.Xml.Serialization.XmlIgnore]
         public ulong? ProbeSN { get; set; } = 0;
 
+        [System.Xml.Serialization.XmlIgnore]
+        public string FlexVersion { get; set; }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public string FlexPartNo { get; set; }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public string ProbePartNo { get; set; }
+
+        [Category("Configuration")]
+        [Description("Proper operation mode.")]
         public OperationMode Mode { get; set; } = OperationMode.RECORD;
 
         [Category("Configuration")]
@@ -48,7 +56,6 @@ namespace Bonsai.ONIX
         [Category("Configuration")]
         [Description("Channel indices that are used as references.")]
         public int[] InternalReferenceChannels { get; set; }
-
 
     }
 }

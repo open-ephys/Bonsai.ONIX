@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     using HeartbeatDataFrame = DataFrame;
 
     [Description("Heartbeat device")]
-    public class HeartbeatDevice : ONIFrameReaderDeviceBuilder<HeartbeatDataFrame>
+    public class HeartbeatDevice : ONIFrameReader<HeartbeatDataFrame>
     {
         enum Register
         {
@@ -19,7 +19,7 @@ namespace Bonsai.ONIX
 
         public HeartbeatDevice() : base(ONIXDevices.ID.HEARTBEAT) { }
 
-        public override IObservable<HeartbeatDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<HeartbeatDataFrame> Process(IObservable<oni.Frame> source)
         {
             return source.Select(f => { return new HeartbeatDataFrame(f); });
         }
@@ -34,16 +34,16 @@ namespace Bonsai.ONIX
             get
             {
 
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV);
-                beat_hz = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / val;
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
+                beat_hz = ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val;
                 return beat_hz;
             }
             set
             {
                 beat_hz = value;
-                WriteRegister(DeviceIndex.SelectedIndex,
+                WriteRegister(DeviceAddress.Address,
                                             (int)Register.CLK_DIV,
-                                            ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / beat_hz);
+                                            ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / beat_hz);
             }
         }
     }

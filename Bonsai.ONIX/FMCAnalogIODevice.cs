@@ -1,13 +1,18 @@
-﻿using System;
+﻿using OpenCV.Net;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Acquires data from the twelve 14-bit analog inputs on the Open Ephys FMC Host. Used in concert with FMCAnalogOutputDevice.")]
-    public class FMCAnalogInputDevice : ONIFrameReaderDeviceBuilder<AnalogInputDataFrame>
+    [Description("Acquires data from the twelve 14-bit analog inputs on the Open Ephys FMC Host. " +
+        "Optionally, sends data to the 16-bit analog outputs on the Open Ephys FMC Host, if those " +
+        "channels are selected to be outputs.")]
+    public class FMCAnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame>
     {
+        const int NUM_CHANNELS = 12;
+
         enum Register
         {
             NULLPARM = 0,
@@ -44,12 +49,12 @@ namespace Bonsai.ONIX
 
         void SetVoltageRange(Register channel, VoltageRange range)
         {
-            WriteRegister(DeviceIndex.SelectedIndex, (uint)channel, (uint)range);
+            WriteRegister(DeviceAddress.Address, (uint)channel, (uint)range);
         }
 
         VoltageRange GetVoltageRange(Register channel)
         {
-            return (VoltageRange)ReadRegister(DeviceIndex.SelectedIndex, (uint)channel);
+            return (VoltageRange)ReadRegister(DeviceAddress.Address, (uint)channel);
         }
 
         uint io_reg = 0;
@@ -57,20 +62,19 @@ namespace Bonsai.ONIX
         void SetIO(int channel, InputOutput io)
         {
             io_reg = (io_reg & ~((uint)1 << channel)) | ((uint)(io) << channel);
-            WriteRegister(DeviceIndex.SelectedIndex, (uint)Register.CHDIR, io_reg);
+            WriteRegister(DeviceAddress.Address, (uint)Register.CHDIR, io_reg);
         }
         InputOutput GetIO(int channel)
         {
-            var io_reg = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CHDIR);
+            var io_reg = ReadRegister(DeviceAddress.Address, (int)Register.CHDIR);
             return (InputOutput)((io_reg >> channel) & 1);
         }
 
+        public FMCAnalogIODevice() : base(ONIXDevices.ID.FMCANALOG1R3) { }
 
-        public FMCAnalogInputDevice() : base(ONIXDevices.ID.FMCANALOG1R3) { }
-
-        public override IObservable<AnalogInputDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<AnalogInputDataFrame> Process(IObservable<oni.Frame> source)
         {
-            var data_block = new AnalogInputDataBlock(NumChannels, BlockSize);
+            var data_block = new AnalogInputDataBlock(NUM_CHANNELS, BlockSize);
 
             return source
                 .Where(f =>
@@ -80,42 +84,35 @@ namespace Bonsai.ONIX
                 .Select(f =>
                 {
                     var sample = new AnalogInputDataFrame(data_block);
-                    data_block = new AnalogInputDataBlock(NumChannels, BlockSize);
+                    data_block = new AnalogInputDataBlock(NUM_CHANNELS, BlockSize);
                     return sample;
                 });
         }
 
-        //public override IObservable<Arr> Process(IObservable<Arr> source)
-        //{
-        //    return source.Do(x =>
-        //    {
+        // TODO: The order of data in the matrix is reverse of the channel index.
+        // m[11] => channel 0, etc.
+        protected override void Write(ONIContextTask ctx, Arr input)
+        {
+            var m = input.GetMat();
 
-        //        var m = x.GetMat();
+            // Check dims
+            if (m.Rows * m.Cols != NUM_CHANNELS)
+            {
+                throw new IndexOutOfRangeException("Source must be a 12 element vector.");
+            }
 
-        //        // Check dims
-        //        if (m.Rows * m.Cols != Rows * Cols)
-        //        {
-        //            throw new IndexOutOfRangeException("Source must be a 12 element vector.");
-        //        }
+            if (m.Depth != Depth.U16)
+            {
+                throw new InvalidOperationException("Source elements must be unsigned 16 bit integers");
+            }
 
-        //        if (m.Depth != Depth.U16)
-        //        {
-        //            throw new InvalidOperationException("Source elements must be unsigned 16 bit integers");
-        //        }
-
-        //        Controller.SelectedController.AcqContext.Write((uint)DeviceIndex.SelectedIndex, m.Data, 2 * Rows);
-        //    });
-        //}
+            ctx.Write(DeviceAddress.Address, m.Data, 2 * NUM_CHANNELS);
+        }
 
         [Category("Acquisition")]
         [Range(1, 10000)]
         [Description("The size of data blocks, in samples, that are propagated as events in the observable sequence.")]
         public int BlockSize { get; set; } = 250;
-
-        [System.Xml.Serialization.XmlIgnore]
-        [Category("Configuration")]
-        [Description("Number of channels begin used.")]
-        public int NumChannels { get; private set; } = 12;
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 0.")]

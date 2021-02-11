@@ -4,8 +4,9 @@ using System.ComponentModel;
 // TODO: Linearize MAXCURRENT
 namespace Bonsai.ONIX
 {
-    [Description("Controls a dual channel optical (LED or Laser Diode) stimulator. True = Stimulation triggered, False = Stimulation untriggered.")]
-    public sealed class OpticalStimulationDevice : ONIRegisterOnlyDeviceBuilder<bool>
+    [Description("Controls a dual channel optical (LED or Laser Diode) stimulator. A boolean input can be" +
+        "used to trigger stimulation: True = Stimulation triggered, False = Stimulation untriggered.")]
+    public sealed class OpticalStimulationDevice : ONISink<bool>
     {
         enum Register
         {
@@ -65,7 +66,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.MINRHEOR);
+                return ReadRegister(DeviceAddress.Address, (int)Register.MINRHEOR);
             }
         }
 
@@ -73,7 +74,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.POTRES);
+                return ReadRegister(DeviceAddress.Address, (int)Register.POTRES);
             }
         }
 
@@ -84,12 +85,12 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.MAXCURRENT);
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.MAXCURRENT);
                 return PotSettingToCurrent(val);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.MAXCURRENT, CurrentToPotSettings((double)value));
+                WriteRegister(DeviceAddress.Address, (int)Register.MAXCURRENT, CurrentToPotSettings((double)value));
             }
         }
 
@@ -100,12 +101,12 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.ENABLE);
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.ENABLE);
                 return val > 0;
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister(DeviceAddress.Address, (int)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 
@@ -116,17 +117,17 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEMASK);
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
                 val &= 0x000000FF;
                 return val > 0;
             }
             set
             {
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEMASK);
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
                 var ub = val & 0x0000FF00;
                 var lb = value ? 0x000000FF : (uint)0x00000000;
                 val = ub | lb;
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEMASK, val);
+                WriteRegister(DeviceAddress.Address, (int)Register.PULSEMASK, val);
             }
         }
 
@@ -137,17 +138,17 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEMASK);
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
                 val &= 0x0000FF00;
                 return val > 0;
             }
             set
             {
-                var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEMASK);
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
                 var lb = val & 0x000000FF;
                 var ub = value ? 0x0000FF00 : (uint)0x00000000;
                 val = ub | lb;
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEMASK, val);
+                WriteRegister(DeviceAddress.Address, (int)Register.PULSEMASK, val);
             }
         }
 
@@ -159,11 +160,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.PULSEDUR);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEDUR, (uint)(1000 * value));
+                WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR, (uint)(1000 * value));
             }
         }
 
@@ -175,11 +176,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEPERIOD);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.PULSEPERIOD, (uint)(1000 * value));
+                WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, (uint)(1000 * value));
             }
         }
 
@@ -190,11 +191,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.BURSTCOUNT);
+                return ReadRegister(DeviceAddress.Address, (int)Register.BURSTCOUNT);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.BURSTCOUNT, value);
+                WriteRegister(DeviceAddress.Address, (int)Register.BURSTCOUNT, value);
             }
         }
 
@@ -206,11 +207,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceIndex.SelectedIndex, (int)Register.IBI);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.IBI);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.IBI, (uint)(1000 * value));
+                WriteRegister(DeviceAddress.Address, (int)Register.IBI, (uint)(1000 * value));
             }
         }
 
@@ -221,11 +222,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINCOUNT);
+                return ReadRegister(DeviceAddress.Address, (int)Register.TRAINCOUNT);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINCOUNT, value);
+                WriteRegister(DeviceAddress.Address, (int)Register.TRAINCOUNT, value);
             }
         }
 
@@ -237,11 +238,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINDELAY);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.TRAINDELAY);
             }
             set
             {
-                WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRAINDELAY, (uint)(1000 * value));
+                WriteRegister(DeviceAddress.Address, (int)Register.TRAINDELAY, (uint)(1000 * value));
             }
         }
 
@@ -251,18 +252,17 @@ namespace Bonsai.ONIX
         //{
         //    get
         //    {
-        //        var val = ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TRIGGER);
+        //        var val = ReadRegister(DeviceIndex.Index, (int)Register.TRIGGER);
         //        return val != 0;
         //    }
         //    set
         //    {
-        //        WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRIGGER, (uint)(value ? 1 : 0));
+        //        WriteRegister(DeviceIndex.Index, (int)Register.TRIGGER, (uint)(value ? 1 : 0));
         //    }
         //}
-
-        public override void DoIt(bool triggered)
+        protected override void Write(ONIContextTask ctx, bool triggered)
         {
-            WriteRegister(DeviceIndex.SelectedIndex, (int)Register.TRIGGER, (uint)(triggered ? 1 : 0));
+            WriteRegister(DeviceAddress.Address, (int)Register.TRIGGER, (uint)(triggered ? 1 : 0));
         }
     }
 }
