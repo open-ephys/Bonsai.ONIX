@@ -1,6 +1,6 @@
 ﻿namespace Bonsai.ONIX.Design
 {
-    internal static class ONIDeviceExpressionBuilderFactory
+    internal static class ONIDeviceFactory
     {
         public static ONIDevice Make(ONIXDevices.ID device)
         {

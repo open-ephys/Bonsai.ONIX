@@ -138,7 +138,7 @@ namespace Bonsai.ONIX.Design
                 var context = c.Context;
                 if (context.DeviceTable.TryGetValue(dev_idx, out oni.Device dev))
                 {
-                    var device = ONIDeviceExpressionBuilderFactory.Make((ONIXDevices.ID)dev.ID);
+                    var device = ONIDeviceFactory.Make((ONIXDevices.ID)dev.ID);
                     if (device != null)
                     {
                         // Hacky "back door" into ONIDeviceIndexTypeConverter's functionality
