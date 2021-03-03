@@ -9,7 +9,6 @@ namespace Bonsai.ONIX
     {
         readonly int ULTRAFRAMES_PER_BLOCK;
         public const int NUM_CHANNELS = 384;
-        private const int SYNC_OFFSET = 4;
         private const int DATA_OFFSET = 5;
         private const int FRAMES_PER_SUPER = 13;
         private const int SUPERS_PER_ULTRA = 12;
@@ -82,7 +81,7 @@ namespace Bonsai.ONIX
                     if (super_cnt_circ == 0) // Use the first superframe in ultraframe as time of this lfp-data round robin
                     {
                         lfp_frame_clock[ultra_cnt] = frame.Clock;
-                        lfp_data_clock[ultra_cnt] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);
+                        lfp_data_clock[ultra_cnt] = spike_data_clock[super_cnt];
                     }
 
                     for (int chan = 0; chan < 32; chan++)

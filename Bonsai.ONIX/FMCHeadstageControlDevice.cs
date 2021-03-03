@@ -6,18 +6,19 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. THIS NODE CAN DAMAGE YOUR HEADSTAGE: BE CAREFUL!")]
+    [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. THIS NODE CAN DAMAGE YOUR HEADSTAGE!")]
     public class FMCHeadstageControlDevice : ONIFrameReader<FMCHeadstageControlFrame>
     {
-        const double VLIM = 6.5;
+        const double VLIM = 7.0;
 
         // NB: registers for this device are all write only.
         enum Register
         {
-            GPOSTATE = 0,
-            DESERIALIZERPOWER = 1,
-            LINKVOLTAGE = 2,
-            SAVELINKVOLTAGE = 3,
+            ENABLE = 0,
+            GPOSTATE = 1,
+            DESERIALIZERPOWER = 2,
+            LINKVOLTAGE = 3,
+            SAVELINKVOLTAGE = 4,
         }
 
         public FMCHeadstageControlDevice() : base(ONIXDevices.ID.FMCLINKCTRL) { }
@@ -25,6 +26,21 @@ namespace Bonsai.ONIX
         protected override IObservable<FMCHeadstageControlFrame> Process(IObservable<oni.Frame> source)
         {
             return source.Select(f => { return new FMCHeadstageControlFrame(f); });
+        }
+
+
+        [Category("Configuration")]
+        [Description("Enable the device data stream.")]
+        public bool Enable
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+            }
         }
 
         //[Description("Save link A voltage to internal EEPROM.")]
@@ -80,18 +96,8 @@ namespace Bonsai.ONIX
             }
             set
             {
-
                 link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
                 link_v = link_enabled ? link_v : 0.0;
-
-                //// TODO: HACK HACK HACK
-                //// The idea here is that on headstages that use the ds9033/9034 SERDES pair, there is some POR issue 
-                //// in our circuit that is preventing a lock. If we quickly power cycle, the caps on the HS hold charge where
-                //// it needs to be long enough to get the POR sequence right.
-                //WriteRegister(DeviceIndex.Index, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
-                //Thread.Sleep(100);
-                //WriteRegister(DeviceIndex.Index, (int)Register.LINKVOLTAGE, 0);
-                //Thread.Sleep(500);
                 WriteRegister(DeviceAddress.Address, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
             }
         }

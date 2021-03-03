@@ -10,7 +10,7 @@ namespace Bonsai.ONIX
     {
         enum Register
         {
-            NULLPARAM = 0,
+            ENABLE = 0,
             MESSAGE,
         }
 
@@ -19,6 +19,20 @@ namespace Bonsai.ONIX
         protected override IObservable<TestDataFrame> Process(IObservable<oni.Frame> source)
         {
             return source.Select(f => { return new TestDataFrame(f); });
+        }
+
+        [Category("Configuration")]
+        [Description("Enable the device data stream.")]
+        public bool Enable
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+            }
         }
 
         [Category("Acquisition")]

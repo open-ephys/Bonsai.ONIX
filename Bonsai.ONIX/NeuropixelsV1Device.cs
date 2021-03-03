@@ -11,6 +11,14 @@ namespace Bonsai.ONIX
     [DefaultProperty("Configuration")]
     public class NeuropixelsV1Device : ONIFrameReader<NeuropixelsV1DataFrame>
     {
+        enum Register
+        {
+            // Unmangaged register access handled by NeuropixelsV1Probe
+
+            // Managed
+            ENABLE = 0x10000
+        }
+
         public NeuropixelsV1Device() : base(ONIXDevices.ID.NEUROPIX1R0)
         {
             Configuration = new NeuropixelsConfiguration
@@ -90,6 +98,21 @@ namespace Bonsai.ONIX
                 Configuration.FlexVersion = flex.Version;
             }
         }
+
+        [Category("Configuration")]
+        [Description("Enable the device data stream.")]
+        public bool Enable
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+            }
+        }
+
 
         [Category("Configuration")]
         [Description("The probe serial number.")]

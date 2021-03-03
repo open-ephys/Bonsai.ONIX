@@ -15,7 +15,7 @@ namespace Bonsai.ONIX
 
         enum Register
         {
-            NULLPARM = 0,
+            ENABLE = 0,
             CHDIR = 1,
             CH00INRANGE = 2,
             CH01INRANGE = 3,
@@ -70,7 +70,10 @@ namespace Bonsai.ONIX
             return (InputOutput)((io_reg >> channel) & 1);
         }
 
-        public FMCAnalogIODevice() : base(ONIXDevices.ID.FMCANALOG1R3) { }
+        public FMCAnalogIODevice() : base(ONIXDevices.ID.FMCANALOG1R3)
+        {
+            //Enable = true;
+        }
 
         protected override IObservable<AnalogInputDataFrame> Process(IObservable<oni.Frame> source)
         {
@@ -113,6 +116,20 @@ namespace Bonsai.ONIX
         [Range(1, 10000)]
         [Description("The size of data blocks, in samples, that are propagated as events in the observable sequence.")]
         public int BlockSize { get; set; } = 250;
+
+        [Category("Configuration")]
+        [Description("Enable the input data stream.")]
+        public bool Enable
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1: 0);
+            }
+        }
 
         [Category("Configuration")]
         [Description("The input voltage range of channel 0.")]

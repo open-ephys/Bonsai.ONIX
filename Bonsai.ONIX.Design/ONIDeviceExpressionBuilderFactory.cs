@@ -25,6 +25,7 @@
                 case ONIXDevices.ID.NEUROPIX1R0:
                     return new NeuropixelsV1Device();
                 case ONIXDevices.ID.HEARTBEAT:
+                    return new HeartbeatDevice();
                 //case ONIXDevices.ID.AD51X2:
                 //case ONIXDevices.ID.FMCVCTRL:
                 //case ONIXDevices.ID.AD7617:

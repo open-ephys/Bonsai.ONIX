@@ -13,6 +13,7 @@ namespace Bonsai.ONIX
         // see http://intantech.com/files/Intan_RHD2164_datasheet.pdf
         enum Register
         {
+            // Unmnanaged
             ADCCONF = 0,
             ADCBUFF,
             MUXBIAS,
@@ -35,6 +36,9 @@ namespace Bonsai.ONIX
             PWR5,
             PWR6,
             PWR7,
+
+            // Managed
+            ENABLE = 0x10000
         }
 
         public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
@@ -54,6 +58,20 @@ namespace Bonsai.ONIX
                     data_block = new RHDDataBlock(64, BlockSize);
                     return sample;
                 });
+        }
+
+        [Category("Configuration")]
+        [Description("Enable the device data stream.")]
+        public bool Enable
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+            }
         }
 
         [Category("Acquisition")]

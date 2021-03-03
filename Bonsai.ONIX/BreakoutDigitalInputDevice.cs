@@ -11,9 +11,9 @@ namespace Bonsai.ONIX
     {
         enum Register
         {
-            BREAKDIG1R3_NULLPARM = 0, // No command
-            BREAKDIG1R3_LEDMODE = 1, // 0 = All off, 1 = Power and Running only, 3 = normal, else undefined
-            BREAKDIG1R3_LEDLVL = 2, // 0-255 overall LED brightness value.
+            ENABLE = 0, // No command
+            LEDMODE = 1, // 0 = All off, 1 = Power and Running only, 3 = normal, else undefined
+            LEDLVL = 2, // 0-255 overall LED brightness value.
         }
 
         public BreakoutDigitalInputDevice() : base(ONIXDevices.ID.BREAKDIG1R3) { }
@@ -30,11 +30,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.BREAKDIG1R3_LEDLVL);
+                return ReadRegister(DeviceAddress.Address, (int)Register.LEDLVL);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.BREAKDIG1R3_LEDLVL, value);
+                WriteRegister(DeviceAddress.Address, (int)Register.LEDLVL, value);
             }
         }
 
@@ -46,16 +46,30 @@ namespace Bonsai.ONIX
             UNDEFINED
         }
 
+        [Category("Configuration")]
+        [Description("Enable the device data stream.")]
+        public bool Enable
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+            }
+        }
+
         [Category("Acquisition")]
         public LEDModes LEDMode
         {
             get
             {
-                return (LEDModes)ReadRegister(DeviceAddress.Address, (int)Register.BREAKDIG1R3_LEDMODE);
+                return (LEDModes)ReadRegister(DeviceAddress.Address, (int)Register.LEDMODE);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.BREAKDIG1R3_LEDMODE, (uint)value);
+                WriteRegister(DeviceAddress.Address, (uint)Register.LEDMODE, (uint)value);
             }
         }
     }

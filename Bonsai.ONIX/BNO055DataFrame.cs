@@ -14,12 +14,24 @@ namespace Bonsai.ONIX
             LinearAcceleration = GetAcceleration(sample, 11);
             GravityVector = GetAcceleration(sample, 14);
             Temperature = (byte)(sample[17] & 0x00FF); // 1°C = 1 LSB
-            Calibration = (byte)((sample[17] & 0xFF00) >> 8);
+            Calibration = (byte)((sample[17] & 0xFF00) >> 8); // Full calibration byte
+            SystemCalibrated = (sample[17] & 0x0300) > 0; // 3 = calibrated, 0 = not calibrated
+            AccelerometerCalibrated = (sample[17] & 0x0C00) > 0;
+            GyroscopeCalibrated = (sample[17] & 0x3000) > 0;
+            MagnitometerCalibrated = (sample[17] & 0xC000) > 0;
         }
 
-        public byte Temperature { get; private set; }
-
         public byte Calibration { get; private set; }
+
+        public bool SystemCalibrated { get; private set; }
+
+        public bool AccelerometerCalibrated { get; private set; }
+
+        public bool GyroscopeCalibrated { get; private set; }
+
+        public bool MagnitometerCalibrated { get; private set; }
+
+        public byte Temperature { get; private set; }
 
         public Mat Quaternion { get; private set; }
 
