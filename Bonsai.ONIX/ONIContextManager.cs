@@ -72,7 +72,6 @@ namespace Bonsai.ONIX
                         ctx.Dispose();
                         contex_wait_handles[slot.MakeKey()].Reset();
 
-                        // Context and wait handles are removed from dictionaries together
                         open_contexts.Remove(slot.MakeKey());
                         contex_wait_handles.Remove(slot.MakeKey());
                     });
@@ -90,17 +89,18 @@ namespace Bonsai.ONIX
                     var ref_count = new RefCountDisposable(dispose);
                     ctx_counted = Tuple.Create(ctx, ref_count);
                     open_contexts.Add(slot.MakeKey(), ctx_counted);
-                    return new ONIContextDisposable(ctx, ref_count);
+                    return new ONIContextDisposable(ctx, ref_count, open_ctx_lock);
                 }
-            }
 
-            if (release_waiting)
-            {
-                // Will already be created if we in this portion of code.
-                contex_wait_handles[slot.MakeKey()].Set();
-            }
 
-            return new ONIContextDisposable(ctx_counted.Item1, ctx_counted.Item2.GetDisposable());
+                if (release_waiting)
+                {
+                    // Will already be created if we in this portion of code.
+                    contex_wait_handles[slot.MakeKey()].Set();
+                }
+
+                return new ONIContextDisposable(ctx_counted.Item1, ctx_counted.Item2.GetDisposable(), open_ctx_lock);
+            }
         }
 
         public static ONIHardwareSlotCollection LoadConfiguration()

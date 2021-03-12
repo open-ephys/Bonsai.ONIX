@@ -8,11 +8,13 @@ namespace Bonsai.ONIX
     public sealed class ONIContextDisposable : ICancelable, IDisposable
     {
         IDisposable resource;
+        object lockObject;
 
-        public ONIContextDisposable(ONIContextTask ctx_task, IDisposable disposable)
+        public ONIContextDisposable(ONIContextTask ctx_task, IDisposable disposable, object ctx_lock)
         {
             Context = ctx_task ?? throw new ArgumentNullException("ctx_task");
             resource = disposable ?? throw new ArgumentNullException("disposable");
+            lockObject = ctx_lock ?? throw new ArgumentNullException("ctx_lock");
         }
 
         public ONIContextTask Context { get; private set; }
@@ -30,16 +32,19 @@ namespace Bonsai.ONIX
                 // NB: Persist the context for soem time to keep UI performance
                 // so that the whole PCIe stack does not have be set up and torn
                 // down for every register IO
-                _ = DelayDisposeAsync(disposable);
+                _ = DelayDisposeAsync(disposable, lockObject);
 
                 //disposable.Dispose();
             }
         }
 
-        private async Task DelayDisposeAsync(IDisposable disposable)
+        private async Task DelayDisposeAsync(IDisposable disposable, object ctx_lock)
         {
             await Task.Delay(300);
-            disposable.Dispose();
+            lock (lockObject)
+            {
+                disposable.Dispose();
+            }
         }
     }
 }

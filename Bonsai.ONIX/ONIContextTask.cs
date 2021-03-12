@@ -188,7 +188,10 @@ namespace Bonsai.ONIX
         public void Dispose()
         {
             Stop();
-            ctx?.Dispose();
+            lock (hw_lock)
+            {
+                ctx?.Dispose();
+            }
         }
     }
 }

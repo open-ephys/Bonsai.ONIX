@@ -36,8 +36,8 @@
                 //case ONIXDevices.ID.FMCCLKIN1R3:
                 case ONIXDevices.ID.FMCCLKOUT1R3:
                     return new FMCCLKOutDevice();
-                case ONIXDevices.ID.TS4231V2ARR:
-                    return new TS4231V2Device();
+                //case ONIXDevices.ID.TS4231V2ARR:
+                //    return new TS4231V2Device();
                 case ONIXDevices.ID.FMCANALOG1R3:
                     return new FMCAnalogIODevice();
                 case ONIXDevices.ID.FMCLINKCTRL:
