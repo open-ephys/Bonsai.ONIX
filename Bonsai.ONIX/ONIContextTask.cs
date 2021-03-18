@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace Bonsai.ONIX
 {
@@ -10,6 +11,20 @@ namespace Bonsai.ONIX
         readonly oni.Context ctx;
 
         Task CollectFrames;
+        Task ReadFrames;
+
+        /// <summary>
+        /// Maximum amount of frames the reading queue will hold.
+        /// If the queue fills, frame reading will throttle, filling host memory instead of 
+        /// userspace memory.
+        /// </summary>
+        private const Int32 MaxQueuedFrames = 200000;
+        /// <summary>
+        /// Timeout in ms for queue reads. This should not be critical as the 
+        /// read operation will cancel if the task is stopped
+        /// </summary>
+        private const int QueueTimeout = 200;
+        BlockingCollection<oni.Frame> FrameQueue;
 
         // TODO: Multi-writer, thread safe FIFO for oni_write()'s
         // private Task WriteData;
@@ -44,14 +59,51 @@ namespace Bonsai.ONIX
         internal void Start()
         {
             ctx.Start(true);
-            TokenSource = new CancellationTokenSource();
+            TokenSource = new CancellationTokenSource(MaxQueuedFrames);
             CollectFramesToken = TokenSource.Token;
+
+            FrameQueue = new BlockingCollection<oni.Frame>();
+
+            ReadFrames = Task.Factory.StartNew(() =>
+            {
+                while (!CollectFramesToken.IsCancellationRequested)
+                {
+                    oni.Frame frame = ReadFrame();
+                    //This should not be needed since we are calling Dispose()
+                    //But somehow it seems to improve performance (coupled with GC.RemovePressure)
+                    //More investigation might be needed
+                    GC.AddMemoryPressure(frame.DataSize);
+                    try
+                    {
+                        FrameQueue.Add(frame, CollectFramesToken);
+                    }
+                    catch (OperationCanceledException) 
+                    {
+                        long dataSize = frame.DataSize;
+                        frame.Dispose();
+                        GC.RemoveMemoryPressure(dataSize);
+                    };
+                }
+            },
+            CollectFramesToken,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default);
 
             CollectFrames = Task.Factory.StartNew(() =>
             {
                 while (!CollectFramesToken.IsCancellationRequested)
                 {
-                    OnFrameReceived(new FrameReceivedEventArgs(ReadFrame()));
+                    oni.Frame frame;
+
+                    try
+                    {
+                        FrameQueue.TryTake(out frame, QueueTimeout, CollectFramesToken);
+                        OnFrameReceived(new FrameReceivedEventArgs(frame));
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        //If the thread stops no frame has been collected
+                    }
                 }
             },
             CollectFramesToken,
@@ -61,12 +113,24 @@ namespace Bonsai.ONIX
 
         internal void Stop()
         {
-            if (CollectFrames != null && !CollectFrames.IsCanceled)
+            if ((CollectFrames != null || ReadFrames != null) && !CollectFrames.IsCanceled)
             {
                 TokenSource.Cancel();
-                Task.WaitAll(CollectFrames);
+                Task.WaitAll(new Task[] { CollectFrames, ReadFrames });
             }
-
+            TokenSource?.Dispose();
+            TokenSource = null;
+            //clear queue and free memory
+            while (FrameQueue?.Count > 0)
+            {
+                oni.Frame frame;
+                frame = FrameQueue.Take();
+                long dataSize = frame.DataSize;
+                frame.Dispose();
+                GC.RemoveMemoryPressure(dataSize);
+            }
+            FrameQueue?.Dispose();
+            FrameQueue = null;
             ctx.Stop();
         }
 
@@ -183,6 +247,9 @@ namespace Bonsai.ONIX
         void OnFrameReceived(FrameReceivedEventArgs e)
         {
             FrameReceived?.Invoke(this, e);
+            long dataSize = e.Frame.DataSize;
+            e.Frame.Dispose();
+            GC.RemoveMemoryPressure(dataSize);
         }
 
         public void Dispose()

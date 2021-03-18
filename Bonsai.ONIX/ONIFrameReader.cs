@@ -42,7 +42,7 @@ namespace Bonsai.ONIX
                     });
                 });
 
-            return Process(source.ObserveOn(Scheduler.Default.DisableOptimizations(typeof(ISchedulerLongRunning))));
+            return Process(source);
         }
 
         protected abstract IObservable<TResult> Process(IObservable<oni.Frame> source);

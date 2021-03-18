@@ -69,7 +69,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="clroni" Version="4.3.2" />
+    <PackageReference Include="clroni" Version="4.3.3" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
     <PackageReference Include="TinyCsvParser" Version="2.6.0" />
   </ItemGroup>
