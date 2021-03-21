@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("ONI Test device.")]
-    public class TestDevice : ONIFrameReader<TestDataFrame>
+    public class TestDevice : ONIFrameReader<TestDataFrame, ushort>
     {
         enum Register
         {
@@ -16,7 +16,7 @@ namespace Bonsai.ONIX
 
         public TestDevice() : base(ONIXDevices.ID.TEST) { }
 
-        protected override IObservable<TestDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<TestDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
         {
             return source.Select(f => { return new TestDataFrame(f); });
         }

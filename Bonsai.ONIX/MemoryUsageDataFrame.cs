@@ -2,10 +2,10 @@
 {
     public class MemoryUsageDataFrame : DataFrame
     {
-        public MemoryUsageDataFrame(oni.Frame frame, uint total_words)
+        public MemoryUsageDataFrame(RawDataFrame<ushort> frame, uint total_words)
             : base(frame)
         {
-            uint words = ((uint)sample[4] << 16) | ((uint)sample[5] << 0);
+            uint words = ((uint)frame.sample[4] << 16) | ((uint)frame.sample[5] << 0);
             MemoryUsagePercentage = 100.0 * words / total_words;
             MemoryUsageBytes = words * sizeof(uint);
         }

@@ -9,13 +9,14 @@ namespace Bonsai.ONIX
     [Source]
     [Combinator(MethodName = "Generate")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public abstract class ONIFrameReader<TResult> : ONIDevice
+    public abstract class ONIFrameReader<TResult, TData> : ONIDevice
+        where TData : unmanaged
     {
         public ONIFrameReader(ONIXDevices.ID dev_id) : base(dev_id) { }
 
         public IObservable<TResult> Generate()
         {
-            var source = Observable.Create<oni.Frame>(async observer =>
+            var source = Observable.Create<RawDataFrame<TData>>(async observer =>
                 {
                     var cd = await ONIContextManager.ReserveOpenContextAsync(DeviceAddress.HardwareSlot);
 
@@ -29,7 +30,8 @@ namespace Bonsai.ONIX
                     {
                         if (e.Frame.DeviceAddress == DeviceAddress.Address)
                         {
-                            observer.OnNext(e.Frame);
+                            RawDataFrame<TData> frame = new RawDataFrame<TData>(e.Frame);
+                            observer.OnNext(frame);
                         }
                     };
 
@@ -45,6 +47,6 @@ namespace Bonsai.ONIX
             return Process(source);
         }
 
-        protected abstract IObservable<TResult> Process(IObservable<oni.Frame> source);
+        protected abstract IObservable<TResult> Process(IObservable<RawDataFrame<TData>> source);
     }
 }

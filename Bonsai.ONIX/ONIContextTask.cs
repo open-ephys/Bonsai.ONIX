@@ -79,9 +79,7 @@ namespace Bonsai.ONIX
                     }
                     catch (OperationCanceledException) 
                     {
-                        long dataSize = frame.DataSize;
-                        frame.Dispose();
-                        GC.RemoveMemoryPressure(dataSize);
+                        DisposeFrame(frame);
                     };
                 }
             },
@@ -125,9 +123,7 @@ namespace Bonsai.ONIX
             {
                 oni.Frame frame;
                 frame = FrameQueue.Take();
-                long dataSize = frame.DataSize;
-                frame.Dispose();
-                GC.RemoveMemoryPressure(dataSize);
+                DisposeFrame(frame);
             }
             FrameQueue?.Dispose();
             FrameQueue = null;
@@ -247,8 +243,13 @@ namespace Bonsai.ONIX
         void OnFrameReceived(FrameReceivedEventArgs e)
         {
             FrameReceived?.Invoke(this, e);
-            long dataSize = e.Frame.DataSize;
-            e.Frame.Dispose();
+            DisposeFrame(e.Frame);
+        }
+
+        void DisposeFrame(oni.Frame frame)
+        {
+            long dataSize = frame.DataSize;
+            frame.Dispose();
             GC.RemoveMemoryPressure(dataSize);
         }
 

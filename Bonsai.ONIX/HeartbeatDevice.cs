@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     using HeartbeatDataFrame = DataFrame;
 
     [Description("Heartbeat device")]
-    public class HeartbeatDevice : ONIFrameReader<HeartbeatDataFrame>
+    public class HeartbeatDevice : ONIFrameReader<HeartbeatDataFrame, ushort>
     {
         enum Register
         {
@@ -19,7 +19,7 @@ namespace Bonsai.ONIX
 
         public HeartbeatDevice() : base(ONIXDevices.ID.HEARTBEAT) { }
 
-        protected override IObservable<HeartbeatDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<HeartbeatDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
         {
             return source.Select(f => { return new HeartbeatDataFrame(f); });
         }

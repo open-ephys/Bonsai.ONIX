@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
     [Description("Acquires data from the twelve 14-bit analog inputs on the Open Ephys FMC Host. " +
         "Optionally, sends data to the 16-bit analog outputs on the Open Ephys FMC Host, if those " +
         "channels are selected to be outputs.")]
-    public class FMCAnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame>
+    public class FMCAnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, ushort>
     {
         const int NUM_CHANNELS = 12;
 
@@ -75,7 +75,7 @@ namespace Bonsai.ONIX
             //Enable = true;
         }
 
-        protected override IObservable<AnalogInputDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<AnalogInputDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
         {
             var data_block = new AnalogInputDataBlock(NUM_CHANNELS, BlockSize);
 

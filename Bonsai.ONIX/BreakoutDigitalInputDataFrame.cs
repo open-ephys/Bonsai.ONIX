@@ -2,12 +2,12 @@
 {
     public class BreakoutDigitalInputDataFrame : DataFrame
     {
-        public BreakoutDigitalInputDataFrame(oni.Frame frame)
+        public BreakoutDigitalInputDataFrame(RawDataFrame<ushort> frame)
             : base(frame)
         {
-            Port = sample[4];
-            Buttons = (byte)(0x00FF & sample[5]);
-            Links = (byte)((0x0F00 & sample[5]) >> 8);
+            Port = frame.sample[4];
+            Buttons = (byte)(0x00FF & frame.sample[5]);
+            Links = (byte)((0x0F00 & frame.sample[5]) >> 8);
         }
 
         public byte Buttons { get; private set; }

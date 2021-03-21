@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
 {
     [Description("Acquires a stream of \"ultra-frames\" from a single Neuropixels v1.0 probe.")]
     [DefaultProperty("Configuration")]
-    public class NeuropixelsV1Device : ONIFrameReader<NeuropixelsV1DataFrame>
+    public class NeuropixelsV1Device : ONIFrameReader<NeuropixelsV1DataFrame, ushort>
     {
         enum Register
         {
@@ -46,7 +46,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<RawDataFrame<ushort>> source)
         {
 
             var data_block = new NeuropixelsV1DataBlock(BlockSize);

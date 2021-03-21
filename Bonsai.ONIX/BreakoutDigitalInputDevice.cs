@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("Acquires digital data from an Open-Ephys FMC Breakout Board.")]
-    public class BreakoutDigitalInputDevice : ONIFrameReader<BreakoutDigitalInputDataFrame>
+    public class BreakoutDigitalInputDevice : ONIFrameReader<BreakoutDigitalInputDataFrame, ushort>
     {
         enum Register
         {
@@ -18,7 +18,7 @@ namespace Bonsai.ONIX
 
         public BreakoutDigitalInputDevice() : base(ONIXDevices.ID.BREAKDIG1R3) { }
 
-        protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
         {
             return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
         }

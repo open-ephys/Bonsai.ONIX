@@ -2,9 +2,9 @@
 {
     public class TestDataFrame : DataFrame
     {
-        public TestDataFrame(oni.Frame frame) : base(frame)
+        public TestDataFrame(RawDataFrame<ushort> frame) : base(frame)
         {
-            Message = (sample[4] << 16) | (sample[5] << 0);
+            Message = (frame.sample[4] << 16) | (frame.sample[5] << 0);
         }
 
         public int Message { get; private set; }

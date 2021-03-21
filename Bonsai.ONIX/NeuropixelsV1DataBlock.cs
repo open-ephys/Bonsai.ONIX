@@ -62,12 +62,12 @@ namespace Bonsai.ONIX
         }
 
         // frame contains a single super frame
-        public bool FillFromFrame(oni.Frame frame)
+        public bool FillFromFrame(RawDataFrame<ushort> frame)
         {
 
-            var data = frame.Data<ushort>();
+            var data = frame.sample;
 
-            spike_frame_clock[super_cnt] = frame.Clock;
+            spike_frame_clock[super_cnt] = frame.FrameClock;
             spike_data_clock[super_cnt] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);
 
             for (int i = 0; i < FRAMES_PER_SUPER; i++)
@@ -80,7 +80,7 @@ namespace Bonsai.ONIX
                     var super_cnt_circ = super_cnt % SUPERS_PER_ULTRA;
                     if (super_cnt_circ == 0) // Use the first superframe in ultraframe as time of this lfp-data round robin
                     {
-                        lfp_frame_clock[ultra_cnt] = frame.Clock;
+                        lfp_frame_clock[ultra_cnt] = frame.FrameClock;
                         lfp_data_clock[ultra_cnt] = spike_data_clock[super_cnt];
                     }
 

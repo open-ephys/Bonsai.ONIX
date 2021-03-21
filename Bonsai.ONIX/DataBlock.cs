@@ -20,16 +20,16 @@ namespace Bonsai.ONIX
 
         protected abstract void FillFromData(ushort[] data);
 
-        public bool FillFromFrame(oni.Frame frame)
+        public bool FillFromFrame(RawDataFrame<ushort> frame)
         {
             if (index >= SamplesPerBlock)
             {
                 throw new IndexOutOfRangeException();
             }
 
-            var data = frame.Data<ushort>();
+            ushort[] data = frame.sample;
 
-            frame_clock[index] = frame.Clock;
+            frame_clock[index] = frame.FrameClock;
             data_clock[index] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);
 
             FillFromData(data);

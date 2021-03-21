@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     // TODO: More abstract control over chip's registers?
 
     [Description("Acquires data from a single RHD2164 bioamplifier chip.")]
-    public class RHD2164Device : ONIFrameReader<RHDDataFrame>
+    public class RHD2164Device : ONIFrameReader<RHDDataFrame, ushort>
     {
         // see http://intantech.com/files/Intan_RHD2164_datasheet.pdf
         enum Register
@@ -43,7 +43,7 @@ namespace Bonsai.ONIX
 
         public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
 
-        protected override IObservable<RHDDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<RHDDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
         {
             var data_block = new RHDDataBlock(64, BlockSize);
 

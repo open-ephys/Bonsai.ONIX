@@ -5,9 +5,10 @@ namespace Bonsai.ONIX
 {
     public class BNO055DataFrame : DataFrame
     {
-        public BNO055DataFrame(oni.Frame frame)
+        public BNO055DataFrame(RawDataFrame<ushort> frame)
             : base(frame)
         {
+            ushort[] sample = frame.sample;
             // Convert data packet (output format is hard coded right now)
             Euler = GetEuler(sample, 4);
             Quaternion = GetQuat(sample, 7);
