@@ -18,7 +18,7 @@ namespace Bonsai.ONIX
         /// If the queue fills, frame reading will throttle, filling host memory instead of 
         /// userspace memory.
         /// </summary>
-        private const Int32 MaxQueuedFrames = 200000;
+        private const Int32 MaxQueuedFrames = 2000000;
         /// <summary>
         /// Timeout in ms for queue reads. This should not be critical as the 
         /// read operation will cancel if the task is stopped
@@ -59,10 +59,10 @@ namespace Bonsai.ONIX
         internal void Start()
         {
             ctx.Start(true);
-            TokenSource = new CancellationTokenSource(MaxQueuedFrames);
+            TokenSource = new CancellationTokenSource();
             CollectFramesToken = TokenSource.Token;
 
-            FrameQueue = new BlockingCollection<oni.Frame>();
+            FrameQueue = new BlockingCollection<oni.Frame>(MaxQueuedFrames);
 
             ReadFrames = Task.Factory.StartNew(() =>
             {
