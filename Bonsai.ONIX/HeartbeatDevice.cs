@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    using HeartbeatDataFrame = DataFrame;
+    using HeartbeatDataFrame = U16DataFrame;
 
     [Description("Heartbeat device")]
     public class HeartbeatDevice : ONIFrameReader<HeartbeatDataFrame, ushort>
@@ -19,14 +19,14 @@ namespace Bonsai.ONIX
 
         public HeartbeatDevice() : base(ONIXDevices.ID.HEARTBEAT) { }
 
-        protected override IObservable<HeartbeatDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<HeartbeatDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new HeartbeatDataFrame(f); });
         }
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {
@@ -46,7 +46,6 @@ namespace Bonsai.ONIX
         {
             get
             {
-
                 var val = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
                 beat_hz = ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val;
                 return beat_hz;

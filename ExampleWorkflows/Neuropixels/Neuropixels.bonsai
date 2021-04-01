@@ -7,6 +7,7 @@
                  xmlns:gli="clr-namespace:Bonsai.Shaders.Input;assembly=Bonsai.Shaders"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:dsp="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp"
+                 xmlns:p2="clr-namespace:Bonsai.JonsUtils;assembly=Bonsai.JonsUtils"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -39,6 +40,7 @@
             <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
           </p1:Hub>
           <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:Enable>false</p1:Enable>
           <p1:Configuration>
             <p1:Mode>RECORD</p1:Mode>
             <p1:Channels>
@@ -21108,7 +21110,7 @@
             </p1:InternalReferenceChannels>
           </p1:Configuration>
           <p1:PerformReadCheck>false</p1:PerformReadCheck>
-          <p1:BlockSize>1</p1:BlockSize>
+          <p1:BlockSize>100</p1:BlockSize>
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
@@ -21123,1067 +21125,1093 @@
       <Expression xsi:type="MemberSelector">
         <Selector>LFPData</Selector>
       </Expression>
-      <Expression xsi:type="Disable">
-        <Builder xsi:type="GroupWorkflow">
-          <Name>Probe Traces</Name>
-          <Workflow>
-            <Nodes>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:CreateWindow">
-                  <gl:Width>640</gl:Width>
-                  <gl:Height>480</gl:Height>
-                  <gl:Title>ProbeImage</gl:Title>
-                  <gl:VSync>On</gl:VSync>
-                  <gl:SwapSync>false</gl:SwapSync>
-                  <gl:ClearColor>Black</gl:ClearColor>
-                  <gl:ClearMask>DepthBufferBit ColorBufferBit</gl:ClearMask>
-                  <gl:CursorVisible>true</gl:CursorVisible>
-                  <gl:Location xsi:nil="true" />
-                  <gl:WindowBorder>Resizable</gl:WindowBorder>
-                  <gl:WindowState>Normal</gl:WindowState>
-                  <gl:DisplayDevice>Primary</gl:DisplayDevice>
-                  <gl:TargetRenderFrequency>24</gl:TargetRenderFrequency>
-                  <gl:TargetUpdateFrequency xsi:nil="true" />
-                  <gl:RenderState>
-                    <gl:StateConfiguration xsi:type="gl:BlendFunctionState">
-                      <gl:SourceFactor>SrcAlpha</gl:SourceFactor>
-                      <gl:DestinationFactor>OneMinusSrcAlpha</gl:DestinationFactor>
-                    </gl:StateConfiguration>
-                  </gl:RenderState>
-                  <gl:GraphicsMode>
-                    <gl:ColorFormat>
-                      <gl:Red>8</gl:Red>
-                      <gl:Green>8</gl:Green>
-                      <gl:Blue>8</gl:Blue>
-                      <gl:Alpha>8</gl:Alpha>
-                    </gl:ColorFormat>
-                    <gl:Depth>16</gl:Depth>
-                    <gl:Stencil>0</gl:Stencil>
-                    <gl:Samples>0</gl:Samples>
-                    <gl:AccumulatorFormat>
-                      <gl:Red>0</gl:Red>
-                      <gl:Green>0</gl:Green>
-                      <gl:Blue>0</gl:Blue>
-                      <gl:Alpha>0</gl:Alpha>
-                    </gl:AccumulatorFormat>
-                    <gl:Buffers>2</gl:Buffers>
-                    <gl:Stereo>false</gl:Stereo>
-                  </gl:GraphicsMode>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:MeshResources">
-                  <gl:Meshes>
-                    <gl:MeshConfiguration xsi:type="gl:TexturedQuad">
-                      <gl:Name>ProbeImage</gl:Name>
-                      <gl:QuadEffects>None</gl:QuadEffects>
-                    </gl:MeshConfiguration>
-                    <gl:MeshConfiguration>
-                      <gl:Name>Waveform</gl:Name>
-                    </gl:MeshConfiguration>
-                  </gl:Meshes>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:ShaderResources">
-                  <gl:Shaders>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage0</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage1</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage2</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage3</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage4</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage5</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage6</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage7</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage8</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage9</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage10</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage11</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage12</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage13</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage14</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage15</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage16</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage17</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage18</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage19</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage20</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage21</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage22</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>ProbeImage23</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>quad.vert</gl:VertexShader>
-                      <gl:FragmentShader>quad.frag</gl:FragmentShader>
-                      <gl:MeshName>ProbeImage</gl:MeshName>
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>Waveform</gl:Name>
-                      <gl:RenderState />
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>waveform.vert</gl:VertexShader>
-                      <gl:GeometryShader>waveform.geom</gl:GeometryShader>
-                      <gl:FragmentShader>waveform.frag</gl:FragmentShader>
-                      <gl:MeshName />
-                    </gl:ShaderConfiguration>
-                    <gl:ShaderConfiguration xsi:type="gl:Material">
-                      <gl:Name>Highlight</gl:Name>
-                      <gl:RenderState>
-                        <gl:StateConfiguration xsi:type="gl:EnableState">
-                          <gl:Capability>Blend</gl:Capability>
-                        </gl:StateConfiguration>
-                      </gl:RenderState>
-                      <gl:ShaderUniforms />
-                      <gl:BufferBindings />
-                      <gl:FramebufferAttachments />
-                      <gl:VertexShader>highlight.vert</gl:VertexShader>
-                      <gl:FragmentShader>highlight.frag</gl:FragmentShader>
-                      <gl:MeshName />
-                    </gl:ShaderConfiguration>
-                  </gl:Shaders>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:TextureResources">
-                  <gl:Textures>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage0</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage1</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage2</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage3</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage4</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage5</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage6</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage7</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage8</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage9</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage10</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage11</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage12</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage13</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage14</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage15</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage16</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage17</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage18</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage19</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage20</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage21</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage22</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>ProbeImage23</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                    <gl:TextureConfiguration xsi:type="gl:Texture2D">
-                      <gl:Name>Highlight</gl:Name>
-                      <gl:Width xsi:nil="true" />
-                      <gl:Height xsi:nil="true" />
-                      <gl:InternalFormat>Rgba</gl:InternalFormat>
-                      <gl:WrapS>Repeat</gl:WrapS>
-                      <gl:WrapT>Repeat</gl:WrapT>
-                      <gl:MinFilter>Linear</gl:MinFilter>
-                      <gl:MagFilter>Linear</gl:MagFilter>
-                    </gl:TextureConfiguration>
-                  </gl:Textures>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="res:LoadResources" />
-              </Expression>
-              <Expression xsi:type="WorkflowInput">
-                <Name>Source1</Name>
-              </Expression>
-              <Expression xsi:type="Condition">
-                <Workflow>
-                  <Nodes>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gli:KeyDown">
-                        <gli:Key>Space</gli:Key>
-                        <gli:Modifiers xsi:nil="true" />
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="IntProperty">
-                        <Value>1</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="rx:Accumulate" />
-                    <Expression xsi:type="Mod">
-                      <Operand xsi:type="IntProperty">
-                        <Value>2</Value>
-                      </Operand>
-                    </Expression>
-                    <Expression xsi:type="Equal">
-                      <Operand xsi:type="IntProperty">
-                        <Value>0</Value>
-                      </Operand>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="BooleanProperty">
-                        <Value>true</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="rx:Merge" />
-                    </Expression>
-                    <Expression xsi:type="WorkflowOutput" />
-                  </Nodes>
-                  <Edges>
-                    <Edge From="0" To="1" Label="Source1" />
-                    <Edge From="1" To="2" Label="Source1" />
-                    <Edge From="2" To="3" Label="Source1" />
-                    <Edge From="3" To="4" Label="Source1" />
-                    <Edge From="4" To="6" Label="Source2" />
-                    <Edge From="5" To="6" Label="Source1" />
-                    <Edge From="6" To="7" Label="Source1" />
-                  </Edges>
-                </Workflow>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="dsp:Rescale">
-                  <dsp:Min>0</dsp:Min>
-                  <dsp:Max>1024</dsp:Max>
-                  <dsp:RangeMin>-1</dsp:RangeMin>
-                  <dsp:RangeMax>1</dsp:RangeMax>
-                  <dsp:RescaleType>Linear</dsp:RescaleType>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="dsp:Reshape">
-                  <dsp:Channels>0</dsp:Channels>
-                  <dsp:Rows>0</dsp:Rows>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="dsp:ConvertScale">
-                  <dsp:Depth>F32</dsp:Depth>
-                  <dsp:Scale>1</dsp:Scale>
-                  <dsp:Shift>0</dsp:Shift>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="dsp:Buffer">
-                  <dsp:Count>3000</dsp:Count>
-                  <dsp:Skip>60</dsp:Skip>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Sink">
-                <Name>UpdateSizeUniform</Name>
-                <Description>Updates information about the number of channels and samples in the waveform visualizer.</Description>
-                <Workflow>
-                  <Nodes>
-                    <Expression xsi:type="WorkflowInput">
-                      <Name>Source1</Name>
-                    </Expression>
-                    <Expression xsi:type="MemberSelector">
-                      <Selector>Rows</Selector>
-                    </Expression>
-                    <Expression xsi:type="ExternalizedMapping">
-                      <Property Name="ShaderName" />
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gl:UpdateUniform">
-                        <gl:UniformName>rows</gl:UniformName>
-                        <gl:ShaderName>Waveform</gl:ShaderName>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="MemberSelector">
-                      <Selector>Cols</Selector>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gl:UpdateUniform">
-                        <gl:UniformName>cols</gl:UniformName>
-                        <gl:ShaderName>Waveform</gl:ShaderName>
-                      </Combinator>
-                    </Expression>
-                  </Nodes>
-                  <Edges>
-                    <Edge From="0" To="1" Label="Source1" />
-                    <Edge From="0" To="4" Label="Source1" />
-                    <Edge From="1" To="3" Label="Source1" />
-                    <Edge From="2" To="3" Label="Source2" />
-                    <Edge From="2" To="5" Label="Source2" />
-                    <Edge From="4" To="5" Label="Source1" />
-                  </Edges>
-                </Workflow>
-              </Expression>
-              <Expression xsi:type="MemberSelector">
-                <Selector>Rows,Cols</Selector>
-              </Expression>
-              <Expression xsi:type="Multiply" />
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="rx:Zip" />
-              </Expression>
-              <Expression xsi:type="InputMapping">
-                <PropertyMappings>
-                  <Property Name="Rows" Selector="Item2" />
-                </PropertyMappings>
-                <Selector>Item1</Selector>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="dsp:Reshape">
-                  <dsp:Channels>0</dsp:Channels>
-                  <dsp:Rows>1152000</dsp:Rows>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="MemberSelector">
-                <Selector>Size</Selector>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:UpdateVertexBuffer">
-                  <gl:MeshName>Waveform</gl:MeshName>
-                  <gl:DrawMode>LineStrip</gl:DrawMode>
-                  <gl:Usage>DynamicDraw</gl:Usage>
-                  <gl:VertexAttributes>
-                    <gl:VertexAttributeMapping>
-                      <gl:Size>1</gl:Size>
-                      <gl:Normalized>false</gl:Normalized>
-                      <gl:Type>Float</gl:Type>
-                    </gl:VertexAttributeMapping>
-                  </gl:VertexAttributes>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="MemberSelector">
-                <Selector>Rows</Selector>
-              </Expression>
-              <Expression xsi:type="PropertyMapping">
-                <PropertyMappings>
-                  <Property Name="Value" />
-                </PropertyMappings>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="FloatProperty">
-                  <Value>384</Value>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="PropertyMapping">
-                <PropertyMappings>
-                  <Property Name="Max" />
-                </PropertyMappings>
-              </Expression>
-              <Expression xsi:type="Negate" />
-              <Expression xsi:type="PropertyMapping">
-                <PropertyMappings>
-                  <Property Name="Min" />
-                </PropertyMappings>
-              </Expression>
-              <Expression xsi:type="PropertyMapping">
-                <PropertyMappings>
-                  <Property Name="Value" />
-                </PropertyMappings>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gli:MouseWheel" />
-              </Expression>
-              <Expression xsi:type="MemberSelector">
-                <Selector>EventArgs.DeltaPrecise</Selector>
-              </Expression>
-              <Expression xsi:type="Condition">
-                <Name>Key Down</Name>
-                <Workflow>
-                  <Nodes>
-                    <Expression xsi:type="WorkflowInput">
-                      <Name>Source1</Name>
-                    </Expression>
-                    <Expression xsi:type="ExternalizedMapping">
-                      <Property Name="Key" />
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gli:KeyDown">
-                        <gli:Key>ControlLeft</gli:Key>
-                        <gli:Modifiers xsi:nil="true" />
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="BooleanProperty">
-                        <Value>true</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gli:KeyUp">
-                        <gli:Key>ControlLeft</gli:Key>
-                        <gli:Modifiers xsi:nil="true" />
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="BooleanProperty">
-                        <Value>false</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="rx:Merge" />
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="rx:CombineLatest" />
-                    </Expression>
-                    <Expression xsi:type="MemberSelector">
-                      <Selector>Item2</Selector>
-                    </Expression>
-                    <Expression xsi:type="WorkflowOutput" />
-                  </Nodes>
-                  <Edges>
-                    <Edge From="0" To="7" Label="Source1" />
-                    <Edge From="1" To="2" Label="Source1" />
-                    <Edge From="1" To="4" Label="Source1" />
-                    <Edge From="2" To="3" Label="Source1" />
-                    <Edge From="3" To="6" Label="Source1" />
-                    <Edge From="4" To="5" Label="Source1" />
-                    <Edge From="5" To="6" Label="Source2" />
-                    <Edge From="6" To="7" Label="Source2" />
-                    <Edge From="7" To="8" Label="Source1" />
-                    <Edge From="8" To="9" Label="Source1" />
-                  </Edges>
-                </Workflow>
-              </Expression>
-              <Expression xsi:type="IncludeWorkflow" Path="Bonsai.JonsUtils:Workflows.BoundedAccumulate.bonsai">
-                <Reset_x0020_Value>0</Reset_x0020_Value>
-                <Initial_x0020_Value>0</Initial_x0020_Value>
-                <Min>0</Min>
-                <Max>1000</Max>
-                <Gain>1</Gain>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:UpdateUniform">
-                  <gl:UniformName>amplitudezoom</gl:UniformName>
-                  <gl:ShaderName>Waveform</gl:ShaderName>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Condition">
-                <Name>Key Down</Name>
-                <Workflow>
-                  <Nodes>
-                    <Expression xsi:type="WorkflowInput">
-                      <Name>Source1</Name>
-                    </Expression>
-                    <Expression xsi:type="ExternalizedMapping">
-                      <Property Name="Key" />
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gli:KeyDown">
-                        <gli:Key>ShiftLeft</gli:Key>
-                        <gli:Modifiers xsi:nil="true" />
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="BooleanProperty">
-                        <Value>true</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gli:KeyUp">
-                        <gli:Key>ShiftLeft</gli:Key>
-                        <gli:Modifiers xsi:nil="true" />
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="BooleanProperty">
-                        <Value>false</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="rx:Merge" />
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="rx:CombineLatest" />
-                    </Expression>
-                    <Expression xsi:type="MemberSelector">
-                      <Selector>Item2</Selector>
-                    </Expression>
-                    <Expression xsi:type="WorkflowOutput" />
-                  </Nodes>
-                  <Edges>
-                    <Edge From="0" To="7" Label="Source1" />
-                    <Edge From="1" To="2" Label="Source1" />
-                    <Edge From="1" To="4" Label="Source1" />
-                    <Edge From="2" To="3" Label="Source1" />
-                    <Edge From="3" To="6" Label="Source1" />
-                    <Edge From="4" To="5" Label="Source1" />
-                    <Edge From="5" To="6" Label="Source2" />
-                    <Edge From="6" To="7" Label="Source2" />
-                    <Edge From="7" To="8" Label="Source1" />
-                    <Edge From="8" To="9" Label="Source1" />
-                  </Edges>
-                </Workflow>
-              </Expression>
-              <Expression xsi:type="IncludeWorkflow" Path="Bonsai.JonsUtils:Workflows.BoundedAccumulate.bonsai">
-                <Reset_x0020_Value>0</Reset_x0020_Value>
-                <Initial_x0020_Value>0</Initial_x0020_Value>
-                <Min>1</Min>
-                <Max>100</Max>
-                <Gain>1</Gain>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:UpdateUniform">
-                  <gl:UniformName>ywindowzoom</gl:UniformName>
-                  <gl:ShaderName>Waveform</gl:ShaderName>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:UpdateUniform">
-                  <gl:UniformName>ywindowzoom</gl:UniformName>
-                  <gl:ShaderName>Highlight</gl:ShaderName>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Condition">
-                <Name>No Keys Pressed</Name>
-                <Workflow>
-                  <Nodes>
-                    <Expression xsi:type="WorkflowInput">
-                      <Name>Source1</Name>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gli:KeyDown">
-                        <gli:Key xsi:nil="true" />
-                        <gli:Modifiers xsi:nil="true" />
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="BooleanProperty">
-                        <Value>false</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="gli:KeyUp">
-                        <gli:Key xsi:nil="true" />
-                        <gli:Modifiers xsi:nil="true" />
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="BooleanProperty">
-                        <Value>true</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="BooleanProperty">
-                        <Value>true</Value>
-                      </Combinator>
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="rx:Merge" />
-                    </Expression>
-                    <Expression xsi:type="Combinator">
-                      <Combinator xsi:type="rx:CombineLatest" />
-                    </Expression>
-                    <Expression xsi:type="MemberSelector">
-                      <Selector>Item2</Selector>
-                    </Expression>
-                    <Expression xsi:type="WorkflowOutput" />
-                  </Nodes>
-                  <Edges>
-                    <Edge From="0" To="7" Label="Source1" />
-                    <Edge From="1" To="2" Label="Source1" />
-                    <Edge From="2" To="6" Label="Source1" />
-                    <Edge From="3" To="4" Label="Source1" />
-                    <Edge From="4" To="6" Label="Source2" />
-                    <Edge From="5" To="6" Label="Source3" />
-                    <Edge From="6" To="7" Label="Source2" />
-                    <Edge From="7" To="8" Label="Source1" />
-                    <Edge From="8" To="9" Label="Source1" />
-                  </Edges>
-                </Workflow>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gli:MouseDown">
-                  <gli:Button xsi:nil="true" />
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gli:NormalizedDeviceCoordinates" />
-              </Expression>
-              <Expression xsi:type="Condition">
-                <Workflow>
-                  <Nodes>
-                    <Expression xsi:type="WorkflowInput">
-                      <Name>Source1</Name>
-                    </Expression>
-                    <Expression xsi:type="MemberSelector">
-                      <Selector>X</Selector>
-                    </Expression>
-                    <Expression xsi:type="LessThan">
-                      <Operand xsi:type="IntProperty">
-                        <Value>0</Value>
-                      </Operand>
-                    </Expression>
-                    <Expression xsi:type="WorkflowOutput" />
-                  </Nodes>
-                  <Edges>
-                    <Edge From="0" To="1" Label="Source1" />
-                    <Edge From="1" To="2" Label="Source1" />
-                    <Edge From="2" To="3" Label="Source1" />
-                  </Edges>
-                </Workflow>
-              </Expression>
-              <Expression xsi:type="MemberSelector">
-                <Selector>Y</Selector>
-              </Expression>
-              <Expression xsi:type="Multiply">
-                <Operand xsi:type="FloatProperty">
-                  <Value>384</Value>
-                </Operand>
-              </Expression>
-              <Expression xsi:type="PropertyMapping">
-                <PropertyMappings>
-                  <Property Name="Reset Value" />
-                </PropertyMappings>
-              </Expression>
-              <Expression xsi:type="IncludeWorkflow" Path="Bonsai.JonsUtils:Workflows.BoundedAccumulate.bonsai">
-                <Reset_x0020_Value>0</Reset_x0020_Value>
-                <Initial_x0020_Value>0</Initial_x0020_Value>
-                <Min>-384</Min>
-                <Max>384</Max>
-                <Gain>3</Gain>
-              </Expression>
-              <Expression xsi:type="PropertyMapping">
-                <PropertyMappings>
-                  <Property Name="Value" />
-                </PropertyMappings>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="FloatProperty">
-                  <Value>335.400024</Value>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="rx:CombineLatest" />
-              </Expression>
-              <Expression xsi:type="Divide" />
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:UpdateUniform">
-                  <gl:UniformName>yshift</gl:UniformName>
-                  <gl:ShaderName>Waveform</gl:ShaderName>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:UpdateUniform">
-                  <gl:UniformName>yshift</gl:UniformName>
-                  <gl:ShaderName>Highlight</gl:ShaderName>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="GroupWorkflow">
+      <Expression xsi:type="GroupWorkflow">
+        <Name>Probe Traces</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:CreateWindow">
+                <gl:Width>640</gl:Width>
+                <gl:Height>480</gl:Height>
+                <gl:Title>ProbeImage</gl:Title>
+                <gl:VSync>On</gl:VSync>
+                <gl:SwapSync>false</gl:SwapSync>
+                <gl:ClearColor>Black</gl:ClearColor>
+                <gl:ClearMask>DepthBufferBit ColorBufferBit</gl:ClearMask>
+                <gl:CursorVisible>true</gl:CursorVisible>
+                <gl:Location xsi:nil="true" />
+                <gl:WindowBorder>Resizable</gl:WindowBorder>
+                <gl:WindowState>Normal</gl:WindowState>
+                <gl:DisplayDevice>Primary</gl:DisplayDevice>
+                <gl:TargetRenderFrequency>24</gl:TargetRenderFrequency>
+                <gl:TargetUpdateFrequency xsi:nil="true" />
+                <gl:RenderState>
+                  <gl:StateConfiguration xsi:type="gl:BlendFunctionState">
+                    <gl:SourceFactor>SrcAlpha</gl:SourceFactor>
+                    <gl:DestinationFactor>OneMinusSrcAlpha</gl:DestinationFactor>
+                  </gl:StateConfiguration>
+                </gl:RenderState>
+                <gl:GraphicsMode>
+                  <gl:ColorFormat>
+                    <gl:Red>8</gl:Red>
+                    <gl:Green>8</gl:Green>
+                    <gl:Blue>8</gl:Blue>
+                    <gl:Alpha>8</gl:Alpha>
+                  </gl:ColorFormat>
+                  <gl:Depth>16</gl:Depth>
+                  <gl:Stencil>0</gl:Stencil>
+                  <gl:Samples>0</gl:Samples>
+                  <gl:AccumulatorFormat>
+                    <gl:Red>0</gl:Red>
+                    <gl:Green>0</gl:Green>
+                    <gl:Blue>0</gl:Blue>
+                    <gl:Alpha>0</gl:Alpha>
+                  </gl:AccumulatorFormat>
+                  <gl:Buffers>2</gl:Buffers>
+                  <gl:Stereo>false</gl:Stereo>
+                </gl:GraphicsMode>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:MeshResources">
+                <gl:Meshes>
+                  <gl:MeshConfiguration xsi:type="gl:TexturedQuad">
+                    <gl:Name>ProbeImage</gl:Name>
+                    <gl:QuadEffects>None</gl:QuadEffects>
+                  </gl:MeshConfiguration>
+                  <gl:MeshConfiguration>
+                    <gl:Name>Waveform</gl:Name>
+                  </gl:MeshConfiguration>
+                </gl:Meshes>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:ShaderResources">
+                <gl:Shaders>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage0</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage1</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage2</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage3</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage4</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage5</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage6</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage7</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage8</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage9</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage10</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage11</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage12</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage13</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage14</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage15</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage16</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage17</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage18</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage19</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage20</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage21</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage22</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>ProbeImage23</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>quad.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>Waveform</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>waveform.vert</gl:VertexShader>
+                    <gl:GeometryShader>waveform.geom</gl:GeometryShader>
+                    <gl:FragmentShader>waveform.frag</gl:FragmentShader>
+                    <gl:MeshName />
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>Overview</gl:Name>
+                    <gl:RenderState />
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>overview.vert</gl:VertexShader>
+                    <gl:FragmentShader>quad.frag</gl:FragmentShader>
+                    <gl:MeshName>ProbeImage</gl:MeshName>
+                  </gl:ShaderConfiguration>
+                  <gl:ShaderConfiguration xsi:type="gl:Material">
+                    <gl:Name>Highlight</gl:Name>
+                    <gl:RenderState>
+                      <gl:StateConfiguration xsi:type="gl:EnableState">
+                        <gl:Capability>Blend</gl:Capability>
+                      </gl:StateConfiguration>
+                    </gl:RenderState>
+                    <gl:ShaderUniforms />
+                    <gl:BufferBindings />
+                    <gl:FramebufferAttachments />
+                    <gl:VertexShader>highlight.vert</gl:VertexShader>
+                    <gl:FragmentShader>highlight.frag</gl:FragmentShader>
+                    <gl:MeshName />
+                  </gl:ShaderConfiguration>
+                </gl:Shaders>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:TextureResources">
+                <gl:Textures>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage0</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage1</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage2</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage3</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage4</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage5</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage6</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage7</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage8</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage9</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage10</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage11</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage12</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage13</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage14</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage15</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage16</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage17</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage18</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage19</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage20</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage21</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage22</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>ProbeImage23</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>Overview</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                  <gl:TextureConfiguration xsi:type="gl:Texture2D">
+                    <gl:Name>Highlight</gl:Name>
+                    <gl:Width xsi:nil="true" />
+                    <gl:Height xsi:nil="true" />
+                    <gl:InternalFormat>Rgba</gl:InternalFormat>
+                    <gl:WrapS>Repeat</gl:WrapS>
+                    <gl:WrapT>Repeat</gl:WrapT>
+                    <gl:MinFilter>Linear</gl:MinFilter>
+                    <gl:MagFilter>Linear</gl:MagFilter>
+                  </gl:TextureConfiguration>
+                </gl:Textures>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="res:LoadResources" />
+            </Expression>
+            <Expression xsi:type="WorkflowInput">
+              <Name>Source1</Name>
+            </Expression>
+            <Expression xsi:type="Condition">
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gli:KeyDown">
+                      <gli:Key>Space</gli:Key>
+                      <gli:Modifiers xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="IntProperty">
+                      <Value>1</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="rx:Accumulate" />
+                  <Expression xsi:type="Mod">
+                    <Operand xsi:type="IntProperty">
+                      <Value>2</Value>
+                    </Operand>
+                  </Expression>
+                  <Expression xsi:type="Equal">
+                    <Operand xsi:type="IntProperty">
+                      <Value>0</Value>
+                    </Operand>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>true</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Merge" />
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="4" Label="Source1" />
+                  <Edge From="4" To="6" Label="Source2" />
+                  <Edge From="5" To="6" Label="Source1" />
+                  <Edge From="6" To="7" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="dsp:Rescale">
+                <dsp:Min>0</dsp:Min>
+                <dsp:Max>1024</dsp:Max>
+                <dsp:RangeMin>-1</dsp:RangeMin>
+                <dsp:RangeMax>1</dsp:RangeMax>
+                <dsp:RescaleType>Linear</dsp:RescaleType>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="dsp:Reshape">
+                <dsp:Channels>0</dsp:Channels>
+                <dsp:Rows>0</dsp:Rows>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="dsp:ConvertScale">
+                <dsp:Depth>F32</dsp:Depth>
+                <dsp:Scale>1</dsp:Scale>
+                <dsp:Shift>0</dsp:Shift>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:CircularBuffer">
+                <p2:Count>2000</p2:Count>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Sink">
+              <Name>UpdateSizeUniform</Name>
+              <Description>Updates information about the number of channels and samples in the waveform visualizer.</Description>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="MemberSelector">
+                    <Selector>Rows</Selector>
+                  </Expression>
+                  <Expression xsi:type="ExternalizedMapping">
+                    <Property Name="ShaderName" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gl:UpdateUniform">
+                      <gl:UniformName>rows</gl:UniformName>
+                      <gl:ShaderName>Waveform</gl:ShaderName>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="MemberSelector">
+                    <Selector>Cols</Selector>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gl:UpdateUniform">
+                      <gl:UniformName>cols</gl:UniformName>
+                      <gl:ShaderName>Waveform</gl:ShaderName>
+                    </Combinator>
+                  </Expression>
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="0" To="4" Label="Source1" />
+                  <Edge From="1" To="3" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source2" />
+                  <Edge From="2" To="5" Label="Source2" />
+                  <Edge From="4" To="5" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Rows,Cols</Selector>
+            </Expression>
+            <Expression xsi:type="Multiply" />
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="InputMapping">
+              <PropertyMappings>
+                <Property Name="Rows" Selector="Item2" />
+              </PropertyMappings>
+              <Selector>Item1</Selector>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="dsp:Reshape">
+                <dsp:Channels>0</dsp:Channels>
+                <dsp:Rows>768000</dsp:Rows>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Size</Selector>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:UpdateVertexBuffer">
+                <gl:MeshName>Waveform</gl:MeshName>
+                <gl:DrawMode>LineStrip</gl:DrawMode>
+                <gl:Usage>DynamicDraw</gl:Usage>
+                <gl:VertexAttributes>
+                  <gl:VertexAttributeMapping>
+                    <gl:Size>1</gl:Size>
+                    <gl:Normalized>false</gl:Normalized>
+                    <gl:Type>Float</gl:Type>
+                  </gl:VertexAttributeMapping>
+                </gl:VertexAttributes>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Rows</Selector>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Value" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="FloatProperty">
+                <Value>384</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Max" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Negate" />
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Min" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Value" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gli:MouseWheel" />
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>EventArgs.DeltaPrecise</Selector>
+            </Expression>
+            <Expression xsi:type="Condition">
+              <Name>Key Down</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="ExternalizedMapping">
+                    <Property Name="Key" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gli:KeyDown">
+                      <gli:Key>ControlLeft</gli:Key>
+                      <gli:Modifiers xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>true</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gli:KeyUp">
+                      <gli:Key>ControlLeft</gli:Key>
+                      <gli:Modifiers xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>false</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Merge" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:CombineLatest" />
+                  </Expression>
+                  <Expression xsi:type="MemberSelector">
+                    <Selector>Item2</Selector>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="7" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="1" To="4" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="6" Label="Source1" />
+                  <Edge From="4" To="5" Label="Source1" />
+                  <Edge From="5" To="6" Label="Source2" />
+                  <Edge From="6" To="7" Label="Source2" />
+                  <Edge From="7" To="8" Label="Source1" />
+                  <Edge From="8" To="9" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="IncludeWorkflow" Path="Bonsai.JonsUtils:Workflows.BoundedAccumulate.bonsai">
+              <Reset_x0020_Value>0</Reset_x0020_Value>
+              <Initial_x0020_Value>0</Initial_x0020_Value>
+              <Min>0</Min>
+              <Max>1000</Max>
+              <Gain>5</Gain>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:UpdateUniform">
+                <gl:UniformName>amplitudezoom</gl:UniformName>
+                <gl:ShaderName>Waveform</gl:ShaderName>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Condition">
+              <Name>Key Down</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="ExternalizedMapping">
+                    <Property Name="Key" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gli:KeyDown">
+                      <gli:Key>ShiftLeft</gli:Key>
+                      <gli:Modifiers xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>true</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gli:KeyUp">
+                      <gli:Key>ShiftLeft</gli:Key>
+                      <gli:Modifiers xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>false</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Merge" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:CombineLatest" />
+                  </Expression>
+                  <Expression xsi:type="MemberSelector">
+                    <Selector>Item2</Selector>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="7" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="1" To="4" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="6" Label="Source1" />
+                  <Edge From="4" To="5" Label="Source1" />
+                  <Edge From="5" To="6" Label="Source2" />
+                  <Edge From="6" To="7" Label="Source2" />
+                  <Edge From="7" To="8" Label="Source1" />
+                  <Edge From="8" To="9" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="IncludeWorkflow" Path="Bonsai.JonsUtils:Workflows.BoundedAccumulate.bonsai">
+              <Reset_x0020_Value>0</Reset_x0020_Value>
+              <Initial_x0020_Value>0</Initial_x0020_Value>
+              <Min>1</Min>
+              <Max>100</Max>
+              <Gain>1</Gain>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:UpdateUniform">
+                <gl:UniformName>ywindowzoom</gl:UniformName>
+                <gl:ShaderName>Waveform</gl:ShaderName>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:UpdateUniform">
+                <gl:UniformName>ywindowzoom</gl:UniformName>
+                <gl:ShaderName>Highlight</gl:ShaderName>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Condition">
+              <Name>No Keys Pressed</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gli:KeyDown">
+                      <gli:Key xsi:nil="true" />
+                      <gli:Modifiers xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>false</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="gli:KeyUp">
+                      <gli:Key xsi:nil="true" />
+                      <gli:Modifiers xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>true</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>true</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Merge" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:CombineLatest" />
+                  </Expression>
+                  <Expression xsi:type="MemberSelector">
+                    <Selector>Item2</Selector>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="7" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="2" To="6" Label="Source1" />
+                  <Edge From="3" To="4" Label="Source1" />
+                  <Edge From="4" To="6" Label="Source2" />
+                  <Edge From="5" To="6" Label="Source3" />
+                  <Edge From="6" To="7" Label="Source2" />
+                  <Edge From="7" To="8" Label="Source1" />
+                  <Edge From="8" To="9" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gli:MouseDown">
+                <gli:Button xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gli:NormalizedDeviceCoordinates" />
+            </Expression>
+            <Expression xsi:type="Condition">
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="MemberSelector">
+                    <Selector>X</Selector>
+                  </Expression>
+                  <Expression xsi:type="LessThan">
+                    <Operand xsi:type="IntProperty">
+                      <Value>0</Value>
+                    </Operand>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Y</Selector>
+            </Expression>
+            <Expression xsi:type="Multiply">
+              <Operand xsi:type="FloatProperty">
+                <Value>384</Value>
+              </Operand>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Reset Value" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="IncludeWorkflow" Path="Bonsai.JonsUtils:Workflows.BoundedAccumulate.bonsai">
+              <Reset_x0020_Value>-184.637146</Reset_x0020_Value>
+              <Initial_x0020_Value>0</Initial_x0020_Value>
+              <Min>-384</Min>
+              <Max>384</Max>
+              <Gain>3</Gain>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Value" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="FloatProperty">
+                <Value>-184.637146</Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:CombineLatest" />
+            </Expression>
+            <Expression xsi:type="Divide" />
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:UpdateUniform">
+                <gl:UniformName>yshift</gl:UniformName>
+                <gl:ShaderName>Waveform</gl:ShaderName>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:UpdateUniform">
+                <gl:UniformName>yshift</gl:UniformName>
+                <gl:ShaderName>Highlight</gl:ShaderName>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:UpdateTexture">
+                <gl:TextureName>Overview</gl:TextureName>
+                <gl:TextureTarget>Texture2D</gl:TextureTarget>
+                <gl:InternalFormat>R32f</gl:InternalFormat>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Disable">
+              <Builder xsi:type="GroupWorkflow">
                 <Name>Probe Image</Name>
                 <Description>Creates the right pane showing the overall probe activity
 </Description>
@@ -23742,87 +23770,82 @@
                     <Edge From="129" To="130" Label="Source1" />
                   </Edges>
                 </Workflow>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:UpdateFrame" />
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:DrawMesh">
-                  <gl:ShaderName>Highlight</gl:ShaderName>
-                  <gl:MeshName>ProbeImage</gl:MeshName>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="gl:DrawMesh">
-                  <gl:ShaderName>Waveform</gl:ShaderName>
-                  <gl:MeshName>Waveform</gl:MeshName>
-                </Combinator>
-              </Expression>
-              <Expression xsi:type="Combinator">
-                <Combinator xsi:type="rx:Range">
-                  <rx:Start>0</rx:Start>
-                  <rx:Count>1</rx:Count>
-                </Combinator>
-              </Expression>
-            </Nodes>
-            <Edges>
-              <Edge From="0" To="1" Label="Source1" />
-              <Edge From="1" To="2" Label="Source1" />
-              <Edge From="2" To="3" Label="Source1" />
-              <Edge From="3" To="4" Label="Source1" />
-              <Edge From="5" To="6" Label="Source1" />
-              <Edge From="6" To="7" Label="Source1" />
-              <Edge From="7" To="8" Label="Source1" />
-              <Edge From="8" To="9" Label="Source1" />
-              <Edge From="9" To="10" Label="Source1" />
-              <Edge From="9" To="49" Label="Source1" />
-              <Edge From="10" To="11" Label="Source1" />
-              <Edge From="10" To="19" Label="Source1" />
-              <Edge From="11" To="14" Label="Source1" />
-              <Edge From="11" To="12" Label="Source1" />
-              <Edge From="12" To="13" Label="Source1" />
-              <Edge From="13" To="14" Label="Source2" />
-              <Edge From="14" To="15" Label="Source1" />
-              <Edge From="15" To="16" Label="Source1" />
-              <Edge From="16" To="17" Label="Source1" />
-              <Edge From="16" To="18" Label="Source1" />
-              <Edge From="19" To="20" Label="Source1" />
-              <Edge From="19" To="22" Label="Source1" />
-              <Edge From="19" To="23" Label="Source1" />
-              <Edge From="19" To="25" Label="Source1" />
-              <Edge From="20" To="21" Label="Source1" />
-              <Edge From="21" To="45" Label="Source2" />
-              <Edge From="22" To="42" Label="Source2" />
-              <Edge From="23" To="24" Label="Source1" />
-              <Edge From="24" To="42" Label="Source3" />
-              <Edge From="25" To="40" Label="Source2" />
-              <Edge From="26" To="27" Label="Source1" />
-              <Edge From="27" To="28" Label="Source1" />
-              <Edge From="27" To="31" Label="Source1" />
-              <Edge From="27" To="35" Label="Source1" />
-              <Edge From="28" To="29" Label="Source1" />
-              <Edge From="29" To="30" Label="Source1" />
-              <Edge From="31" To="32" Label="Source1" />
-              <Edge From="32" To="33" Label="Source1" />
-              <Edge From="32" To="34" Label="Source1" />
-              <Edge From="35" To="42" Label="Source1" />
-              <Edge From="36" To="37" Label="Source1" />
-              <Edge From="37" To="38" Label="Source1" />
-              <Edge From="38" To="39" Label="Source1" />
-              <Edge From="39" To="40" Label="Source1" />
-              <Edge From="40" To="41" Label="Source1" />
-              <Edge From="41" To="42" Label="Source4" />
-              <Edge From="42" To="43" Label="Source1" />
-              <Edge From="43" To="44" Label="Source1" />
-              <Edge From="44" To="45" Label="Source1" />
-              <Edge From="45" To="46" Label="Source1" />
-              <Edge From="46" To="47" Label="Source1" />
-              <Edge From="47" To="48" Label="Source1" />
-              <Edge From="50" To="51" Label="Source1" />
-              <Edge From="51" To="52" Label="Source1" />
-            </Edges>
-          </Workflow>
-        </Builder>
+              </Builder>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:UpdateFrame" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:DrawMesh">
+                <gl:ShaderName>Highlight</gl:ShaderName>
+                <gl:MeshName>ProbeImage</gl:MeshName>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="gl:DrawMesh">
+                <gl:ShaderName>Waveform</gl:ShaderName>
+                <gl:MeshName>Waveform</gl:MeshName>
+              </Combinator>
+            </Expression>
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="10" Label="Source1" />
+            <Edge From="9" To="50" Label="Source1" />
+            <Edge From="10" To="11" Label="Source1" />
+            <Edge From="10" To="19" Label="Source1" />
+            <Edge From="10" To="49" Label="Source1" />
+            <Edge From="11" To="14" Label="Source1" />
+            <Edge From="11" To="12" Label="Source1" />
+            <Edge From="12" To="13" Label="Source1" />
+            <Edge From="13" To="14" Label="Source2" />
+            <Edge From="14" To="15" Label="Source1" />
+            <Edge From="15" To="16" Label="Source1" />
+            <Edge From="16" To="17" Label="Source1" />
+            <Edge From="16" To="18" Label="Source1" />
+            <Edge From="19" To="20" Label="Source1" />
+            <Edge From="19" To="22" Label="Source1" />
+            <Edge From="19" To="23" Label="Source1" />
+            <Edge From="19" To="25" Label="Source1" />
+            <Edge From="20" To="21" Label="Source1" />
+            <Edge From="21" To="45" Label="Source2" />
+            <Edge From="22" To="42" Label="Source2" />
+            <Edge From="23" To="24" Label="Source1" />
+            <Edge From="24" To="42" Label="Source3" />
+            <Edge From="25" To="40" Label="Source2" />
+            <Edge From="26" To="27" Label="Source1" />
+            <Edge From="27" To="28" Label="Source1" />
+            <Edge From="27" To="31" Label="Source1" />
+            <Edge From="27" To="35" Label="Source1" />
+            <Edge From="28" To="29" Label="Source1" />
+            <Edge From="29" To="30" Label="Source1" />
+            <Edge From="31" To="32" Label="Source1" />
+            <Edge From="32" To="33" Label="Source1" />
+            <Edge From="32" To="34" Label="Source1" />
+            <Edge From="35" To="42" Label="Source1" />
+            <Edge From="36" To="37" Label="Source1" />
+            <Edge From="37" To="38" Label="Source1" />
+            <Edge From="38" To="39" Label="Source1" />
+            <Edge From="39" To="40" Label="Source1" />
+            <Edge From="40" To="41" Label="Source1" />
+            <Edge From="41" To="42" Label="Source4" />
+            <Edge From="42" To="43" Label="Source1" />
+            <Edge From="43" To="44" Label="Source1" />
+            <Edge From="44" To="45" Label="Source1" />
+            <Edge From="45" To="46" Label="Source1" />
+            <Edge From="46" To="47" Label="Source1" />
+            <Edge From="47" To="48" Label="Source1" />
+            <Edge From="51" To="52" Label="Source1" />
+            <Edge From="52" To="53" Label="Source1" />
+          </Edges>
+        </Workflow>
       </Expression>
       <Expression xsi:type="MemberSelector">
         <Selector>LFPFrameClock</Selector>
@@ -23850,6 +23873,7 @@
             <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
           </p1:Hub>
           <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:Enable>false</p1:Enable>
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
@@ -23878,6 +23902,7 @@
             <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
           </p1:Hub>
           <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:Enable>false</p1:Enable>
         </Combinator>
       </Expression>
       <Expression xsi:type="p1:TS4321V1FrameToPosition">

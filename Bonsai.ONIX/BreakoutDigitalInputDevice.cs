@@ -12,19 +12,19 @@ namespace Bonsai.ONIX
         enum Register
         {
             ENABLE = 0, // No command
-            LEDMODE = 1, // 0 = All off, 1 = Power and Running only, 3 = normal, else undefined
+            LEDMODE = 1, // 0 = All off, 1 = Power only, 2 = Power and running, 3 = normal
             LEDLVL = 2, // 0-255 overall LED brightness value.
         }
 
         public BreakoutDigitalInputDevice() : base(ONIXDevices.ID.BREAKDIG1R3) { }
 
-        protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
         }
 
         [Category("Acquisition")]
-        [Range(0, 255)]
+        [Range(0, 15)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
         public uint LEDBrightness
         {
@@ -42,13 +42,13 @@ namespace Bonsai.ONIX
         {
             OFF = 0,
             POWERONLY,
-            ON,
-            UNDEFINED
+            POWERANDRUNNING,
+            ON
         }
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {

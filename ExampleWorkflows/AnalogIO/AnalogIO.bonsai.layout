@@ -81,8 +81,8 @@
   <DialogSettings>
     <Visible>true</Visible>
     <Location>
-      <X>827</X>
-      <Y>139</Y>
+      <X>776</X>
+      <Y>134</Y>
     </Location>
     <Size>
       <Width>416</Width>
@@ -94,13 +94,13 @@
       <MatVisualizer>
         <XMin>0</XMin>
         <XMax>250000</XMax>
-        <YMin>-40000</YMin>
-        <YMax>19999.999999999996</YMax>
+        <YMin>-6000</YMin>
+        <YMax>10000</YMax>
         <AutoScaleX>true</AutoScaleX>
         <AutoScaleY>true</AutoScaleY>
         <SelectedPage>0</SelectedPage>
         <ChannelsPerPage>16</ChannelsPerPage>
-        <OverlayChannels>false</OverlayChannels>
+        <OverlayChannels>true</OverlayChannels>
         <ChannelOffset>0</ChannelOffset>
         <HistoryLength>1000</HistoryLength>
         <WaveformBufferLength>1</WaveformBufferLength>

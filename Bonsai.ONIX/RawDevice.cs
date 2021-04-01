@@ -5,13 +5,13 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    public class RawDevice : ONIFrameReader<RawDeviceDataFrame, ushort>
+    public class RawDevice : ONIFrameReader<RawDataFrame, ushort>
     {
         public RawDevice() : base(ONIXDevices.ID.NULL) { }
 
-        protected override IObservable<RawDeviceDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-            return source.Select(f => { return new RawDeviceDataFrame(f); });
+            return source.Select(f => { return new RawDataFrame(f); });
         }
 
         [Category("Configuration")]

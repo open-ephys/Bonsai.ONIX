@@ -4,13 +4,14 @@
     /// Base class for most data frames using <see cref="ushort"/> as
     /// the underlying data type.
     /// </summary>
-    public class DataFrame 
+    public class U16DataFrame
     {
-        public DataFrame(RawDataFrame<ushort> frame) 
+        public U16DataFrame(ONIManagedFrame<ushort> frame)
         {
-
-            DataClock = ((ulong)frame.sample[0] << 48) | ((ulong)frame.sample[1] << 32) | ((ulong)frame.sample[2] << 16) | ((ulong)frame.sample[3] << 0);
-            
+            DataClock = ((ulong)frame.Sample[0] << 48) |
+                        ((ulong)frame.Sample[1] << 32) |
+                        ((ulong)frame.Sample[2] << 16) |
+                        ((ulong)frame.Sample[3] << 0);
             FrameClock = frame.FrameClock;
         }
 
@@ -18,6 +19,7 @@
         /// The sample clock, create locally alongside the source device.
         /// </summary>
         public ulong DataClock { get; private set; }
+
         /// <summary>
         /// The frame clock. Created by the host when receiving the sample from the device.
         /// </summary>

@@ -62,10 +62,10 @@ namespace Bonsai.ONIX
         }
 
         // frame contains a single super frame
-        public bool FillFromFrame(RawDataFrame<ushort> frame)
+        public bool FillFromFrame(ONIManagedFrame<ushort> frame)
         {
 
-            var data = frame.sample;
+            var data = frame.Sample;
 
             spike_frame_clock[super_cnt] = frame.FrameClock;
             spike_data_clock[super_cnt] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);

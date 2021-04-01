@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,6 +57,12 @@ namespace Bonsai.ONIX
 
             lock (open_ctx_lock)
             {
+                if (string.IsNullOrEmpty(slot.Driver))
+                {
+                    if (open_contexts.Count == 1) ctx_counted = open_contexts.Values.Single();
+                    else throw new ArgumentException("An ONI hardware slot must be specified.", nameof(slot));
+                }
+
                 if (!open_contexts.TryGetValue(slot.MakeKey(), out ctx_counted))
                 {
 
@@ -72,6 +79,7 @@ namespace Bonsai.ONIX
                         ctx.Dispose();
                         contex_wait_handles[slot.MakeKey()].Reset();
 
+                        // Context and wait handles are removed from dictionaries together
                         open_contexts.Remove(slot.MakeKey());
                         contex_wait_handles.Remove(slot.MakeKey());
                     });

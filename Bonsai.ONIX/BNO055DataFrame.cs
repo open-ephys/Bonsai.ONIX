@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace Bonsai.ONIX
 {
-    public class BNO055DataFrame : DataFrame
+    public class BNO055DataFrame : U16DataFrame
     {
-        public BNO055DataFrame(RawDataFrame<ushort> frame)
+        public BNO055DataFrame(ONIManagedFrame<ushort> frame)
             : base(frame)
         {
-            ushort[] sample = frame.sample;
+            ushort[] sample = frame.Sample;
             // Convert data packet (output format is hard coded right now)
             Euler = GetEuler(sample, 4);
             Quaternion = GetQuat(sample, 7);

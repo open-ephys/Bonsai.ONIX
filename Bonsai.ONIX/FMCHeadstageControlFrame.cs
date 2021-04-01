@@ -1,14 +1,14 @@
 ﻿
 namespace Bonsai.ONIX
 {
-    public class FMCHeadstageControlFrame : DataFrame
+    public class FMCHeadstageControlFrame : U16DataFrame
     {
-        public FMCHeadstageControlFrame(RawDataFrame<ushort> frame)
+        public FMCHeadstageControlFrame(ONIManagedFrame<ushort> frame)
             : base(frame)
         {
-            Lock = (frame.sample[4] & 0x0001) == 1;
-            Pass = (frame.sample[4] & 0x0002) == 2;
-            Code = (frame.sample[4] & 0x0004) == 4 ? (frame.sample[4] & 0xFF00) >> 8 : 0;
+            Lock = (frame.Sample[4] & 0x0001) == 1;
+            Pass = (frame.Sample[4] & 0x0002) == 2;
+            Code = (frame.Sample[4] & 0x0004) == 4 ? (frame.Sample[4] & 0xFF00) >> 8 : 0;
         }
 
         public bool Lock { get; private set; }

@@ -20,14 +20,14 @@ namespace Bonsai.ONIX
 
         public LoadTestingDevice() : base(ONIXDevices.ID.LOADTEST) { }
 
-        protected override IObservable<LoadTestingDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<LoadTestingDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new LoadTestingDataFrame(f); });
         }
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {

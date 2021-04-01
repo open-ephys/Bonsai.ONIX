@@ -23,7 +23,7 @@ namespace Bonsai.ONIX
 
         public FMCHeadstageControlDevice() : base(ONIXDevices.ID.FMCLINKCTRL) { }
 
-        protected override IObservable<FMCHeadstageControlFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<FMCHeadstageControlFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new FMCHeadstageControlFrame(f); });
         }
@@ -31,7 +31,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {
@@ -77,12 +77,11 @@ namespace Bonsai.ONIX
             set
             {
                 link_enabled = value;
-                LinkVoltage = link_v;
+                LinkVoltage = 0;
             }
         }
 
         // TODO: reading voltage does not work with current firmware
-        double link_v = 5.5;
         [Category("Acquisition")]
         [Range(3.3, 10.0)]
         [Precision(1, 0.1)]
@@ -92,11 +91,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return link_v;
+                return ReadRegister(DeviceAddress.Address, (int)Register.LINKVOLTAGE) / 10.0;
             }
             set
             {
-                link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
+                var link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
                 link_v = link_enabled ? link_v : 0.0;
                 WriteRegister(DeviceAddress.Address, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
             }

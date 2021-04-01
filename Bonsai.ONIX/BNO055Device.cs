@@ -16,14 +16,14 @@ namespace Bonsai.ONIX
 
         public BNO055Device() : base(ONIXDevices.ID.BNO055) { }
 
-        protected override IObservable<BNO055DataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<BNO055DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new BNO055DataFrame(f); });
         }
 
         [Category("Configuration")]
         [Description("Enable the input data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {

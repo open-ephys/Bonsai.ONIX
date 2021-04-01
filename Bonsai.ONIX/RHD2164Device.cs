@@ -43,7 +43,7 @@ namespace Bonsai.ONIX
 
         public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
 
-        protected override IObservable<RHDDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<RHDDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             var data_block = new RHDDataBlock(64, BlockSize);
 
@@ -62,7 +62,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {
@@ -75,9 +75,9 @@ namespace Bonsai.ONIX
         }
 
         [Category("Acquisition")]
-        [Range(10, 10000)]
+        [Range(1, 10000)]
         [Description("The number of frames making up a single data block that is propagated in the observable sequence.")]
-        public int BlockSize { get; set; } = 250;
+        public int BlockSize { get; set; } = 30;
 
         [Category("Configuration")]
         [Description("Register 0: ADC Configuration and Amplifier Fast Settle. See http://intantech.com/files/Intan_RHD2164_datasheet.pdf.")]

@@ -22,11 +22,11 @@
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="dsp:FunctionGenerator">
           <dsp:BufferLength>12</dsp:BufferLength>
-          <dsp:Frequency>1</dsp:Frequency>
-          <dsp:Waveform>Sine</dsp:Waveform>
+          <dsp:Frequency>10</dsp:Frequency>
+          <dsp:Waveform>Square</dsp:Waveform>
           <dsp:SampleRate>1200</dsp:SampleRate>
           <dsp:Depth>U16</dsp:Depth>
-          <dsp:Amplitude>32760</dsp:Amplitude>
+          <dsp:Amplitude>8192</dsp:Amplitude>
           <dsp:Offset>32768</dsp:Offset>
           <dsp:Phase>0</dsp:Phase>
         </Combinator>
@@ -79,18 +79,19 @@
           </p1:Hub>
           <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:BlockSize>250</p1:BlockSize>
-          <p1:InputRange00>TenVolts</p1:InputRange00>
+          <p1:Enable>true</p1:Enable>
+          <p1:InputRange00>TwoPointFiveVolts</p1:InputRange00>
           <p1:InputRange01>TenVolts</p1:InputRange01>
           <p1:InputRange02>TenVolts</p1:InputRange02>
           <p1:InputRange03>TenVolts</p1:InputRange03>
-          <p1:InputRange04>TenVolts</p1:InputRange04>
+          <p1:InputRange04>TwoPointFiveVolts</p1:InputRange04>
           <p1:InputRange05>TenVolts</p1:InputRange05>
           <p1:InputRange06>TenVolts</p1:InputRange06>
           <p1:InputRange07>TenVolts</p1:InputRange07>
           <p1:InputRange08>TenVolts</p1:InputRange08>
           <p1:InputRange09>TenVolts</p1:InputRange09>
           <p1:InputRange10>TenVolts</p1:InputRange10>
-          <p1:InputRange11>TenVolts</p1:InputRange11>
+          <p1:InputRange11>FiveVolts</p1:InputRange11>
           <p1:Direction00>Output</p1:Direction00>
           <p1:Direction01>Input</p1:Direction01>
           <p1:Direction02>Input</p1:Direction02>

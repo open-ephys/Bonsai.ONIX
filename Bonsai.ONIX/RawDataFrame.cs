@@ -1,35 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using OpenCV.Net;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bonsai.ONIX
 {
-    /// <summary>
-    /// Managed copy of <see cref="oni.Frame"/> with strongly-typed data array
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class RawDataFrame<T> where T : unmanaged
+    public class RawDataFrame : U16DataFrame
     {
-        public T[] sample;
-
-        public RawDataFrame(oni.Frame frame)
+        public RawDataFrame(ONIManagedFrame<ushort> frame)
+            : base(frame)
         {
-            sample = frame.Data<T>();
-            //copy frame-specific properties
-            FrameClock = frame.Clock;
-            DeviceAddress = frame.DeviceAddress;
+            var data = new ArraySegment<ushort>(frame.Sample, 4, frame.Sample.Length - 4);
+            Data = Mat.FromArray(data.ToArray(), frame.Sample.Length - 4, 1, Depth.U16, 1);
         }
 
-        public RawDataFrame(RawDataFrame<T> orig)
-        {
-            sample = orig.sample;
-        }
-
-        public ulong FrameClock { get; private set; }
-        public uint DeviceAddress { get; private set; }
-
+        public Mat Data { get; private set; }
     }
-
 }

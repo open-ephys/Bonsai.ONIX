@@ -13,7 +13,7 @@ namespace Bonsai.ONIX
         public ONIDeviceAddress DeviceAddress
         {
             get { return dev_address; }
-            set { dev_address = value; DeviceIndexChanged(); }
+            set { dev_address = value; DeviceAddressChanged(); }
         }
 
         [Category("ONI Configuration")]
@@ -41,40 +41,38 @@ namespace Bonsai.ONIX
         // I'm just dumping errors to the Console and returning 0 or doing nothing.
         protected uint ReadRegister(uint dev_index, uint register_address)
         {
-            using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
+            try
             {
-                try
+                using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
                 {
                     return c.Context.ReadRegister(dev_index, register_address);
                 }
-                catch (oni.ONIException ex)
-                {
-                    System.Console.WriteLine(ex.Message);
-                    return 0;
-                }
+            }
+            catch (oni.ONIException ex)
+            {
+                System.Console.WriteLine(ex.Message);
+                return 0;
             }
         }
 
         protected void WriteRegister(uint dev_index, uint register_address, uint value)
         {
-            using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
+            try
             {
-                try
+                using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
                 {
                     c.Context.WriteRegister(dev_index, register_address, value);
                 }
-                catch (oni.ONIException ex)
-                {
-                    System.Console.WriteLine(ex.Message);
-                    return;
-                }
+            }
+            catch (oni.ONIException ex)
+            {
+                System.Console.WriteLine(ex.Message);
+                return;
             }
         }
 
         // Can be used by derived classes to perform updates 
         // when the selected hardware (device and or hardware slot) changes
-        protected virtual void DeviceIndexChanged()
-        {
-        }
+        protected virtual void DeviceAddressChanged() { }
     }
 }

@@ -29,7 +29,7 @@ namespace Bonsai.ONIX
             var disposable = Interlocked.Exchange(ref resource, null);
             if (disposable != null)
             {
-                // NB: Persist the context for soem time to keep UI performance
+                // NB: Persist the context for some time to keep UI performance
                 // so that the whole PCIe stack does not have be set up and torn
                 // down for every register IO
                 _ = DelayDisposeAsync(disposable, lockObject);

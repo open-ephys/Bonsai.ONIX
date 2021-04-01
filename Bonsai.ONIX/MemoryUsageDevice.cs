@@ -18,7 +18,7 @@ namespace Bonsai.ONIX
 
         public MemoryUsageDevice() : base(ONIXDevices.ID.MEMUSAGE) { }
 
-        protected override IObservable<MemoryUsageDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<MemoryUsageDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             var total_words = MemorySize;
             return source.Select(f => { return new MemoryUsageDataFrame(f, total_words); });
@@ -26,7 +26,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {

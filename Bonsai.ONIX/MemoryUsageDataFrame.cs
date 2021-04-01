@@ -1,11 +1,11 @@
 ﻿namespace Bonsai.ONIX
 {
-    public class MemoryUsageDataFrame : DataFrame
+    public class MemoryUsageDataFrame : U16DataFrame
     {
-        public MemoryUsageDataFrame(RawDataFrame<ushort> frame, uint total_words)
+        public MemoryUsageDataFrame(ONIManagedFrame<ushort> frame, uint total_words)
             : base(frame)
         {
-            uint words = ((uint)frame.sample[4] << 16) | ((uint)frame.sample[5] << 0);
+            uint words = ((uint)frame.Sample[4] << 16) | ((uint)frame.Sample[5] << 0);
             MemoryUsagePercentage = 100.0 * words / total_words;
             MemoryUsageBytes = words * sizeof(uint);
         }

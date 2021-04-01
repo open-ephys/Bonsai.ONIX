@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 
 namespace Bonsai.ONIX
 {
@@ -18,13 +18,15 @@ namespace Bonsai.ONIX
         /// If the queue fills, frame reading will throttle, filling host memory instead of 
         /// userspace memory.
         /// </summary>
-        private const Int32 MaxQueuedFrames = 2000000;
+        private const int MAX_QUEUED_FRAMES = 2000000;
+
         /// <summary>
         /// Timeout in ms for queue reads. This should not be critical as the 
         /// read operation will cancel if the task is stopped
         /// </summary>
-        private const int QueueTimeout = 200;
-        BlockingCollection<oni.Frame> FrameQueue;
+        private const int QUEUE_TIMEOUT_MS = 200;
+
+        private BlockingCollection<oni.Frame> FrameQueue;
 
         // TODO: Multi-writer, thread safe FIFO for oni_write()'s
         // private Task WriteData;
@@ -62,22 +64,24 @@ namespace Bonsai.ONIX
             TokenSource = new CancellationTokenSource();
             CollectFramesToken = TokenSource.Token;
 
-            FrameQueue = new BlockingCollection<oni.Frame>(MaxQueuedFrames);
+            FrameQueue = new BlockingCollection<oni.Frame>(MAX_QUEUED_FRAMES);
 
             ReadFrames = Task.Factory.StartNew(() =>
             {
                 while (!CollectFramesToken.IsCancellationRequested)
                 {
                     oni.Frame frame = ReadFrame();
+
                     //This should not be needed since we are calling Dispose()
                     //But somehow it seems to improve performance (coupled with GC.RemovePressure)
                     //More investigation might be needed
                     GC.AddMemoryPressure(frame.DataSize);
+
                     try
                     {
                         FrameQueue.Add(frame, CollectFramesToken);
                     }
-                    catch (OperationCanceledException) 
+                    catch (OperationCanceledException)
                     {
                         DisposeFrame(frame);
                     };
@@ -91,12 +95,10 @@ namespace Bonsai.ONIX
             {
                 while (!CollectFramesToken.IsCancellationRequested)
                 {
-                    oni.Frame frame;
-
                     try
                     {
-                        FrameQueue.TryTake(out frame, QueueTimeout, CollectFramesToken);
-                        OnFrameReceived(new FrameReceivedEventArgs(frame));
+                        if (FrameQueue.TryTake(out oni.Frame frame, QUEUE_TIMEOUT_MS, CollectFramesToken))
+                            OnFrameReceived(new FrameReceivedEventArgs(frame));
                     }
                     catch (OperationCanceledException)
                     {
@@ -118,6 +120,7 @@ namespace Bonsai.ONIX
             }
             TokenSource?.Dispose();
             TokenSource = null;
+
             //clear queue and free memory
             while (FrameQueue?.Count > 0)
             {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
@@ -8,14 +7,13 @@ namespace Bonsai.ONIX
     [Source]
     [Combinator(MethodName = "Generate")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public abstract class ONIFrameReaderAndWriter<TSource, TResult, TData> : ONIDevice
-        where TData : unmanaged
+    public abstract class ONIFrameReaderAndWriter<TSource, TResult, TData> : ONIDevice where TData : unmanaged
     {
         public ONIFrameReaderAndWriter(ONIXDevices.ID dev_id) : base(dev_id) { }
 
         public IObservable<TResult> Generate()
         {
-            var source = Observable.Create<RawDataFrame<TData>>(async observer =>
+            var source = Observable.Create<ONIManagedFrame<TData>>(async observer =>
                 {
                     var cd = await ONIContextManager.ReserveOpenContextAsync(DeviceAddress.HardwareSlot);
 
@@ -29,7 +27,7 @@ namespace Bonsai.ONIX
                     {
                         if (e.Frame.DeviceAddress == DeviceAddress.Address)
                         {
-                            RawDataFrame<TData> frame = new RawDataFrame<TData>(e.Frame);
+                            ONIManagedFrame<TData> frame = new ONIManagedFrame<TData>(e.Frame);
                             observer.OnNext(frame);
                         }
                     };
@@ -73,7 +71,8 @@ namespace Bonsai.ONIX
             });
         }
 
-        protected abstract IObservable<TResult> Process(IObservable<RawDataFrame<TData>> source);
+        protected abstract IObservable<TResult> Process(IObservable<ONIManagedFrame<TData>> source);
+
         protected abstract void Write(ONIContextTask ctx, TSource input);
     }
 }

@@ -16,14 +16,14 @@ namespace Bonsai.ONIX
 
         public TS4231V1Device() : base(ONIXDevices.ID.TS4231V1ARR) { }
 
-        protected override IObservable<TS4231V1DataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<TS4231V1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new TS4231V1DataFrame(f); });
         }
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {

@@ -64,6 +64,7 @@ namespace Bonsai.ONIX
             io_reg = (io_reg & ~((uint)1 << channel)) | ((uint)(io) << channel);
             WriteRegister(DeviceAddress.Address, (uint)Register.CHDIR, io_reg);
         }
+
         InputOutput GetIO(int channel)
         {
             var io_reg = ReadRegister(DeviceAddress.Address, (int)Register.CHDIR);
@@ -75,7 +76,7 @@ namespace Bonsai.ONIX
             //Enable = true;
         }
 
-        protected override IObservable<AnalogInputDataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             var data_block = new AnalogInputDataBlock(NUM_CHANNELS, BlockSize);
 
@@ -119,7 +120,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("Enable the input data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {
@@ -127,7 +128,7 @@ namespace Bonsai.ONIX
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1: 0);
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 

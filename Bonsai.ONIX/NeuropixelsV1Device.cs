@@ -46,7 +46,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<RawDataFrame<ushort>> source)
+        protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
 
             var data_block = new NeuropixelsV1DataBlock(BlockSize);
@@ -87,7 +87,7 @@ namespace Bonsai.ONIX
             );
         }
 
-        protected override void DeviceIndexChanged()
+        protected override void DeviceAddressChanged()
         {
             using (var flex = new NeuropixelsV1Flex(DeviceAddress))
             {
@@ -101,7 +101,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
-        public bool Enable
+        public bool EnableStream
         {
             get
             {
