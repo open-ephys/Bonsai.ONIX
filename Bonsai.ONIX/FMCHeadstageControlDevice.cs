@@ -6,50 +6,58 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. THIS NODE CAN DAMAGE YOUR HEADSTAGE: BE CAREFUL!")]
-    public class FMCHeadstageControlDevice : ONIFrameReaderDeviceBuilder<FMCHeadstageControlFrame>
+    [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. THIS NODE CAN DAMAGE YOUR HEADSTAGE!")]
+    public class FMCHeadstageControlDevice : ONIFrameReader<FMCHeadstageControlFrame, ushort>
     {
-        const double VLIM = 6.3;
+        const double VLIM = 7.0;
 
-        // Control registers (see oedevices.h)
         // NB: registers for this device are all write only.
-        public enum Register
+        enum Register
         {
-            GPOSTATE = 0,
-            DESERIALIZERPOWER = 1,
-            LINKVOLTAGE = 2,
-            SAVELINKVOLTAGE = 3,
+            ENABLE = 0,
+            GPOSTATE = 1,
+            DESERIALIZERPOWER = 2,
+            LINKVOLTAGE = 3,
+            SAVELINKVOLTAGE = 4,
         }
 
         public FMCHeadstageControlDevice() : base(ONIXDevices.ID.FMCLINKCTRL) { }
 
-        public override IObservable<FMCHeadstageControlFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<FMCHeadstageControlFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-            return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Select(f => { return new FMCHeadstageControlFrame(f, FrameClockHz, DataClockHz); });
+            return source.Select(f => { return new FMCHeadstageControlFrame(f); });
+        }
+
+
+        [Category("Configuration")]
+        [Description("Enable the device data stream.")]
+        public bool EnableStream
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+            }
         }
 
         //[Description("Save link A voltage to internal EEPROM.")]
         //public bool SaveLinkAVoltage { get; set; } = false;
-        //        if (SaveLinkAVoltage) ctx.Environment.AcqContext.WriteRegister((uint)DeviceIndex.SelectedIndex, (int)Register.SAVELINKA, 0);
+        //        if (SaveLinkAVoltage) ctx.Environment.AcqContext.WriteRegister((uint)DeviceIndex.Index, (int)Register.SAVELINKA, 0);
 
         [Category("Acquisition")]
         [Description("Headstage deserializer power enabled or disabled.")]
-        public bool? DeserializerPowerEnabled
+        public bool DeserializerPowerEnabled
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.DESERIALIZERPOWER);
-                if (val != null) return val > 0;
-                return null;
+                return ReadRegister(DeviceAddress.Address, (int)Register.DESERIALIZERPOWER) > 0;
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.DESERIALIZERPOWER, (bool)value ? (uint)1 : 0);
-                }
+                WriteRegister(DeviceAddress.Address, (int)Register.DESERIALIZERPOWER, (uint)(value ? 1 : 0));
             }
         }
 
@@ -57,7 +65,7 @@ namespace Bonsai.ONIX
         [Description("Type \"BE CAREFUL\" here to enable the extended link voltage range.")]
         public string EnableExtendedVoltageRange { get; set; }
 
-        bool link_enabled = false;
+        bool link_enabled = true;
         [Category("Acquisition")]
         [Description("Headstage power enabled or disabled.")]
         public bool LinkPowerEnabled
@@ -69,12 +77,11 @@ namespace Bonsai.ONIX
             set
             {
                 link_enabled = value;
-                LinkVoltage = link_v;
+                LinkVoltage = 0;
             }
         }
 
         // TODO: reading voltage does not work with current firmware
-        double link_v = 5.0;
         [Category("Acquisition")]
         [Range(3.3, 10.0)]
         [Precision(1, 0.1)]
@@ -84,16 +91,13 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return link_v;
+                return ReadRegister(DeviceAddress.Address, (int)Register.LINKVOLTAGE) / 10.0;
             }
             set
             {
-                if (Controller != null)
-                {
-                    link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
-                    link_v = link_enabled ? link_v : 0.0;
-                    Controller.AcqContext.WriteRegister((uint)DeviceIndex.SelectedIndex, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
-                }
+                var link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
+                link_v = link_enabled ? link_v : 0.0;
+                WriteRegister(DeviceAddress.Address, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
             }
         }
 
@@ -105,17 +109,15 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE);
-                if (val != null) { gpo_register = (uint)val; return (gpo_register & 0x01) > 0; };
-                return null;
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.GPOSTATE);
+                gpo_register = val;
+                return (gpo_register & 0x01) > 0;
             }
             set
             {
-                if (Controller != null && value != null)
-                {
-                    gpo_register = (gpo_register & ~((uint)1 << 0)) | (((bool)value ? (uint)1 : (uint)0) << 0);
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE, gpo_register);
-                }
+
+                gpo_register = (gpo_register & ~((uint)1 << 0)) | (((bool)value ? 1 : (uint)0) << 0);
+                WriteRegister(DeviceAddress.Address, (int)Register.GPOSTATE, gpo_register);
             }
         }
 
@@ -126,7 +128,7 @@ namespace Bonsai.ONIX
         //{
         //    get
         //    {
-        //        var val = Controller?.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE);
+        //        var val = Controller?.ReadRegister(DeviceIndex.Index, (int)Register.GPOSTATE);
         //        if (val != null) return new bool[] { (val & 0x01) > 0, (val & 0x02) > 0, (val & 0x04) > 0 };
         //        return null;
         //    }
@@ -135,7 +137,7 @@ namespace Bonsai.ONIX
         //        if (Controller != null && value != null)
         //        {
         //            var val = (value[0] ? 0x01 : 0x00) | (value[1] ? 0x02 : 0x00) | (value[2] ? 0x04 : 0x00);
-        //            Controller.WriteRegister(DeviceIndex.SelectedIndex, (int)Register.GPOSTATE, (uint)val);
+        //            Controller.WriteRegister(DeviceIndex.Index, (int)Register.GPOSTATE, (uint)val);
         //        }
         //    }
         //}

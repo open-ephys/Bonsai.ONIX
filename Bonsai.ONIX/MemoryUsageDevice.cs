@@ -5,12 +5,12 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Memory usage device")]
-    public class MemoryUsageDevice : ONIFrameReaderDeviceBuilder<MemoryUsageDataFrame>
+    [Description("Memory usage monitoring device")]
+    public class MemoryUsageDevice : ONIFrameReader<MemoryUsageDataFrame, ushort>
     {
-        public enum Register
+        enum Register
         {
-            NULLPARM = 0,  // No command
+            ENABLE = 0,
             CLK_DIV = 1,  // Update clock divider ratio.Default results in 10 Hz heartbeat. Values less than CLK_HZ / 10e6 Hz will result in 1kHz.
             CLK_HZ = 2, // The frequency parameter, CLK_HZ, used in the calculation of CLK_DIV
             TOTAL_MEM = 3, //Total memory in 32bit words
@@ -18,63 +18,56 @@ namespace Bonsai.ONIX
 
         public MemoryUsageDevice() : base(ONIXDevices.ID.MEMUSAGE) { }
 
-        public override IObservable<MemoryUsageDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<MemoryUsageDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-            return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Select(f => { return new MemoryUsageDataFrame(f, FrameClockHz, DataClockHz, total_words); });
+            var total_words = MemorySize;
+            return source.Select(f => { return new MemoryUsageDataFrame(f, total_words); });
+        }
+
+        [Category("Configuration")]
+        [Description("Enable the device data stream.")]
+        public bool EnableStream
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+            }
         }
 
         uint update_hz;
         [Category("Configuration")]
-        [Description("Rate at which memory usage updates.")]
+        [Description("Rate of memory usage measurements.")]
         [Range(0, 10e6)]
-        public uint BeatHz
+        public uint UpdateHz
         {
             get
             {
-                if (Controller != null)
-                {
-                    var val = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_DIV);
-                    update_hz = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / val;
-                    return update_hz;
-                }
-                else
-                {
-                    return update_hz;
-                }
+                var val = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
+                update_hz = ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val;
+                return update_hz;
             }
             set
             {
-                if (Controller != null)
-                {
-                    update_hz = value;
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex,
-                                             (int)Register.CLK_DIV,
-                                             Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.CLK_HZ) / update_hz);
-                }
+                update_hz = value;
+                WriteRegister(DeviceAddress.Address,
+                                            (int)Register.CLK_DIV,
+                                            ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / update_hz);
             }
         }
 
-        uint total_words;
         [System.Xml.Serialization.XmlIgnore]
-        [Category("Information")]
-        [Description("Memory size in 32bit words.")]
+        [Category("Configuration")]
+        [Description("Hardware buffer size in 32-bit words.")]
         public uint MemorySize
         {
             get
             {
-                if (Controller != null)
-                {
-                    total_words = Controller.ReadRegister(DeviceIndex.SelectedIndex, (int)Register.TOTAL_MEM);
-                    return total_words;
-                }
-                else
-                {
-                    return total_words;
-                }
+                return ReadRegister(DeviceAddress.Address, (int)Register.TOTAL_MEM);
             }
-            private set { }
         }
     }
 }

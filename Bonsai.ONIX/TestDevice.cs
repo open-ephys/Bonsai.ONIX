@@ -6,37 +6,46 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("ONI Test device.")]
-    public class TestDevice : ONIFrameReaderDeviceBuilder<TestDataFrame>
+    public class TestDevice : ONIFrameReader<TestDataFrame, ushort>
     {
-        public enum Register
+        enum Register
         {
-            NULLPARAM = 0,
+            ENABLE = 0,
             MESSAGE,
         }
 
         public TestDevice() : base(ONIXDevices.ID.TEST) { }
 
-        public override IObservable<TestDataFrame> Process(IObservable<oni.Frame> source)
+        protected override IObservable<TestDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-            return source
-                .Where(f => f.DeviceIndex() == DeviceIndex.SelectedIndex)
-                .Select(f => { return new TestDataFrame(f); });
+            return source.Select(f => { return new TestDataFrame(f); });
+        }
+
+        [Category("Configuration")]
+        [Description("Enable the device data stream.")]
+        public bool EnableStream
+        {
+            get
+            {
+                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+            }
+            set
+            {
+                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+            }
         }
 
         [Category("Acquisition")]
         [Description("16-bit word to send as frame payload.")]
-        public short? Message
+        public short Message
         {
             get
             {
-                return (short?)Controller?.ReadRegister(DeviceIndex.SelectedIndex, (uint)Register.MESSAGE);
+                return (short)ReadRegister(DeviceAddress.Address, (uint)Register.MESSAGE);
             }
             set
             {
-                if (Controller != null)
-                {
-                    Controller.WriteRegister(DeviceIndex.SelectedIndex, (uint)Register.MESSAGE, (uint)value);
-                }
+                WriteRegister(DeviceAddress.Address, (uint)Register.MESSAGE, (uint)value);
             }
         }
     }

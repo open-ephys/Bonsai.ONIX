@@ -7,21 +7,17 @@ namespace Bonsai.ONIX
     /// </summary>
     public class NeuropixelsV1DataBlock
     {
-        private int HyperFramesPerBlock;
-        public const int NumChannels = 384;
-        private const int data_offset = 5;
-
-        private readonly int block_idx = 0;
-
-        // Total frames
-        private int total_frame_cnt = 0;
-        private int total_super_cnt = 0;
+        readonly int ULTRAFRAMES_PER_BLOCK;
+        public const int NUM_CHANNELS = 384;
+        private const int DATA_OFFSET = 5;
+        private const int FRAMES_PER_SUPER = 13;
+        private const int SUPERS_PER_ULTRA = 12;
+        private const int FRAME_WORDS = 36; // 32 ADCs + type + 2 counters
 
         // Frame hierarchy
-        private int spike_frame_cnt = 0;
         private int frame_cnt = 0;
         private int super_cnt = 0;
-        private int hyper_cnt = 0;
+        private int ultra_cnt = 0;
 
         // TODO: Would rather used the top map, but its wrong because of 
         // to vs downto somewhere in firmware
@@ -45,118 +41,91 @@ namespace Bonsai.ONIX
         readonly ulong[] spike_frame_clock;
         readonly ulong[] lfp_data_clock;
         readonly ulong[] spike_data_clock;
-        readonly uint[] counter_type;
-        readonly ushort[] frame_tpe_data;
+        readonly int[] counter_data;
         readonly ushort[,] spike_data;
         readonly ushort[,] lfp_data;
 
-        public NeuropixelsV1DataBlock(int hyper_frames_per_block = 1)
+        public NeuropixelsV1DataBlock(int ultra_frames_per_block = 1)
         {
-            HyperFramesPerBlock = hyper_frames_per_block;
+            ULTRAFRAMES_PER_BLOCK = ultra_frames_per_block;
 
-            AllocateArray1D(ref spike_frame_clock, HyperFramesPerBlock * 12);
-            AllocateArray1D(ref lfp_frame_clock, HyperFramesPerBlock);
+            AllocateArray1D(ref spike_frame_clock, ULTRAFRAMES_PER_BLOCK * 12);
+            AllocateArray1D(ref lfp_frame_clock, ULTRAFRAMES_PER_BLOCK);
 
-            AllocateArray1D(ref spike_data_clock, HyperFramesPerBlock * 12);
-            AllocateArray1D(ref lfp_data_clock, HyperFramesPerBlock);
+            AllocateArray1D(ref spike_data_clock, ULTRAFRAMES_PER_BLOCK * 12);
+            AllocateArray1D(ref lfp_data_clock, ULTRAFRAMES_PER_BLOCK);
 
-            AllocateArray1D(ref counter_type, HyperFramesPerBlock * 13 * 12);
-            AllocateArray1D(ref frame_tpe_data, HyperFramesPerBlock * 13 * 12);
+            AllocateArray2D(ref spike_data, NUM_CHANNELS, ULTRAFRAMES_PER_BLOCK * 12);
+            AllocateArray2D(ref lfp_data, NUM_CHANNELS, ULTRAFRAMES_PER_BLOCK);
 
-            AllocateArray2D(ref spike_data, NumChannels, HyperFramesPerBlock * 12);
-            AllocateArray2D(ref lfp_data, NumChannels, HyperFramesPerBlock);
+            AllocateArray1D(ref counter_data, ULTRAFRAMES_PER_BLOCK * 13 * 12);
         }
 
-        public bool FillFromFrame(oni.Frame frame)
+        // frame contains a single super frame
+        public bool FillFromFrame(ONIManagedFrame<ushort> frame)
         {
-            if (block_idx >= HyperFramesPerBlock)
-                throw new IndexOutOfRangeException();
 
-            // [uint64_t local_clock, uint16_t frame_type, ephys1, uint16_t ephys2, ... , uint16_t aux1, uint16_t aux2, ...]
-            var data = frame.Data<ushort>();
+            var data = frame.Sample;
 
-            // TODO: This should be done automatically by firmware, seems like buffers are not getting cleared during reset
-            if (total_frame_cnt == 0 && data[4] == 207)
-                return false;
+            spike_frame_clock[super_cnt] = frame.FrameClock;
+            spike_data_clock[super_cnt] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);
 
-            // Frame type and counter
-            frame_tpe_data[total_frame_cnt] = data[4];
-            //counterData[total_frame_cnt] = ((uint)data[27] << 16) | ((uint)data[34] << 0);
-            counter_type[total_frame_cnt] = ((uint)data[21 + data_offset] << 16) | ((uint)data[28 + data_offset] << 0);
-
-            if (frame_cnt == 0) // This one is LFP data
+            for (int i = 0; i < FRAMES_PER_SUPER; i++)
             {
+                var data_offset = DATA_OFFSET + i * FRAME_WORDS;
+                counter_data[frame_cnt + i] = (data[data_offset + 21] << 10) | (data[data_offset + 28] << 0);
 
-                if (super_cnt == 0) // Use the first superframe in hyperframe as time of this lfp-data round robin
+                if (i == 0) // This one is LFP data
                 {
-                    lfp_frame_clock[hyper_cnt] = frame.Clock();
-                    lfp_data_clock[hyper_cnt] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);
-                }
+                    var super_cnt_circ = super_cnt % SUPERS_PER_ULTRA;
+                    if (super_cnt_circ == 0) // Use the first superframe in ultraframe as time of this lfp-data round robin
+                    {
+                        lfp_frame_clock[ultra_cnt] = frame.FrameClock;
+                        lfp_data_clock[ultra_cnt] = spike_data_clock[super_cnt];
+                    }
 
-                for (int chan = 0; chan < 32; chan++)
+                    for (int chan = 0; chan < 32; chan++)
+                    {
+                        lfp_data[chan + super_cnt_circ * 32, ultra_cnt] = data[chan_map[chan] + data_offset]; // Start at index 6
+                    }
+
+                }
+                else // Spike data
                 {
-                    lfp_data[chan + super_cnt * 32, hyper_cnt] = data[chan_map[chan] + data_offset]; // Start at index 6
+
+                    var spike_frame_cnt = i - 1;
+                    for (int chan = 0; chan < 32; chan++)
+                    {
+                        spike_data[chan + spike_frame_cnt * 32, super_cnt] = data[chan_map[chan] + data_offset]; // Start at index 6
+                    }
+
                 }
-
-            }
-            else
-            { // Spike data
-
-                if (frame_cnt == 1) // Use the first frame in superframe as time of this spike-data round robin
-                {
-                    spike_frame_clock[hyper_cnt] = frame.Clock();
-                    spike_data_clock[super_cnt] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);
-                }
-
-                //spikeClock[block_idx] = ((ulong)data[0] << 48) | ((ulong)data[1] << 32) | ((ulong)data[2] << 16) | ((ulong)data[3] << 0);
-
-                for (int chan = 0; chan < 32; chan++)
-                {
-                    spike_data[chan + spike_frame_cnt * 32, total_super_cnt] = data[chan_map[chan] + data_offset]; // Start at index 6
-                }
-
-                spike_frame_cnt++;
             }
 
-            if (frame_cnt == 12)
+            super_cnt++;
+            frame_cnt += FRAMES_PER_SUPER;
+
+            if (super_cnt % SUPERS_PER_ULTRA == 0)
             {
-                total_super_cnt++;
-                if (++super_cnt == 12)
-                {
-                    hyper_cnt++;
-                    super_cnt = 0;
-                }
+                ultra_cnt++;
+            }
 
-                spike_frame_cnt = 0;
-                frame_cnt = 0;
-            }
-            else
-            {
-                frame_cnt++;
-            }
-            total_frame_cnt++;
-            return hyper_cnt == HyperFramesPerBlock;
+            return ultra_cnt == ULTRAFRAMES_PER_BLOCK;
         }
 
-        // Allocates memory for a 1-D array of integers.
-        void AllocateArray1D(ref ushort[] array1D, int xSize)
+        // Allocates memory for a 1D array of integers.
+        void AllocateArray1D(ref int[] array1D, int xSize)
         {
             Array.Resize(ref array1D, xSize);
         }
 
-        // Allocates memory for a 1-D array of integers.
-        void AllocateArray1D(ref uint[] array1D, int xSize)
-        {
-            Array.Resize(ref array1D, xSize);
-        }
-
-        // Allocates memory for a 1-D array of integers.
+        // Allocates memory for a 1D array of ulongs.
         void AllocateArray1D(ref ulong[] array1D, int xSize)
         {
             Array.Resize(ref array1D, xSize);
         }
 
-        // Allocates memory for a 2-D array of ushorts.
+        // Allocates memory for a 2D array of ushorts.
         void AllocateArray2D(ref ushort[,] array2D, int xSize, int ySize)
         {
             array2D = new ushort[xSize, ySize];
@@ -213,18 +182,14 @@ namespace Bonsai.ONIX
         /// <summary>
         /// Gets the array of frame-counter data.
         /// </summary>
-        public uint[] CounterData
+        public int[] CounterData
         {
-            get { return counter_type; }
+            get { return counter_data; }
         }
 
-        /// <summary>
-        /// Gets the array of frame-type data.
-        /// </summary>
-        public ushort[] FrameType
+        public bool Valid
         {
-            get { return frame_tpe_data; }
+            get; private set;
         }
-
     }
 }

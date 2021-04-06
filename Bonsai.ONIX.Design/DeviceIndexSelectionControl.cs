@@ -7,7 +7,6 @@ namespace Bonsai.ONIX.Design
     public partial class DeviceIndexSelectionControl : UserControl
     {
         const float DefaultDpi = 96f;
-        //DeviceIndexSelectionEditorService editorService;
 
         public DeviceIndexSelectionControl(DeviceIndexSelection selection)
             : this(null, selection)
@@ -17,7 +16,6 @@ namespace Bonsai.ONIX.Design
         public DeviceIndexSelectionControl(IServiceProvider provider, DeviceIndexSelection selection)
         {
             InitializeComponent();
-            //editorService = new DeviceIndexSelectionEditorService(this, provider);
 
             using (var graphics = Graphics.FromHwnd(IntPtr.Zero))
             {

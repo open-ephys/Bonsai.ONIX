@@ -5,16 +5,18 @@ namespace Bonsai.ONIX.Design
 {
     public partial class HubConfigurationEditor : Form
     {
-        // Hold reference to the controller being manipulated
-        Bonsai.ONIX.ONIController CtrlRef;
+        readonly ONIContextConfiguration Configuration;
         int hub_state;
 
-        public HubConfigurationEditor(Bonsai.ONIX.ONIController controller)
+        public HubConfigurationEditor(Bonsai.ONIX.ONIContextConfiguration configuraiton)
         {
             InitializeComponent();
 
-            CtrlRef = controller;
-            hub_state = CtrlRef.AcqContext.GetCustomOption((int)oni.lib.ONIXOption.PORTFUNC);
+            Configuration = configuraiton;
+            using (var c = Bonsai.ONIX.ONIContextManager.ReserveContext(Configuration.Slot))
+            {
+                hub_state = c.Context.HubState;
+            }
 
             radioButtonAStandard.Checked = (hub_state & 0x0001) == 0;
             radioButtonAPassthrough.Checked = (hub_state & 0x0001) == 1;
@@ -49,7 +51,10 @@ namespace Bonsai.ONIX.Design
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            CtrlRef.AcqContext.SetCustomOption((int)oni.lib.ONIXOption.PORTFUNC, hub_state);
+            using (var c = Bonsai.ONIX.ONIContextManager.ReserveContext(Configuration.Slot))
+            {
+                c.Context.HubState = hub_state;
+            }
             Close();
         }
 

@@ -4,13 +4,10 @@ namespace Bonsai.ONIX
 {
     public class DataBlockFrame
     {
-        public DataBlockFrame(DataBlock block, double acq_clk_hz, double data_clk_hz)
+        public DataBlockFrame(DataBlock block)
         {
             FrameClock = GetClock(block.FrameClock);
             DataClock = GetClock(block.DataClock);
-
-            FrameClockHz = acq_clk_hz;
-            DataClockHz = data_clk_hz;
         }
 
         Mat GetClock(ulong[] data)
@@ -19,9 +16,6 @@ namespace Bonsai.ONIX
         }
 
         protected ushort[] sample;
-
-        public double FrameClockHz { get; private set; }
-        public double DataClockHz { get; private set; }
         public Mat FrameClock { get; private set; }
         public Mat DataClock { get; private set; }
     }

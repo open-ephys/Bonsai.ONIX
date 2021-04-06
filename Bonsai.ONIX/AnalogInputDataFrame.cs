@@ -7,15 +7,19 @@ namespace Bonsai.ONIX
     /// </summary>
     public class AnalogInputDataFrame : DataBlockFrame
     {
-        public AnalogInputDataFrame(AnalogInputDataBlock data_block, double acq_clk_hz, double data_clk_hz)
-            : base(data_block, acq_clk_hz, data_clk_hz)
+        public AnalogInputDataFrame(AnalogInputDataBlock data_block)
+            : base(data_block)
         {
             Data = GetData(data_block.Data);
         }
 
         Mat GetData(short[,] data)
         {
-            if (data.Length == 0) return null;
+            if (data.Length == 0)
+            {
+                return null;
+            }
+
             var numChannels = data.GetLength(0);
             var numSamples = data.GetLength(1);
 

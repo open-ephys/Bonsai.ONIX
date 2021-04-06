@@ -12,49 +12,61 @@ namespace Bonsai.ONIX.Design
 {
     public partial class NeuropixelsEditorDialog : Form
     {
-        public Bonsai.ONIX.NeuropixelsConfiguration Config;
+        public NeuropixelsConfiguration Config;
 
         public NeuropixelsEditorDialog(Bonsai.ONIX.NeuropixelsConfiguration config)
         {
             InitializeComponent();
-            this.ControlBox = false;
 
             // Create a deep copy of the configuration to work with internally that won't 
             // commit changes to config until user clicks "OK"
             Config = ObjectExtensions.Copy(config);
 
-            label_ProbeSN.Text = "Probe SN: " + Config.ProbeSN.ToString();
+            toolStripStatusLabel.Text = "Probe SN: " + Config.ProbeSN.ToString();
 
+            // Need to manually add the SelectedIndexChange event handler or assigning the data source will trigger it
             comboBox_CalibrationMode.DataSource = Enum.GetValues(typeof(NeuropixelsConfiguration.OperationMode));
             comboBox_CalibrationMode.SelectedItem = Config.Mode;
+            comboBox_CalibrationMode.SelectedIndexChanged += new EventHandler(comboBox_CalibrationMode_SelectedIndexChanged);
 
-            DataGridViewComboBoxColumn col = new DataGridViewComboBoxColumn();
-            col.HeaderText = "Bank";
-            col.DataPropertyName = "Bank";
-            col.ValueType = typeof(NeuropixelsChannel.ElectrodeBank);
-            col.DataSource = Enum.GetValues(typeof(NeuropixelsChannel.ElectrodeBank));
+            DataGridViewComboBoxColumn col = new DataGridViewComboBoxColumn
+            {
+                HeaderText = "Bank",
+                DataPropertyName = "Bank",
+                ValueType = typeof(NeuropixelsChannel.ElectrodeBank),
+                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.ElectrodeBank)),
+            };
             dataGridView_Channels.Columns.Add(col);
 
-            col = new DataGridViewComboBoxColumn();
-            col.HeaderText = "AP Gain";
-            col.DataPropertyName = "APGain";
-            col.ValueType = typeof(NeuropixelsChannel.Gain);
-            col.DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Gain));
+            col = new DataGridViewComboBoxColumn
+            {
+                HeaderText = "AP Gain",
+                DataPropertyName = "APGain",
+                ValueType = typeof(NeuropixelsChannel.Gain),
+                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Gain))
+            };
             dataGridView_Channels.Columns.Add(col);
 
-            col = new DataGridViewComboBoxColumn();
-            col.HeaderText = "LFP Gain";
-            col.DataPropertyName = "LFPGain";
-            col.ValueType = typeof(NeuropixelsChannel.Gain);
-            col.DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Gain));
+            col = new DataGridViewComboBoxColumn
+            {
+                HeaderText = "LFP Gain",
+                DataPropertyName = "LFPGain",
+                ValueType = typeof(NeuropixelsChannel.Gain),
+                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Gain))
+            };
             dataGridView_Channels.Columns.Add(col);
 
-            col = new DataGridViewComboBoxColumn();
-            col.HeaderText = "Reference";
-            col.DataPropertyName = "Reference";
-            col.ValueType = typeof(NeuropixelsChannel.Ref);
-            col.DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Ref));
+            col = new DataGridViewComboBoxColumn
+            {
+                HeaderText = "Reference",
+                DataPropertyName = "Reference",
+                ValueType = typeof(NeuropixelsChannel.Ref),
+                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Ref))
+            };
             dataGridView_Channels.Columns.Add(col);
+
+            // Immediate update
+            dataGridView_Channels.CellEndEdit += dataGridView_Channels_CellEndEdit;
 
             // Bind the data grids
             dataGridView_Channels.DataSource = Config.Channels; // ch_source;
@@ -90,10 +102,12 @@ namespace Bonsai.ONIX.Design
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fd = new SaveFileDialog();
-            fd.Filter = "JSON file|*.json|XML file|*.xml";
-            fd.Title = "Export neuropixels configuration";
-            fd.FileName = Config.ProbeType + "_sn-" + Config.ProbeSN.ToString();
+            var fd = new SaveFileDialog
+            {
+                Filter = "JSON file|*.json|XML file|*.xml",
+                Title = "Export neuropixels configuration",
+                FileName = Config.ProbePartNo + "_sn-" + Config.ProbeSN.ToString()
+            };
             var result = fd.ShowDialog();
 
             // If the file name is not an empty string open it for saving.
@@ -102,8 +116,10 @@ namespace Bonsai.ONIX.Design
                 switch (fd.FilterIndex)
                 {
                     case 1:
-                        var opts = new JsonSerializerOptions();
-                        opts.WriteIndented = true;
+                        var opts = new JsonSerializerOptions
+                        {
+                            WriteIndented = true
+                        };
                         var json = JsonSerializer.Serialize(Config, opts);
                         File.WriteAllText(fd.FileName, json);
                         break;
@@ -120,9 +136,11 @@ namespace Bonsai.ONIX.Design
 
         private void importToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fd = new OpenFileDialog();
-            fd.Filter = "JSON file|*.json|XML file|*.xml";
-            fd.Title = "Import neuropixels configuration";
+            var fd = new OpenFileDialog
+            {
+                Filter = "JSON file|*.json|XML file|*.xml",
+                Title = "Import neuropixels configuration"
+            };
             var result = fd.ShowDialog();
 
             if (result == DialogResult.OK && fd.FileName != "")
@@ -296,14 +314,14 @@ namespace Bonsai.ONIX.Design
 
         private void applyToColumnToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var pos = contextMenuStrip_ChannelsGrid.Tag as Tuple<int, int>;
-
-            if (pos != null)
+            if (contextMenuStrip_ChannelsGrid.Tag is Tuple<int, int> pos)
             {
                 var value = dataGridView_Channels.Rows[pos.Item1].Cells[pos.Item2].Value;
 
                 for (int i = 0; i < dataGridView_Channels.Rows.Count; i++)
+                {
                     dataGridView_Channels.Rows[i].Cells[pos.Item2].Value = value;
+                }
             }
 
         }
@@ -311,10 +329,13 @@ namespace Bonsai.ONIX.Design
         private void comboBox_CalibrationMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             var box = sender as ComboBox;
-            NeuropixelsConfiguration.OperationMode mode;
-            Enum.TryParse(box.SelectedValue.ToString(), out mode);
-
+            Enum.TryParse(box.SelectedValue.ToString(), out NeuropixelsConfiguration.OperationMode mode);
             Config.Mode = mode;
+        }
+
+        private void dataGridView_Channels_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridView_Channels.BindingContext[dataGridView_Channels.DataSource].EndCurrentEdit();
         }
     }
 }

@@ -1,17 +1,35 @@
-﻿using OpenCV.Net;
+﻿using Bonsai.Expressions;
+using OpenCV.Net;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reactive.Linq;
+using System.Reflection;
 
 // TODO: Sweep frequency needs to be in terms of DataClock cycles for this to work or we need to convert the pulse width etc to time in seconds
 namespace Bonsai.ONIX
 {
+    class Visitor : ExpressionVisitor
+    {
+        protected override Expression VisitMember(MemberExpression member)
+        {
+            if (member.Expression is ConstantExpression ex &&
+                member.Member is FieldInfo fi)
+            {
+                object container = ex.Value;
+                object value = fi.GetValue(container);
+                Console.WriteLine("Got value: {0}", value);
+            }
+            return base.VisitMember(member);
+        }
+    }
+
     [Combinator]
     [WorkflowElementCategory(ElementCategory.Transform)]
     [Description("Calculates uncalibrated 3D position of a single photodiode for V1 base stations.")]
-    public class TS4321V1FrameToPosition
+    public class TS4321V1FrameToPosition : SingleArgumentExpressionBuilder
     {
         // Template pattern
         static readonly bool[] template = {
@@ -34,9 +52,9 @@ namespace Bonsai.ONIX
         // TODO: Figure out the correct value...
         //const double max_packet_duration = 0.03;
 
-        private Queue<double> pulse_times;
-        private Queue<double> pulse_widths;
-        private Queue<bool> pulse_parse;
+        readonly Queue<double> pulse_times;
+        readonly Queue<double> pulse_widths;
+        readonly Queue<bool> pulse_parse;
 
         // Origins in Mat format
         Mat p, q;
@@ -57,15 +75,33 @@ namespace Bonsai.ONIX
             pulse_parse = new Queue<bool>(fill1);
         }
 
-        bool Process(TS4231V1DataFrame source)
+        public override Expression Build(IEnumerable<Expression> arguments)
+        {
+            var source = arguments.First();
+
+            // TODO: needs to do this using visitor searching for upstream node. This is brittle and will fail if immediately upstream node is not TS4231
+            DataClockHz = (((((source
+                as MethodCallExpression).Object
+                as ConstantExpression).Value
+                as InspectBuilder).Builder
+                as CombinatorBuilder).Combinator
+                as ONIDevice).Hub.ClockHz;
+
+            var thisType = GetType();
+            var method = thisType.GetMethod(nameof(Process));
+            var instance = Expression.Constant(this);
+            return Expression.Call(instance, method, new[] { source });
+        }
+
+        bool Decode(TS4231V1DataFrame source)
         {
             // Push pulse time into buffer and pop oldest
             pulse_times.Dequeue();
-            pulse_times.Enqueue(source.DataClock / source.DataClockHz);
+            pulse_times.Enqueue(source.DataClock / DataClockHz ?? double.NaN);
 
             // Push pulse width into buffer and pop oldest
             pulse_widths.Dequeue();
-            pulse_widths.Enqueue(source.PulseWidth / source.DataClockHz);
+            pulse_widths.Enqueue(source.PulseWidth / DataClockHz ?? double.NaN);
 
             // Push pulse parse info into buffer and pop oldest 4x
             pulse_parse.Dequeue();
@@ -82,7 +118,9 @@ namespace Bonsai.ONIX
             // Test template match and make sure time between pulses does 
             // not integrate to more than two periods
             if (!pulse_parse.SequenceEqual(template) || pulse_times.Last() - pulse_times.First() > 2 / SweepFrequency)
+            {
                 return false;
+            }
 
             // Time is the mean of the data used
             position_time = 0.5 * (pulse_times.Last() + pulse_times.First());
@@ -149,7 +187,7 @@ namespace Bonsai.ONIX
         public IObservable<Position3D> Process(IObservable<TS4231V1DataFrame> source)
         {
             return source.Where(input => input.Index == Index)
-                         .Where(input => Process(input))
+                         .Where(input => Decode(input))
                          .Select(input => new Position3D(position_time, position));
         }
 
@@ -190,5 +228,9 @@ namespace Bonsai.ONIX
 
         [Description("Base station IR sweep frequency in Hz.")]
         public double SweepFrequency { get; set; } = 60;
+
+        [System.Xml.Serialization.XmlIgnore]
+        [Description("Rate of clock timing the IR reception times.")]
+        public double? DataClockHz { get; private set; }
     }
 }

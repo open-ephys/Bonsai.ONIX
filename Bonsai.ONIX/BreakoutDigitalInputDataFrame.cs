@@ -1,23 +1,20 @@
 ﻿namespace Bonsai.ONIX
 {
-    /// <summary>
-    /// Provides Bonsai-friendly version of an AD7617DataBlock
-    /// </summary>
-    public class BreakoutDigitalInputDataFrame : DataFrame
+    public class BreakoutDigitalInputDataFrame : U16DataFrame
     {
-        public BreakoutDigitalInputDataFrame(oni.Frame frame, double acq_clk_hz, double data_clk_hz)
-            : base(frame, acq_clk_hz, data_clk_hz)
+        public BreakoutDigitalInputDataFrame(ONIManagedFrame<ushort> frame)
+            : base(frame)
         {
-            Port = sample[4];
-            Buttons = (ushort)(0x00FF & sample[5]);
-            Links = (ushort)((0x0F00 & sample[5]) >> 8);
+            Port = (byte)(0x00FF & frame.Sample[4]);
+            Buttons = (byte)(0x00FF & frame.Sample[5]);
+            Links = (byte)((0x0F00 & frame.Sample[5]) >> 8);
         }
 
-        public ushort Buttons { get; private set; }
+        public byte Buttons { get; private set; }
 
-        public ushort Links { get; private set; }
+        public byte Links { get; private set; }
 
-        public ushort Port { get; private set; }
+        public byte Port { get; private set; }
 
     }
 }
