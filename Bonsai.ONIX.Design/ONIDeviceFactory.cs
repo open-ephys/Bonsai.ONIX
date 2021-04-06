@@ -32,7 +32,7 @@
                 //case ONIXDevices.ID.AD576X:
                 //case ONIXDevices.ID.TESTREG0:
                 case ONIXDevices.ID.BREAKDIG1R3:
-                    return new BreakoutDigitalInputDevice();
+                    return new FMCDigitalIODevice();
                 //case ONIXDevices.ID.FMCCLKIN1R3:
                 case ONIXDevices.ID.FMCCLKOUT1R3:
                     return new FMCCLKOutDevice();

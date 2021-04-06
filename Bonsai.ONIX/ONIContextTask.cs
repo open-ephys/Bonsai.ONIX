@@ -46,7 +46,10 @@ namespace Bonsai.ONIX
         public static readonly string DefaultDriver = "riffa";
         public static readonly int DefaultIndex = 0;
 
-        private readonly object hw_lock = new object();
+        // TODO: These work for RIFFA implementation, but potentially not others!!
+        private readonly object read_lock = new object();
+        private readonly object write_lock = new object();
+        private readonly object reg_lock = new object();
 
         public ONIContextTask(string driver, int index)
         {
@@ -196,7 +199,7 @@ namespace Bonsai.ONIX
 
         internal uint ReadRegister(uint dev_index, uint register_address)
         {
-            lock (hw_lock)
+            lock (reg_lock)
             {
                 return ctx.ReadRegister(dev_index, register_address);
             }
@@ -204,7 +207,7 @@ namespace Bonsai.ONIX
 
         internal void WriteRegister(uint dev_index, uint register_address, uint value)
         {
-            lock (hw_lock)
+            lock (reg_lock)
             {
                 ctx.WriteRegister(dev_index, register_address, value);
             }
@@ -212,7 +215,7 @@ namespace Bonsai.ONIX
 
         public oni.Frame ReadFrame()
         {
-            lock (hw_lock)
+            lock (read_lock)
             {
                 return ctx.ReadFrame();
             }
@@ -220,21 +223,21 @@ namespace Bonsai.ONIX
 
         public void Write<T>(uint dev_idx, T data) where T : unmanaged
         {
-            lock (hw_lock)
+            lock (write_lock)
             {
                 ctx.Write(dev_idx, data);
             }
         }
         public void Write<T>(uint dev_idx, T[] data) where T : unmanaged
         {
-            lock (hw_lock)
+            lock (write_lock)
             {
                 ctx.Write(dev_idx, data);
             }
         }
         public void Write(uint dev_idx, IntPtr data, int data_size)
         {
-            lock (hw_lock)
+            lock (write_lock)
             {
                 ctx.Write(dev_idx, data, data_size);
             }
@@ -259,7 +262,9 @@ namespace Bonsai.ONIX
         public void Dispose()
         {
             Stop();
-            lock (hw_lock)
+            lock (read_lock)
+            lock (write_lock)
+            lock (reg_lock)
             {
                 ctx?.Dispose();
             }

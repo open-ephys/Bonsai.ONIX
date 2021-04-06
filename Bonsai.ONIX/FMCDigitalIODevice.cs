@@ -3,11 +3,12 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 using System.Reactive.Linq;
+using OpenCV.Net;
 
 namespace Bonsai.ONIX
 {
     [Description("Acquires digital data from an Open-Ephys FMC Breakout Board.")]
-    public class BreakoutDigitalInputDevice : ONIFrameReader<BreakoutDigitalInputDataFrame, ushort>
+    public class FMCDigitalIODevice : ONIFrameReaderAndWriter<int, BreakoutDigitalInputDataFrame, ushort>
     {
         enum Register
         {
@@ -16,11 +17,16 @@ namespace Bonsai.ONIX
             LEDLVL = 2, // 0-255 overall LED brightness value.
         }
 
-        public BreakoutDigitalInputDevice() : base(ONIXDevices.ID.BREAKDIG1R3) { }
+        public FMCDigitalIODevice() : base(ONIXDevices.ID.BREAKDIG1R3) { }
 
         protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
+        }
+
+        protected override void Write(ONIContextTask ctx, int input)
+        {
+            ctx.Write(DeviceAddress.Address, (uint)input);
         }
 
         [Category("Acquisition")]
