@@ -38,7 +38,7 @@ namespace Bonsai.ONIX
             PWR7,
 
             // Managed
-            ENABLE = 0x10000
+            ENABLE = 0x8000
         }
 
         public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
