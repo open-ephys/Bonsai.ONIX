@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 using System.Reactive.Linq;
-using OpenCV.Net;
 
 namespace Bonsai.ONIX
 {

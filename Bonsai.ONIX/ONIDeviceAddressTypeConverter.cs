@@ -34,12 +34,13 @@ namespace Bonsai.ONIX
                 device.FrameClockHz = clks.Item1;
                 device.Hub = clks.Item2;
 
-                var dev_idx = new ONIDeviceAddress();
-                dev_idx.HardwareSlot.Driver = matches[0];
-                dev_idx.HardwareSlot.Index = Convert.ToInt32(matches[1]);
-                dev_idx.Address = Convert.ToUInt32(matches[2]);
+                result = new ONIDeviceAddress
+                {
+                    HardwareSlot = new ONIHardwareSlot { Driver = matches[0], Index = Convert.ToInt32(matches[1]) },
+                    Address = Convert.ToUInt32(matches[2]),
+                    Valid = true
+                };
 
-                result = dev_idx;
             }
 
             return result ?? base.ConvertFrom(context, culture, value);

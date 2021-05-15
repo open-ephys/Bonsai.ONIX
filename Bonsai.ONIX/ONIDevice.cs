@@ -6,15 +6,10 @@ namespace Bonsai.ONIX
     {
         internal ONIXDevices.ID ID { get; set; } = ONIXDevices.ID.NULL;
 
-        ONIDeviceAddress dev_address = new ONIDeviceAddress();
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        public ONIDeviceAddress DeviceAddress
-        {
-            get { return dev_address; }
-            set { dev_address = value; DeviceAddressChanged(); }
-        }
+        public virtual ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("ONI Configuration")]
         [Description("The hub that this device belongs to.")]
@@ -41,6 +36,8 @@ namespace Bonsai.ONIX
         // I'm just dumping errors to the Console and returning 0 or doing nothing.
         protected uint ReadRegister(uint dev_index, uint register_address)
         {
+            if (!DeviceAddress.Valid) return 0;
+
             try
             {
                 using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
@@ -57,6 +54,8 @@ namespace Bonsai.ONIX
 
         protected void WriteRegister(uint dev_index, uint register_address, uint value)
         {
+            if (!DeviceAddress.Valid) return;
+
             try
             {
                 using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
@@ -70,9 +69,5 @@ namespace Bonsai.ONIX
                 return;
             }
         }
-
-        // Can be used by derived classes to perform updates 
-        // when the selected hardware (device and or hardware slot) changes
-        protected virtual void DeviceAddressChanged() { }
     }
 }

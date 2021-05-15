@@ -11,8 +11,6 @@ namespace Bonsai.ONIX
         "channels are selected to be outputs.")]
     public class FMCAnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, ushort>
     {
-        const int NUM_CHANNELS = 12;
-
         enum Register
         {
             ENABLE = 0,
@@ -78,19 +76,9 @@ namespace Bonsai.ONIX
 
         protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-            var data_block = new AnalogInputDataBlock(NUM_CHANNELS, BlockSize);
-
             return source
-                .Where(f =>
-                {
-                    return data_block.FillFromFrame(f);
-                })
-                .Select(f =>
-                {
-                    var sample = new AnalogInputDataFrame(data_block);
-                    data_block = new AnalogInputDataBlock(NUM_CHANNELS, BlockSize);
-                    return sample;
-                });
+                .Buffer(BlockSize)
+                .Select(block => { return new AnalogInputDataFrame(block); });
         }
 
         // TODO: The order of data in the matrix is reverse of the channel index.
@@ -100,7 +88,7 @@ namespace Bonsai.ONIX
             var m = input.GetMat();
 
             // Check dims
-            if (m.Rows * m.Cols != NUM_CHANNELS)
+            if (m.Rows * m.Cols != AnalogInputDataFrame.NumberOfChannels)
             {
                 throw new IndexOutOfRangeException("Source must be a 12 element vector.");
             }
@@ -110,11 +98,11 @@ namespace Bonsai.ONIX
                 throw new InvalidOperationException("Source elements must be unsigned 16 bit integers");
             }
 
-            ctx.Write(DeviceAddress.Address, m.Data, 2 * NUM_CHANNELS);
+            ctx.Write(DeviceAddress.Address, m.Data, 2 * AnalogInputDataFrame.NumberOfChannels);
         }
 
-        [Category("Acquisition")]
-        [Range(1, 10000)]
+        [Category("Configuration")]
+        [Range(1, 1e6)]
         [Description("The size of data blocks, in samples, that are propagated as events in the observable sequence.")]
         public int BlockSize { get; set; } = 250;
 

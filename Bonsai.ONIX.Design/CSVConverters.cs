@@ -2,7 +2,7 @@
 
 namespace Bonsai.ONIX.Design
 {
-    public class CsvNeuropixelsADCMapping : CsvMapping<NeuropixelsADC>
+    public class CsvNeuropixelsADCMapping : CsvMapping<NeuropixelsV1ADC>
     {
         public CsvNeuropixelsADCMapping()
             : base()
@@ -20,7 +20,7 @@ namespace Bonsai.ONIX.Design
         }
     }
 
-    public class CsvNeuropixelsElectrodeMapping : CsvMapping<NeuropixelsElectrode>
+    public class CsvNeuropixelsElectrodeMapping : CsvMapping<NeuropixelsV1GainCorrection>
     {
         public CsvNeuropixelsElectrodeMapping()
             : base()

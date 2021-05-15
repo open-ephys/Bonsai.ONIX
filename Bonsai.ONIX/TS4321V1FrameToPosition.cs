@@ -79,13 +79,22 @@ namespace Bonsai.ONIX
         {
             var source = arguments.First();
 
-            // TODO: needs to do this using visitor searching for upstream node. This is brittle and will fail if immediately upstream node is not TS4231
-            DataClockHz = (((((source
-                as MethodCallExpression).Object
-                as ConstantExpression).Value
-                as InspectBuilder).Builder
-                as CombinatorBuilder).Combinator
-                as ONIDevice).Hub.ClockHz;
+            // TODO: HACK HACK HACK
+            // Need to do this using visitor searching for upstream node.
+            // This is brittle and will fail if immediately upstream node is not TS4231
+            try
+            {
+                DataClockHz = (((((source
+                    as MethodCallExpression).Object
+                    as ConstantExpression).Value
+                    as InspectBuilder).Builder
+                    as CombinatorBuilder).Combinator
+                    as ONIDevice).Hub.ClockHz;
+            }
+            catch (NullReferenceException ex)
+            {
+                throw new Bonsai.WorkflowBuildException("Upstream node must be TS4231V1Device.", ex);
+            }
 
             var thisType = GetType();
             var method = thisType.GetMethod(nameof(Process));
@@ -168,7 +177,7 @@ namespace Bonsai.ONIX
             var b2 = CV.DotProduct(v, d);
 
             // Solve Ax = B
-            var x2 = (b2 - b1 * a21 / a11) / (a22 - (a12 * a21) / a11);
+            var x2 = (b2 - (b1 * a21) / a11) / (a22 - (a12 * a21) / a11);
             var x1 = (b1 - a12 * x2) / a11;
 
             // TODO: If non-singular solution else send NaNs

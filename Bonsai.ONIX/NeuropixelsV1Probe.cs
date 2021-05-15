@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bonsai.ONIX
 {
-    using Channel = NeuropixelsChannel;
+    using Channel = NeuropixelsV1Channel;
 
     public class NeuropixelsV1Probe : I2CConfiguration
     {
@@ -35,10 +36,33 @@ namespace Bonsai.ONIX
         // where these parameters are actually used.
         const int PROBE_SRBASECONFIG_BIT_ADCBASE = 2114;
 
+        enum Register
+        {
+            // Unmangaged register access handled by I2C base class
+
+            // Managed
+            ENABLE = 0x00008000,
+            ADC01_00_OFF_THRESH = 0x00008001,
+            CHAN001_000_LFPGAIN = 0x00008011,
+            CHAN001_000_APGAIN = 0x000080D1,
+            PROBE_SN_LSB = 0x00008191,
+            PROBE_SN_MSB = 0x00008192
+        }
+
         public NeuropixelsV1Probe(ONIDeviceAddress device) : base(device, 0x70)
         { }
 
-        public void Reset()
+        public static int ElectrodeToChannel(int electrode)
+        {
+            return electrode % CHANNEL_COUNT;
+        }
+
+        public static Channel.ElectrodeBank ElectrodeToBank(int electrode)
+        {
+            return (Channel.ElectrodeBank)(electrode / CHANNEL_COUNT);
+        }
+
+        public void FullReset()
         {
             // Set memory map and test configuration registers to default values
             WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.CAL_OFF);
@@ -56,47 +80,43 @@ namespace Bonsai.ONIX
             WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD);
         }
 
+        public void DigitalReset()
+        {
+            WriteByte((uint)RegAddr.REC_MOD, (uint)RecMod.DIG_RESET);
+        }
+
         public void Start()
         {
             // Release resets
+            //WriteByte((uint)RegAddr.REC_MOD, (uint)RecMod.DIG_RESET);
             WriteByte((uint)RegAddr.REC_MOD, (uint)RecMod.ACTIVE);
         }
 
-        public void WriteConfiguration(NeuropixelsConfiguration config, bool read_check = false)
+        public void WriteConfiguration(NeuropixelsV1Configuration config, bool read_check = false)
         {
-            if (config.Channels.Length != CHANNEL_COUNT)
-            {
-                throw new ArgumentException("Incorrect number of channels for this probe.", "config");
-            }
-
-            if (config.ADCs.Length != ADC_COUNT)
-            {
-                throw new ArgumentException("Incorrect number of ADCs for this probe.", "config");
-            }
-
             if (config.Channels.ToList().GetRange(192, 192).Any(c => c.Bank == Channel.ElectrodeBank.TWO))
             {
                 throw new ArgumentException("Electrode selection is out of bounds. Only bank 0 and 1 are valid for channels in range 192..383.", "config");
             }
 
             // Turn on calibration if necessary
-            if (config.Mode != NeuropixelsConfiguration.OperationMode.RECORD)
+            if (config.Mode != NeuropixelsV1Configuration.OperationMode.RECORD)
             {
                 switch (config.Mode)
                 {
-                    case NeuropixelsConfiguration.OperationMode.CALIBRATE_ADCS:
+                    case NeuropixelsV1Configuration.OperationMode.CALIBRATE_ADCS:
                         WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_ADC_CAL);
                         WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
                         break;
-                    case NeuropixelsConfiguration.OperationMode.CALIBRATE_CHANNELS:
+                    case NeuropixelsV1Configuration.OperationMode.CALIBRATE_CHANNELS:
                         WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_CH_CAL);
                         WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
                         break;
-                    case NeuropixelsConfiguration.OperationMode.CALIBRATE_PIXELS:
+                    case NeuropixelsV1Configuration.OperationMode.CALIBRATE_PIXELS:
                         WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_PIX_CAL);
                         WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
                         break;
-                    case NeuropixelsConfiguration.OperationMode.DIGITAL_TEST:
+                    case NeuropixelsV1Configuration.OperationMode.DIGITAL_TEST:
                         WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_DIG_TEST);
                         break;
                 }
@@ -106,17 +126,85 @@ namespace Bonsai.ONIX
             // NB: ASIC bug, read_check on SR_CHAIN1 ignored
             WriteShiftRegister((uint)RegAddr.SR_CHAIN1, ShankConfig(config), false);
 
-            // NB: NP API uploads ADC gain correction at this point, but we are using a downstream transform to do this.
-            // This process does not mutate base_config bit arrays
+            // Gain and ADC corrections
+            WriteLFPGainCorrections(config);
+            WriteAPGainCorrections(config);
+            WriteADCCorrections(config);
+            ConfigProbeSN = config.ConfigProbeSN;
 
             // Base configurations
             var base_configs = BaseConfig(config);
             WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], read_check);
             WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], read_check);
+
+            // Configuration has been uploaded
+            config.RefreshNeeded = false;
+        }
+
+
+        public async Task<int> WriteConfigurationAsync(NeuropixelsV1Configuration config, IProgress<int> progress, bool read_check = false)
+        {
+            return await Task.Run<int>(() =>
+            {
+                if (config.Channels.ToList().GetRange(192, 192).Any(c => c.Bank == Channel.ElectrodeBank.TWO))
+                {
+                    throw new ArgumentException("Electrode selection is out of bounds. Only bank 0 and 1 are valid for channels in range 192..383.", "config");
+                }
+
+                // Turn on calibration if necessary
+                if (config.Mode != NeuropixelsV1Configuration.OperationMode.RECORD)
+                {
+                    switch (config.Mode)
+                    {
+                        case NeuropixelsV1Configuration.OperationMode.CALIBRATE_ADCS:
+                            WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_ADC_CAL);
+                            WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
+                            break;
+                        case NeuropixelsV1Configuration.OperationMode.CALIBRATE_CHANNELS:
+                            WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_CH_CAL);
+                            WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
+                            break;
+                        case NeuropixelsV1Configuration.OperationMode.CALIBRATE_PIXELS:
+                            WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.OSC_ACTIVE_AND_PIX_CAL);
+                            WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_CALIBRATE);
+                            break;
+                        case NeuropixelsV1Configuration.OperationMode.DIGITAL_TEST:
+                            WriteByte((uint)RegAddr.OP_MODE, (uint)Operation.RECORD_AND_DIG_TEST);
+                            break;
+                    }
+                }
+                progress.Report(10);
+
+                // Shank configuration
+                // NB: ASIC bug, read_check on SR_CHAIN1 ignored
+                WriteShiftRegister((uint)RegAddr.SR_CHAIN1, ShankConfig(config), false);
+                progress.Report(30);
+
+                // Gain and ADC corrections
+                WriteLFPGainCorrections(config);
+                progress.Report(50);
+                WriteAPGainCorrections(config);
+                progress.Report(60);
+                WriteADCCorrections(config);
+                progress.Report(70);
+                ConfigProbeSN = config.ConfigProbeSN;
+
+                // Base configurations
+                var base_configs = BaseConfig(config);
+                WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], read_check);
+                progress.Report(80);
+                WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], read_check);
+                progress.Report(100);
+
+                // Configuration has been uploaded
+                config.RefreshNeeded = false;
+
+                return 100;
+            });
         }
 
         // Convert Channels into BitArray
-        BitArray ShankConfig(NeuropixelsConfiguration config)
+        BitArray ShankConfig(NeuropixelsV1Configuration config)
         {
             // Default
             var shank_config = new BitArray(SHANK_CONFIG_BITS, false);
@@ -149,7 +237,7 @@ namespace Bonsai.ONIX
                     continue;
                 }
 
-                var e = config.GetElectrode(i);
+                var e = config.Channels[i].ElectrodeNumber;
                 if (e != null)
                 {
                     int bit_idx = e % 2 == 0 ?
@@ -163,7 +251,7 @@ namespace Bonsai.ONIX
         }
 
         // Convert Channels & ADCs into BitArray
-        BitArray[] BaseConfig(NeuropixelsConfiguration config)
+        BitArray[] BaseConfig(NeuropixelsV1Configuration config)
         {
 
             // MSB [Full, standby, LFPGain(3 downto 0), APGain(3 downto0)] LSB
@@ -292,7 +380,6 @@ namespace Bonsai.ONIX
 
         void WriteShiftRegister(uint sr_addr, BitArray data, bool read_check = false)
         {
-
             var bytes = BitArrayToBytes(data);
 
             var count = read_check ? 2 : 1;
@@ -310,6 +397,62 @@ namespace Bonsai.ONIX
             if (read_check && ReadByte((uint)RegAddr.STATUS) != (uint)Status.SR_OK)
             {
                 throw new IOException("Shift register programming check failed.");
+            }
+        }
+
+        void WriteLFPGainCorrections(NeuropixelsV1Configuration config)
+        {
+            for (int i = 0; i < config.Channels.Count(); i += 2)
+            {
+                var addr = (uint)Register.CHAN001_000_LFPGAIN + (uint)i / 2;
+                var gain_fixed0 = (uint)(config.Channels[i].LFPGainCorrection * (1 << 14));
+                var gain_fixed1 = (uint)(config.Channels[i + 1].LFPGainCorrection * (1 << 14));
+                var val = gain_fixed1 << 16 | gain_fixed0;
+                WriteManagedRegister(addr, val);
+            }
+        }
+
+        void WriteAPGainCorrections(NeuropixelsV1Configuration config)
+        {
+            for (int i = 0; i < config.Channels.Count(); i += 2)
+            {
+                var addr = (uint)Register.CHAN001_000_APGAIN + (uint)i / 2;
+                var gain_fixed0 = (uint)(config.Channels[i].APGainCorrection * (1 << 14));
+                var gain_fixed1 = (uint)(config.Channels[i + 1].APGainCorrection * (1 << 14));
+                var val = gain_fixed1 << 16 | gain_fixed0;
+                WriteManagedRegister(addr, val);
+            }
+        }
+
+        void WriteADCCorrections(NeuropixelsV1Configuration config)
+        {
+            for (int i = 0; i < config.ADCs.Count(); i += 2)
+            {
+                var addr = (uint)Register.ADC01_00_OFF_THRESH + (uint)i / 2;
+                var adc0 = (uint)config.ADCs[i].Offset << 10 | (uint)config.ADCs[i].Threshold;
+                var adc1 = (uint)config.ADCs[i + 1].Offset << 10 | (uint)config.ADCs[i].Threshold;
+                var val = adc1 << 16 | adc0;
+                WriteManagedRegister(addr, val);
+            }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public ulong? ConfigProbeSN
+        {
+            get
+            {
+                return ReadManagedRegister((uint)Register.PROBE_SN_MSB) << 32 | ReadManagedRegister((uint)Register.PROBE_SN_LSB);
+            }
+            private set
+            {
+                ulong val = 0;
+                if (value != null)
+                {
+                    val = (ulong)value;
+                }
+
+                WriteManagedRegister((uint)Register.PROBE_SN_LSB, (uint)(val & 0x00000000FFFFFFFF));
+                WriteManagedRegister((uint)Register.PROBE_SN_MSB, (uint)(val >> 32 & 0x00000000FFFFFFFF));
             }
         }
 
@@ -363,8 +506,8 @@ namespace Bonsai.ONIX
 
             // Useful combinations
             SR_RESET = RESET_ALL | CH_NRESET | DIG_NRESET,
-            DIG_RESET = CH_NRESET,
-            CH_RESET = DIG_NRESET,
+            DIG_RESET = CH_NRESET, // Yes, this is actually correct
+            CH_RESET = DIG_NRESET, // Yes, this is actually correct
             ACTIVE = DIG_NRESET | CH_NRESET,
         };
 

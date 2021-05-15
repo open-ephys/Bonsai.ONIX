@@ -19,7 +19,7 @@ namespace Bonsai.ONIX.Design
             var editorService = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
             if (editorService != null)
             {
-                var editorDialog = new NeuropixelsEditorDialog(value as NeuropixelsConfiguration);
+                var editorDialog = new NeuropixelsEditorDialog(value as NeuropixelsV1Configuration);
 
                 if (editorService.ShowDialog(editorDialog) == DialogResult.OK)
                 {

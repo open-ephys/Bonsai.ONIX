@@ -8,29 +8,29 @@ namespace Bonsai.ONIX
 {
     public class ONIContextTask : IDisposable
     {
-        readonly oni.Context ctx;
+        private readonly oni.Context ctx;
 
-        Task CollectFrames;
-        Task ReadFrames;
+        private Task ReadFrames;
+        private Task CollectFrames;
 
         /// <summary>
         /// Maximum amount of frames the reading queue will hold.
         /// If the queue fills, frame reading will throttle, filling host memory instead of 
         /// userspace memory.
         /// </summary>
-        private const int MAX_QUEUED_FRAMES = 2000000;
+        private const int MaxQueuedFrames = 2_000_000;
 
         /// <summary>
         /// Timeout in ms for queue reads. This should not be critical as the 
         /// read operation will cancel if the task is stopped
         /// </summary>
-        private const int QUEUE_TIMEOUT_MS = 200;
+        private const int QueueTimeoutMilliseconds = 200;
 
         private BlockingCollection<oni.Frame> FrameQueue;
 
         // TODO: Multi-writer, thread safe FIFO for oni_write()'s
         // private Task WriteData;
-        // System.Collections.Concurrent.BlockingCollection<oni.Frame> write_queue = new System.Collections.Concurrent.BlockingCollection<oni.Frame>();
+        // private BlockingCollection<oni.Frame> write_queue = new System.Collections.Concurrent.BlockingCollection<oni.Frame>();
 
         CancellationTokenSource TokenSource;
         CancellationToken CollectFramesToken;
@@ -41,15 +41,15 @@ namespace Bonsai.ONIX
         public readonly uint AcquisitionClockHz;
         public readonly uint MaxReadFrameSize;
         public readonly uint MaxWriteFrameSize;
-        public readonly Dictionary<uint, oni.Device> DeviceTable;
+        public Dictionary<uint, oni.Device> DeviceTable;
 
         public static readonly string DefaultDriver = "riffa";
         public static readonly int DefaultIndex = 0;
 
         // TODO: These work for RIFFA implementation, but potentially not others!!
-        private readonly object read_lock = new object();
-        private readonly object write_lock = new object();
-        private readonly object reg_lock = new object();
+        private readonly object readLock = new object();
+        private readonly object writeLock = new object();
+        private readonly object regLock = new object();
 
         public ONIContextTask(string driver, int index)
         {
@@ -67,7 +67,7 @@ namespace Bonsai.ONIX
             TokenSource = new CancellationTokenSource();
             CollectFramesToken = TokenSource.Token;
 
-            FrameQueue = new BlockingCollection<oni.Frame>(MAX_QUEUED_FRAMES);
+            FrameQueue = new BlockingCollection<oni.Frame>(MaxQueuedFrames);
 
             ReadFrames = Task.Factory.StartNew(() =>
             {
@@ -96,16 +96,20 @@ namespace Bonsai.ONIX
 
             CollectFrames = Task.Factory.StartNew(() =>
             {
+
                 while (!CollectFramesToken.IsCancellationRequested)
                 {
+
                     try
                     {
-                        if (FrameQueue.TryTake(out oni.Frame frame, QUEUE_TIMEOUT_MS, CollectFramesToken))
+                        if (FrameQueue.TryTake(out oni.Frame frame, QueueTimeoutMilliseconds, CollectFramesToken))
+                        {
                             OnFrameReceived(new FrameReceivedEventArgs(frame));
+                        }
                     }
                     catch (OperationCanceledException)
                     {
-                        //If the thread stops no frame has been collected
+                        // If the thread stops no frame has been collected
                     }
                 }
             },
@@ -124,7 +128,7 @@ namespace Bonsai.ONIX
             TokenSource?.Dispose();
             TokenSource = null;
 
-            //clear queue and free memory
+            // Clear queue and free memory
             while (FrameQueue?.Count > 0)
             {
                 oni.Frame frame;
@@ -199,7 +203,7 @@ namespace Bonsai.ONIX
 
         internal uint ReadRegister(uint dev_index, uint register_address)
         {
-            lock (reg_lock)
+            lock (regLock)
             {
                 return ctx.ReadRegister(dev_index, register_address);
             }
@@ -207,7 +211,7 @@ namespace Bonsai.ONIX
 
         internal void WriteRegister(uint dev_index, uint register_address, uint value)
         {
-            lock (reg_lock)
+            lock (regLock)
             {
                 ctx.WriteRegister(dev_index, register_address, value);
             }
@@ -215,7 +219,7 @@ namespace Bonsai.ONIX
 
         public oni.Frame ReadFrame()
         {
-            lock (read_lock)
+            lock (readLock)
             {
                 return ctx.ReadFrame();
             }
@@ -223,21 +227,21 @@ namespace Bonsai.ONIX
 
         public void Write<T>(uint dev_idx, T data) where T : unmanaged
         {
-            lock (write_lock)
+            lock (writeLock)
             {
                 ctx.Write(dev_idx, data);
             }
         }
         public void Write<T>(uint dev_idx, T[] data) where T : unmanaged
         {
-            lock (write_lock)
+            lock (writeLock)
             {
                 ctx.Write(dev_idx, data);
             }
         }
         public void Write(uint dev_idx, IntPtr data, int data_size)
         {
-            lock (write_lock)
+            lock (writeLock)
             {
                 ctx.Write(dev_idx, data, data_size);
             }
@@ -262,12 +266,12 @@ namespace Bonsai.ONIX
         public void Dispose()
         {
             Stop();
-            lock (read_lock)
-            lock (write_lock)
-            lock (reg_lock)
-            {
-                ctx?.Dispose();
-            }
+            lock (readLock)
+                lock (writeLock)
+                    lock (regLock)
+                    {
+                        ctx?.Dispose();
+                    }
         }
     }
 }

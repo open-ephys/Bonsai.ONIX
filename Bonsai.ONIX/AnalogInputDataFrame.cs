@@ -1,29 +1,40 @@
 ﻿using OpenCV.Net;
+using System.Collections.Generic;
 
 namespace Bonsai.ONIX
 {
-    /// <summary>
-    /// Provides Bonsai-friendly version of an AD7617DataBlock
-    /// </summary>
-    public class AnalogInputDataFrame : DataBlockFrame
+    public class AnalogInputDataFrame : U16DataBlockFrame
     {
-        public AnalogInputDataFrame(AnalogInputDataBlock data_block)
-            : base(data_block)
+        public const int NumberOfChannels = 12;
+        public readonly int NumberOfSamples;
+
+        public AnalogInputDataFrame(IList<ONIManagedFrame<ushort>> frameBlock)
+            : base(frameBlock)
         {
-            Data = GetData(data_block.Data);
+            if (frameBlock.Count == 0)
+            {
+                throw new Bonsai.WorkflowRuntimeException("Analog input frame buffer is empty.");
+            }
+
+            NumberOfSamples = frameBlock.Count;
+            var data = new short[NumberOfChannels, NumberOfSamples];
+
+            for (int i = 0; i < NumberOfSamples; i++)
+            {
+                int chan = 4; // Data starts at index 4
+
+                for (int j = 0; j < NumberOfChannels; j++, chan++)
+                {
+                    data[j, i] = (short)frameBlock[i].Sample[chan];
+                }
+            }
+
+            Data = GetData(data);
         }
 
         Mat GetData(short[,] data)
         {
-            if (data.Length == 0)
-            {
-                return null;
-            }
-
-            var numChannels = data.GetLength(0);
-            var numSamples = data.GetLength(1);
-
-            var output = new Mat(numChannels, numSamples, Depth.S16, 1);
+            var output = new Mat(NumberOfChannels, NumberOfSamples, Depth.S16, 1);
             using (var header = Mat.CreateMatHeader(data))
             {
                 CV.Convert(header, output);

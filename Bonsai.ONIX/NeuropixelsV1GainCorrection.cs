@@ -2,7 +2,7 @@
 
 namespace Bonsai.ONIX
 {
-    public class NeuropixelsElectrode
+    public class NeuropixelsV1GainCorrection
     {
         // This is terrible, but...
         // Using dictionaries results in _huge_ performance drop when doing deep copy inside the editor
@@ -25,55 +25,54 @@ namespace Bonsai.ONIX
         public double LFPx2000Correction { get; set; } = 1.0;
         public double LFPx3000Correction { get; set; } = 1.0;
 
-        public double APGainCorrection(NeuropixelsChannel.Gain gain)
+        public double APGainCorrection(NeuropixelsV1Channel.Gain gain)
         {
             switch (gain)
             {
-                case NeuropixelsChannel.Gain.x50:
+                case NeuropixelsV1Channel.Gain.x50:
                     return APx50Correction;
-                case NeuropixelsChannel.Gain.x125:
+                case NeuropixelsV1Channel.Gain.x125:
                     return APx125Correction;
-                case NeuropixelsChannel.Gain.x250:
+                case NeuropixelsV1Channel.Gain.x250:
                     return APx250Correction;
-                case NeuropixelsChannel.Gain.x500:
+                case NeuropixelsV1Channel.Gain.x500:
                     return APx500Correction;
-                case NeuropixelsChannel.Gain.x1000:
+                case NeuropixelsV1Channel.Gain.x1000:
                     return APx1000Correction;
-                case NeuropixelsChannel.Gain.x1500:
+                case NeuropixelsV1Channel.Gain.x1500:
                     return APx1500Correction;
-                case NeuropixelsChannel.Gain.x2000:
+                case NeuropixelsV1Channel.Gain.x2000:
                     return APx2000Correction;
-                case NeuropixelsChannel.Gain.x3000:
+                case NeuropixelsV1Channel.Gain.x3000:
                     return APx3000Correction;
                 default:
-                    throw new InvalidEnumArgumentException("gain", (int)gain, typeof(NeuropixelsChannel.Gain));
+                    throw new InvalidEnumArgumentException("gain", (int)gain, typeof(NeuropixelsV1Channel.Gain));
             }
         }
 
-        public double LFPGainCorrection(NeuropixelsChannel.Gain gain)
+        public double LFPGainCorrection(NeuropixelsV1Channel.Gain gain)
         {
             switch (gain)
             {
-                case NeuropixelsChannel.Gain.x50:
+                case NeuropixelsV1Channel.Gain.x50:
                     return LFPx50Correction;
-                case NeuropixelsChannel.Gain.x125:
+                case NeuropixelsV1Channel.Gain.x125:
                     return LFPx125Correction;
-                case NeuropixelsChannel.Gain.x250:
+                case NeuropixelsV1Channel.Gain.x250:
                     return LFPx250Correction;
-                case NeuropixelsChannel.Gain.x500:
+                case NeuropixelsV1Channel.Gain.x500:
                     return LFPx500Correction;
-                case NeuropixelsChannel.Gain.x1000:
+                case NeuropixelsV1Channel.Gain.x1000:
                     return LFPx1000Correction;
-                case NeuropixelsChannel.Gain.x1500:
+                case NeuropixelsV1Channel.Gain.x1500:
                     return LFPx1500Correction;
-                case NeuropixelsChannel.Gain.x2000:
+                case NeuropixelsV1Channel.Gain.x2000:
                     return LFPx2000Correction;
-                case NeuropixelsChannel.Gain.x3000:
+                case NeuropixelsV1Channel.Gain.x3000:
                     return LFPx3000Correction;
                 default:
-                    throw new InvalidEnumArgumentException("gain", (int)gain, typeof(NeuropixelsChannel.Gain));
+                    throw new InvalidEnumArgumentException("gain", (int)gain, typeof(NeuropixelsV1Channel.Gain));
             }
         }
-
     }
 }

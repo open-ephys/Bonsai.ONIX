@@ -38,16 +38,19 @@ namespace Bonsai.ONIX
             }
         }
 
-        uint update_hz;
+        uint update_hz = 1;
         [Category("Configuration")]
         [Description("Rate of memory usage measurements.")]
-        [Range(0, 10e6)]
+        [Range(1, 10e6)]
         public uint UpdateHz
         {
             get
             {
                 var val = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
-                update_hz = ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val;
+                if (val != 0)
+                {
+                    update_hz = ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val;
+                }
                 return update_hz;
             }
             set

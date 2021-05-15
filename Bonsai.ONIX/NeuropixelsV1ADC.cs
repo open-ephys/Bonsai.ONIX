@@ -1,6 +1,6 @@
 ﻿namespace Bonsai.ONIX
 {
-    public class NeuropixelsADC
+    public class NeuropixelsV1ADC
     {
         public int CompP { get; set; } = 16;
         public int CompN { get; set; } = 16;

@@ -4,6 +4,8 @@ namespace Bonsai.ONIX
 {
     public class ONIDeviceAddress
     {
+        public bool Valid { get; set; } = false;
+
         [Description("ONI hardware translation driver and hardware index tuple supporting this device.")]
         public ONIHardwareSlot HardwareSlot { get; set; } = new ONIHardwareSlot();
 

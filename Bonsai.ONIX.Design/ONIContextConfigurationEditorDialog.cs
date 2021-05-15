@@ -84,7 +84,7 @@ namespace Bonsai.ONIX.Design
             }
             catch (Exception err)
             {
-                if (err is oni.ONIException || err is InvalidProgramException)
+                if (err is oni.ONIException || err is InvalidProgramException || err is TimeoutException)
                 {
                     toolStripSplitButton.Text = err.Message;
                     toolStripSplitButton.ForeColor = Color.Red;
@@ -97,7 +97,6 @@ namespace Bonsai.ONIX.Design
             Configuration.Slot.Driver = comboBoxDriver.SelectedItem.ToString();
             AttemptToConnect();
         }
-
 
         private void dataGridViewDeviceTable_KeyDown(object sender, KeyEventArgs e)
         {
@@ -142,7 +141,7 @@ namespace Bonsai.ONIX.Design
                     if (device != null)
                     {
                         // Hacky "back door" into ONIDeviceIndexTypeConverter's functionality
-                        device.DeviceAddress = new ONIDeviceAddress { HardwareSlot = Configuration.Slot, Address = dev_idx };
+                        device.DeviceAddress = new ONIDeviceAddress { HardwareSlot = Configuration.Slot, Address = dev_idx, Valid = true };
                         propertyGrid.SelectedObject = device;
                         device.FrameClockHz = c.Context.AcquisitionClockHz;
                         device.Hub = c.Context.GetHub(device.DeviceAddress.Address);

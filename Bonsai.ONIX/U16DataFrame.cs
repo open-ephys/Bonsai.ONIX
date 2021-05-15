@@ -1,7 +1,7 @@
 ﻿namespace Bonsai.ONIX
 {
     /// <summary>
-    /// Base class for most data frames using <see cref="ushort"/> as
+    /// Base class for data frames using <see cref="ushort"/> as
     /// the underlying data type.
     /// </summary>
     public class U16DataFrame

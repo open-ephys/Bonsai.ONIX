@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Drawing;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -12,9 +13,12 @@ namespace Bonsai.ONIX.Design
 {
     public partial class NeuropixelsEditorDialog : Form
     {
-        public NeuropixelsConfiguration Config;
+        public NeuropixelsV1Configuration Config;
+        NeuropixelsV1Drawing probeDrawing;
+        List<int> selectedElectrodes = new List<int>();
+        private bool closeContextMenu = true;
 
-        public NeuropixelsEditorDialog(Bonsai.ONIX.NeuropixelsConfiguration config)
+        public NeuropixelsEditorDialog(Bonsai.ONIX.NeuropixelsV1Configuration config)
         {
             InitializeComponent();
 
@@ -22,63 +26,78 @@ namespace Bonsai.ONIX.Design
             // commit changes to config until user clicks "OK"
             Config = ObjectExtensions.Copy(config);
 
-            toolStripStatusLabel.Text = "Probe SN: " + Config.ProbeSN.ToString();
+            // Display probe and config SNs
+            CheckStatus();
 
             // Need to manually add the SelectedIndexChange event handler or assigning the data source will trigger it
-            comboBox_CalibrationMode.DataSource = Enum.GetValues(typeof(NeuropixelsConfiguration.OperationMode));
+            comboBox_CalibrationMode.DataSource = Enum.GetValues(typeof(NeuropixelsV1Configuration.OperationMode));
             comboBox_CalibrationMode.SelectedItem = Config.Mode;
             comboBox_CalibrationMode.SelectedIndexChanged += new EventHandler(comboBox_CalibrationMode_SelectedIndexChanged);
 
-            DataGridViewComboBoxColumn col = new DataGridViewComboBoxColumn
+            var combo_col = new DataGridViewComboBoxColumn
             {
                 HeaderText = "Bank",
                 DataPropertyName = "Bank",
-                ValueType = typeof(NeuropixelsChannel.ElectrodeBank),
-                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.ElectrodeBank)),
+                ValueType = typeof(NeuropixelsV1Channel.ElectrodeBank),
+                DataSource = Enum.GetValues(typeof(NeuropixelsV1Channel.ElectrodeBank)),
             };
-            dataGridView_Channels.Columns.Add(col);
+            dataGridView_Channels.Columns.Add(combo_col);
 
-            col = new DataGridViewComboBoxColumn
+            combo_col = new DataGridViewComboBoxColumn
             {
                 HeaderText = "AP Gain",
                 DataPropertyName = "APGain",
-                ValueType = typeof(NeuropixelsChannel.Gain),
-                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Gain))
+                ValueType = typeof(NeuropixelsV1Channel.Gain),
+                DataSource = Enum.GetValues(typeof(NeuropixelsV1Channel.Gain))
             };
-            dataGridView_Channels.Columns.Add(col);
+            dataGridView_Channels.Columns.Add(combo_col);
 
-            col = new DataGridViewComboBoxColumn
+            combo_col = new DataGridViewComboBoxColumn
             {
                 HeaderText = "LFP Gain",
                 DataPropertyName = "LFPGain",
-                ValueType = typeof(NeuropixelsChannel.Gain),
-                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Gain))
+                ValueType = typeof(NeuropixelsV1Channel.Gain),
+                DataSource = Enum.GetValues(typeof(NeuropixelsV1Channel.Gain))
             };
-            dataGridView_Channels.Columns.Add(col);
+            dataGridView_Channels.Columns.Add(combo_col);
 
-            col = new DataGridViewComboBoxColumn
+            combo_col = new DataGridViewComboBoxColumn
             {
                 HeaderText = "Reference",
                 DataPropertyName = "Reference",
-                ValueType = typeof(NeuropixelsChannel.Ref),
-                DataSource = Enum.GetValues(typeof(NeuropixelsChannel.Ref))
+                ValueType = typeof(NeuropixelsV1Channel.Ref),
+                DataSource = Enum.GetValues(typeof(NeuropixelsV1Channel.Ref))
             };
-            dataGridView_Channels.Columns.Add(col);
+            dataGridView_Channels.Columns.Add(combo_col);
 
             // Immediate update
             dataGridView_Channels.CellEndEdit += dataGridView_Channels_CellEndEdit;
 
             // Bind the data grids
-            dataGridView_Channels.DataSource = Config.Channels; // ch_source;
+            dataGridView_Channels.DataSource = Config.Channels;
             dataGridView_ADCs.DataSource = Config.ADCs;
-            dataGridView_Electrodes.DataSource = Config.Electrodes;
 
-            // TODO: This does not work
-            foreach (var i in Config.InternalReferenceChannels)
-            {
-                dataGridView_Channels.Rows[i].ReadOnly = true;
-                dataGridView_Channels.Rows[i].DefaultCellStyle.BackColor = Color.LightGreen;
-            }
+            // Drawing panel options
+            typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty
+                | BindingFlags.Instance | BindingFlags.NonPublic, null,
+                panelProbeDrawing, new object[] { true });
+
+            panelProbeDrawing.MouseWheel += panelProbeDrawing_MouseWheel;
+            probeDrawing = new NeuropixelsV1Drawing(panelProbeDrawing);
+
+            panelProbeDrawing.MouseMove += panelProbeDrawing_MouseMove;
+            panelProbeDrawing.MouseDown += panelProbeDrawing_MouseDown;
+            panelProbeDrawing.MouseUp += panelProbeDrawing_MouseUp;
+            panelProbeDrawing.PreviewKeyDown += panelProbeDrawing_PreviewKeyDown;
+
+            apGainToolStripComboBox.ComboBox.BindingContext = BindingContext;
+            apGainToolStripComboBox.ComboBox.DataSource = Enum.GetValues(typeof(NeuropixelsV1Channel.Gain));
+
+            lfpGainToolStripComboBox.ComboBox.BindingContext = BindingContext;
+            lfpGainToolStripComboBox.ComboBox.DataSource = Enum.GetValues(typeof(NeuropixelsV1Channel.Gain));
+
+            referenceToolStripComboBox.ComboBox.BindingContext = BindingContext;
+            referenceToolStripComboBox.ComboBox.DataSource = Enum.GetValues(typeof(NeuropixelsV1Channel.Ref));
         }
 
         protected override void OnLoad(EventArgs e)
@@ -106,7 +125,7 @@ namespace Bonsai.ONIX.Design
             {
                 Filter = "JSON file|*.json|XML file|*.xml",
                 Title = "Export neuropixels configuration",
-                FileName = Config.ProbePartNo + "_sn-" + Config.ProbeSN.ToString()
+                FileName = Config.ProbePartNo + "_sn-" + Config.FlexProbeSN.ToString()
             };
             var result = fd.ShowDialog();
 
@@ -126,7 +145,7 @@ namespace Bonsai.ONIX.Design
 
                     case 2:
                         var text_writer = new StreamWriter(fd.FileName);
-                        var ser = new XmlSerializer(typeof(NeuropixelsConfiguration));
+                        var ser = new XmlSerializer(typeof(NeuropixelsV1Configuration));
                         ser.Serialize(text_writer, Config);
                         text_writer.Close();
                         break;
@@ -145,27 +164,27 @@ namespace Bonsai.ONIX.Design
 
             if (result == DialogResult.OK && fd.FileName != "")
             {
-                var config_tmp = new NeuropixelsConfiguration();
+                var config_tmp = new NeuropixelsV1Configuration();
 
                 switch (fd.FilterIndex)
                 {
                     case 1:
                         var json = File.ReadAllText(fd.FileName);
-                        config_tmp = JsonSerializer.Deserialize<NeuropixelsConfiguration>(json);
+                        config_tmp = JsonSerializer.Deserialize<NeuropixelsV1Configuration>(json);
                         break;
 
                     case 2:
-                        var xml = new XmlSerializer(typeof(NeuropixelsConfiguration));
+                        var xml = new XmlSerializer(typeof(NeuropixelsV1Configuration));
                         var xml_file = new FileStream(fd.FileName, FileMode.Open);
-                        config_tmp = (NeuropixelsConfiguration)xml.Deserialize(xml_file);
+                        config_tmp = (NeuropixelsV1Configuration)xml.Deserialize(xml_file);
                         break;
                 }
 
-                if (config_tmp.ProbeSN != Config.ProbeSN)
+                if (config_tmp.ConfigProbeSN != Config.FlexProbeSN)
                 {
-                    var txt = String.Format("Warning, probe serial numbers do not match. " +
+                    var txt = String.Format("Warning, the configuration and probe serial numbers do not match. " +
                         "Do you wish to import the channel configuration from probe {0}?. " +
-                        "The current ADC calibration data will be preserved", config_tmp.ProbeSN);
+                        "The current ADC calibration data will be preserved", config_tmp.ConfigProbeSN);
                     result = MessageBox.Show(txt,
                         "Serial number mismatch",
                         MessageBoxButtons.YesNo,
@@ -173,7 +192,6 @@ namespace Bonsai.ONIX.Design
                     if (result == DialogResult.Yes)
                     {
                         Config.Channels = config_tmp.Channels;
-                        dataGridView_Channels.DataSource = Config.Channels;
                     }
                 }
                 else
@@ -183,21 +201,34 @@ namespace Bonsai.ONIX.Design
                     // Bind the data grids
                     dataGridView_Channels.DataSource = Config.Channels;
                     dataGridView_ADCs.DataSource = Config.ADCs;
-                    dataGridView_Electrodes.DataSource = Config.Electrodes;
 
+                    // You need to upload these values
+                    Config.RefreshNeeded = true;
                 }
+
+                CheckStatus();
             }
         }
 
         private void loadCalibrationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             var fd = new FolderBrowserDialog();
+            fd.ShowNewFolderButton = false;
+
+            if (Config.CalibrationFolderPath != null && Directory.Exists(Config.CalibrationFolderPath))
+            {
+                fd.RootFolder = Environment.SpecialFolder.Desktop;
+                fd.SelectedPath = Config.CalibrationFolderPath;
+            }
+
+            fd.Description = String.Format("Select a folder containing the following calibration files:\n" +
+                "* {0}_ADCCalibration.csv\n" +
+                "* {0}_GainCalValues.csv", Config.FlexProbeSN);
 
             if (fd.ShowDialog() == DialogResult.OK)
             {
-                var adc_cal_fn = String.Format("{0}_ADCCalibration.csv", Config.ProbeSN);
-                var gain_cal_fn = String.Format("{0}_GainCalValues.csv", Config.ProbeSN);
+                var adc_cal_fn = String.Format("{0}_ADCCalibration.csv", Config.FlexProbeSN);
+                var gain_cal_fn = String.Format("{0}_GainCalValues.csv", Config.FlexProbeSN);
 
                 var adc_path = Directory.GetFiles(fd.SelectedPath, "*" + adc_cal_fn);
                 var gain_path = Directory.GetFiles(fd.SelectedPath, "*" + gain_cal_fn);
@@ -206,29 +237,19 @@ namespace Bonsai.ONIX.Design
                 {
                     // Check serial numbers inside each file
                     System.IO.StreamReader file = new System.IO.StreamReader(adc_path[0]);
-                    var sn = UInt64.Parse(file.ReadLine());
+                    Config.ConfigProbeSN = UInt64.Parse(file.ReadLine());
                     file.Close();
-                    if (Config.ProbeSN != sn)
-                    {
-                        ShowError("Serial number mismatch",
-                            String.Format("Serial number inside ADC calibration file, {0}," +
-                            "does not match the current probe serial number, {1}.", sn, Config.ProbeSN));
-                    }
+                    CheckStatus();
 
                     file = new System.IO.StreamReader(gain_path[0]);
-                    sn = UInt64.Parse(file.ReadLine());
+                    Config.ConfigProbeSN = UInt64.Parse(file.ReadLine());
                     file.Close();
-                    if (Config.ProbeSN != sn)
-                    {
-                        ShowError("Serial number mismatch",
-                            String.Format("Serial number inside gain values file, {0}," +
-                            "does not match the current probe serial number, {1}.", sn, Config.ProbeSN));
-                    }
+                    CheckStatus();
 
                     // Parse ADC calibrations
                     CsvParserOptions csv_parser_opts = new CsvParserOptions(true, ',');
                     var adc_csv_mapper = new CsvNeuropixelsADCMapping();
-                    var adc_csv_parser = new CsvParser<NeuropixelsADC>(csv_parser_opts, adc_csv_mapper);
+                    var adc_csv_parser = new CsvParser<NeuropixelsV1ADC>(csv_parser_opts, adc_csv_mapper);
 
                     // Parse ADC calibration parameters
                     var adcs = adc_csv_parser
@@ -253,7 +274,7 @@ namespace Bonsai.ONIX.Design
 
                     // Parse Gains
                     var electrde_csv_mapper = new CsvNeuropixelsElectrodeMapping();
-                    var electrde_csv_parser = new CsvParser<NeuropixelsElectrode>(csv_parser_opts, electrde_csv_mapper);
+                    var electrde_csv_parser = new CsvParser<NeuropixelsV1GainCorrection>(csv_parser_opts, electrde_csv_mapper);
 
                     // Parse ADC calibration parameters
                     var electrodes = electrde_csv_parser
@@ -261,28 +282,37 @@ namespace Bonsai.ONIX.Design
                         .ToList();
 
                     // Confirm parse
-                    if (!adcs.All(x => x.IsValid))
+                    if (!electrodes.All(x => x.IsValid))
                     {
                         ShowError("Parse Error", electrodes.First(x => !x.IsValid).Error.Value);
                         return;
                     }
 
                     // Check length
-                    if (electrodes.Count() != Config.Electrodes.Length)
+                    if (electrodes.Count() != NeuropixelsV1Probe.ELECTRODE_COUNT)
                     {
                         ShowError("Parse Error",
-                            String.Format("Too many rows in gain values calibration file. There are {0} when " +
-                            "there should be {1}.", electrodes.Count(), Config.Electrodes.Length));
+                            String.Format("Incorrect number of gain correction values in calibration file. There are {0} when " +
+                            "there should be {1}.", electrodes.Count(), NeuropixelsV1Probe.ELECTRODE_COUNT));
                         return;
                     }
 
                     // Assign
                     Config.ADCs = adcs.Select(x => x.Result).ToArray();
-                    Config.Electrodes = electrodes.Select(x => x.Result).ToArray();
+
+                    foreach (var c in Config.Channels)
+                    {
+                        c.UpdateGainCorrections(electrodes.Select(x => x.Result).ToArray());
+                    }
 
                     // Update gridviews
                     dataGridView_ADCs.DataSource = Config.ADCs;
-                    dataGridView_Electrodes.DataSource = Config.Electrodes;
+
+                    // Save for next time
+                    Config.CalibrationFolderPath = fd.SelectedPath;
+
+                    // You need to upload these values
+                    Config.RefreshNeeded = true;
 
                 }
                 else
@@ -292,6 +322,29 @@ namespace Bonsai.ONIX.Design
                         "specified directory.", adc_cal_fn, gain_cal_fn));
                     return;
                 }
+            }
+        }
+
+        void CheckStatus()
+        {
+            toolStripStatusLabel.Text = "";
+            toolStripStatusLabel_ProbeSN.Text = "Probe SN: " + Config.FlexProbeSN.ToString();
+            toolStripStatusLabel_ConfigSN.Text = "Config SN: " + Config.ConfigProbeSN.ToString();
+
+            if (Config.FlexProbeSN == null || Config.ConfigProbeSN == null || Config.FlexProbeSN != Config.ConfigProbeSN)
+            {
+                toolStripStatusLabel.Image = Properties.Resources.StatusWarningImage;
+                toolStripStatusLabel.Text = "Serial number mismatch";
+            }
+            else if (Config.RefreshNeeded)
+            {
+                toolStripStatusLabel.Image = Properties.Resources.StatusWarningImage;
+                toolStripStatusLabel.Text = "Upload required";
+            }
+            else
+            {
+                toolStripStatusLabel.Image = Properties.Resources.StatusReadyImage;
+                toolStripStatusLabel.Text = "";
             }
         }
 
@@ -323,19 +376,186 @@ namespace Bonsai.ONIX.Design
                     dataGridView_Channels.Rows[i].Cells[pos.Item2].Value = value;
                 }
             }
-
         }
 
         private void comboBox_CalibrationMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             var box = sender as ComboBox;
-            Enum.TryParse(box.SelectedValue.ToString(), out NeuropixelsConfiguration.OperationMode mode);
+            Enum.TryParse(box.SelectedValue.ToString(), out NeuropixelsV1Configuration.OperationMode mode);
             Config.Mode = mode;
         }
 
         private void dataGridView_Channels_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             dataGridView_Channels.BindingContext[dataGridView_Channels.DataSource].EndCurrentEdit();
+            Config.RefreshNeeded = true;
+            CheckStatus();
+        }
+
+        private async void toolStripSplitButton_ButtonClick(object sender, EventArgs e)
+        {
+            using (var probe = new NeuropixelsV1Probe(Config.DeviceAddress))
+            {
+                probe.FullReset();
+
+                toolStripProgressBar_UploadPogress.Value = 0;
+                var progressIndicator = new Progress<int>(ReportProgress);
+                int uploads = await probe.WriteConfigurationAsync(Config, progressIndicator, Config.PerformReadCheck);
+                CheckStatus();
+            }
+        }
+
+        void ReportProgress(int value)
+        {
+            toolStripProgressBar_UploadPogress.Value = value;
+        }
+
+        private void performSRReadCheckToolStripMenuItem_CheckChanged(object sender, EventArgs e)
+        {
+            Config.PerformReadCheck = performSRReadCheckToolStripMenuItem.Checked;
+        }
+
+        // TODO: Massive mess. Will need to make less brittle if we want it to work for other probes.
+
+        private void panelProbeDrawing_Paint(object sender, PaintEventArgs e)
+        {
+            selectedElectrodes = probeDrawing.DrawProbe(Config, e.Graphics, panelProbeDrawing);
+        }
+
+        private void panelProbeDrawing_Scroll(object sender, ScrollEventArgs e)
+        {
+            panelProbeDrawing.Invalidate();
+        }
+
+        private void panelProbeDrawing_MouseHover(object sender, EventArgs e)
+        {
+            panelProbeDrawing.Focus();
+        }
+
+        private void panelProbeDrawing_MouseWheel(object sender, MouseEventArgs e)
+        {
+            probeDrawing.UpdateZoom(e);
+            panelProbeDrawing.Invalidate();
+        }
+
+        private void panelProbeDrawing_MouseDown(object sender, MouseEventArgs e)
+        {
+            probeDrawing.UpdateMouseLocation(e);
+            if (e.Button == MouseButtons.Left)
+            {
+                probeDrawing.ClearSelections();
+            }
+            else if (e.Button == MouseButtons.Middle)
+            {
+                panelProbeDrawing.Cursor = Cursors.NoMove2D;
+            }
+        }
+
+        private void panelProbeDrawing_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                probeDrawing.Drag(e, false);
+            }
+            else if (e.Button == MouseButtons.Left)
+            {
+                probeDrawing.Drag(e, true);
+            }
+            else
+            {
+                probeDrawing.UpdateMouseLocation(e, true);
+            }
+
+            panelProbeDrawing.Invalidate();
+        }
+
+        private void panelProbeDrawing_MouseUp(object sender, MouseEventArgs e)
+        {
+            panelProbeDrawing.Cursor = Cursors.Default;
+            probeDrawing.MouseUp();
+        }
+
+        private void panelProbeDrawing_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                probeDrawing.ClearSelections();
+            }
+        }
+
+        private void electrodeEnableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (var elec in selectedElectrodes)
+            {
+                Config.Channels[NeuropixelsV1Probe.ElectrodeToChannel(elec)].Bank =
+                    NeuropixelsV1Probe.ElectrodeToBank(elec);
+            }
+
+            closeContextMenu = false;
+            panelProbeDrawing.Invalidate();
+        }
+
+        private void aPFilterToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            foreach (var elec in selectedElectrodes)
+            {
+                Config.Channels[NeuropixelsV1Probe.ElectrodeToChannel(elec)].APFilter =
+                    aPFilterToolStripMenuItem.Checked;
+            }
+
+            closeContextMenu = false;
+        }
+
+        private void standbyToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+        {
+            foreach (var elec in selectedElectrodes)
+            {
+                Config.Channels[NeuropixelsV1Probe.ElectrodeToChannel(elec)].Standby =
+                    standbyToolStripMenuItem.Checked;
+            }
+
+            closeContextMenu = false;
+        }
+
+        private void lfpGainToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (var elec in selectedElectrodes)
+            {
+                Config.Channels[NeuropixelsV1Probe.ElectrodeToChannel(elec)].LFPGain = (NeuropixelsV1Channel.Gain)lfpGainToolStripComboBox.SelectedItem;
+            }
+
+            closeContextMenu = false;
+        }
+
+        private void apGainToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (var elec in selectedElectrodes)
+            {
+                Config.Channels[NeuropixelsV1Probe.ElectrodeToChannel(elec)].APGain = (NeuropixelsV1Channel.Gain)apGainToolStripComboBox.SelectedItem;
+            }
+
+            closeContextMenu = false;
+        }
+
+        private void referenceToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (var elec in selectedElectrodes)
+            {
+                Config.Channels[NeuropixelsV1Probe.ElectrodeToChannel(elec)].Reference = (NeuropixelsV1Channel.Ref)referenceToolStripComboBox.SelectedItem;
+            }
+
+            closeContextMenu = false;
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            closeContextMenu = true;
+        }
+
+        private void contextMenuStrip_Probe_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        {
+            e.Cancel = !closeContextMenu;
+            closeContextMenu = true;
         }
     }
 }

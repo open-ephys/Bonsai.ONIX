@@ -38,24 +38,27 @@ namespace Bonsai.ONIX
             }
         }
 
-        uint beat_hz;
+        uint beat_hz = 1;
         [Category("Configuration")]
         [Description("Rate at which beats are produced.")]
-        [Range(0, 10e6)]
+        [Range(1, 10e6)]
         public uint BeatHz
         {
             get
             {
                 var val = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
-                beat_hz = ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val;
+                if (val != 0) { beat_hz = ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val; }
                 return beat_hz;
             }
             set
             {
                 beat_hz = value;
-                WriteRegister(DeviceAddress.Address,
-                                            (int)Register.CLK_DIV,
-                                            ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / beat_hz);
+                if (beat_hz != 0)
+                {
+                    WriteRegister(DeviceAddress.Address,
+                                                (int)Register.CLK_DIV,
+                                                ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / beat_hz);
+                }
             }
         }
     }

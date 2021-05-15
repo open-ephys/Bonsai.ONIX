@@ -9,7 +9,6 @@ namespace Bonsai.ONIX
     /// </summary>
     public class I2CConfiguration : IDisposable
     {
-
         readonly ONIContextDisposable ctx;
         readonly uint? dev_idx;
 
@@ -22,7 +21,7 @@ namespace Bonsai.ONIX
             I2C_ADDR = i2c_addr;
         }
 
-        uint? I2CReadRegister(uint? dev_index, uint register_address)
+        uint? ReadRegister(uint? dev_index, uint register_address)
         {
             if (dev_index == null)
             {
@@ -37,10 +36,9 @@ namespace Bonsai.ONIX
             {
                 return null;
             }
-
         }
 
-        void I2CWriteRegister(uint? dev_index, uint register_address, uint? value)
+        void WriteRegister(uint? dev_index, uint register_address, uint? value)
         {
             if (value == null)
             {
@@ -55,10 +53,20 @@ namespace Bonsai.ONIX
             ctx.Context.WriteRegister((uint)dev_index, register_address, (uint)value);
         }
 
+        public uint? ReadManagedRegister(uint register_address)
+        {
+            return ReadRegister(dev_idx, register_address);
+        }
+
+        public void WriteManagedRegister(uint register_address, uint value)
+        {
+            WriteRegister(dev_idx, register_address, value);
+        }
+
         public byte? ReadByte(uint addr)
         {
             uint reg_addr = (addr << 8) | I2C_ADDR;
-            var val = I2CReadRegister(dev_idx, reg_addr);
+            var val = ReadRegister(dev_idx, reg_addr);
 
             if (val != null && val <= byte.MaxValue)
             {
@@ -73,7 +81,7 @@ namespace Bonsai.ONIX
         public void WriteByte(uint addr, uint value)
         {
             uint reg_addr = (addr << 8) | I2C_ADDR;
-            I2CWriteRegister(dev_idx, reg_addr, value);
+            WriteRegister(dev_idx, reg_addr, value);
         }
 
         public byte[] ReadBytes(uint offset, int size)
@@ -83,7 +91,7 @@ namespace Bonsai.ONIX
             for (uint i = 0; i < size; i++)
             {
                 uint reg_addr = ((offset + i) << 8) | I2C_ADDR;
-                var val = I2CReadRegister(dev_idx, reg_addr);
+                var val = ReadRegister(dev_idx, reg_addr);
 
                 if (val != null && val <= byte.MaxValue)
                 {

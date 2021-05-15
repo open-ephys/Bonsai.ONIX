@@ -6,9 +6,9 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     // TODO: More abstract control over chip's registers?
-
+    // (the best way to do this is with a GUI like neuropixels has)
     [Description("Acquires data from a single RHD2164 bioamplifier chip.")]
-    public class RHD2164Device : ONIFrameReader<RHDDataFrame, ushort>
+    public class RHD2164Device : ONIFrameReader<RHD2164DataFrame, ushort>
     {
         // see http://intantech.com/files/Intan_RHD2164_datasheet.pdf
         enum Register
@@ -38,26 +38,16 @@ namespace Bonsai.ONIX
             PWR7,
 
             // Managed
-            ENABLE = 0x8000
+            ENABLE = 0x00008000
         }
 
         public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
 
-        protected override IObservable<RHDDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<RHD2164DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-            var data_block = new RHDDataBlock(64, BlockSize);
-
             return source
-                .Where(f =>
-                {
-                    return data_block.FillFromFrame(f);
-                })
-                .Select(f =>
-                {
-                    var sample = new RHDDataFrame(data_block);
-                    data_block = new RHDDataBlock(64, BlockSize);
-                    return sample;
-                });
+                .Buffer(BlockSize)
+                .Select(block => { return new RHD2164DataFrame(block); });
         }
 
         [Category("Configuration")]
@@ -74,7 +64,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        [Category("Acquisition")]
+        [Category("Configuration")]
         [Range(1, 10000)]
         [Description("The number of frames making up a single data block that is propagated in the observable sequence.")]
         public int BlockSize { get; set; } = 30;

@@ -11,45 +11,10 @@ namespace Bonsai.ONIX
     [DefaultProperty("Configuration")]
     public class NeuropixelsV1Device : ONIFrameReader<NeuropixelsV1DataFrame, ushort>
     {
-        enum Register
-        {
-            // Unmangaged register access handled by NeuropixelsV1Probe
-
-            // Managed
-            ENABLE = 0x10000
-        }
-
-        public NeuropixelsV1Device() : base(ONIXDevices.ID.NEUROPIX1R0)
-        {
-            Configuration = new NeuropixelsConfiguration
-            {
-                Channels = new NeuropixelsChannel[NeuropixelsV1Probe.CHANNEL_COUNT],
-                ADCs = new NeuropixelsADC[NeuropixelsV1Probe.ADC_COUNT],
-                Electrodes = new NeuropixelsElectrode[NeuropixelsV1Probe.ELECTRODE_COUNT]
-            };
-
-            for (int i = 0; i < Configuration.Channels.Length; i++)
-            {
-                Configuration.Channels[i] = new NeuropixelsChannel();
-            }
-
-            Configuration.InternalReferenceChannels = new int[] { NeuropixelsV1Probe.INTERNAL_REF_CHANNEL };
-
-            for (int i = 0; i < Configuration.ADCs.Length; i++)
-            {
-                Configuration.ADCs[i] = new NeuropixelsADC();
-            }
-
-            for (int i = 0; i < Configuration.Electrodes.Length; i++)
-            {
-                Configuration.Electrodes[i] = new NeuropixelsElectrode();
-            }
-        }
+        public NeuropixelsV1Device() : base(ONIXDevices.ID.NEUROPIX1R0) { }
 
         protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-
-            var data_block = new NeuropixelsV1DataBlock(BlockSize);
 
             return Observable.Concat(
 
@@ -58,45 +23,47 @@ namespace Bonsai.ONIX
                 {
                     using (var probe = new NeuropixelsV1Probe(DeviceAddress))
                     {
-                        probe.Reset();
-                        probe.WriteConfiguration(Configuration, PerformReadCheck);
+                        if (RequireSNMatch && Configuration.ConfigProbeSN != Configuration.FlexProbeSN)
+                        {
+                            throw new Bonsai.WorkflowRuntimeException("Probe and configuration serial numbers do not match.");
+                        }
+
+                        if (Configuration.RefreshNeeded)
+                        {
+                            probe.FullReset();
+                            probe.WriteConfiguration(Configuration, PerformReadCheck);
+                        }
+                        else
+                        {
+                            probe.DigitalReset();
+                        }
+
                         probe.Start();
                     }
                     observer.OnCompleted();
                     return Disposable.Empty;
                 }),
 
-                // Second sequence filters resulting frame stream
-                source.Where(f =>
-                {
-                    return data_block.FillFromFrame(f);
-                })
-                .Select(f =>
-                {
-                    var sample = new NeuropixelsV1DataFrame(data_block);
-                    data_block = new NeuropixelsV1DataBlock(BlockSize);
-                    return sample;
-                })
-                .Finally(() =>
-                {
-                    using (var probe = new NeuropixelsV1Probe(DeviceAddress))
-                    {
-                        probe.Reset();
-                    }
-                })
+                // Process frame stream
+                source
+                    .Buffer(BlockSize * NeuropixelsV1DataFrame.SuperframesPerUltraFrame)
+                    .Select(block => { return new NeuropixelsV1DataFrame(block, BlockSize); })
             );
         }
 
-        protected override void DeviceAddressChanged()
+        enum Register
         {
-            using (var flex = new NeuropixelsV1Flex(DeviceAddress))
-            {
-                Configuration.ProbeSN = flex.ProbeSN;
-                Configuration.ProbePartNo = flex.ProbePartNo;
+            // Managed
+            ENABLE = 0x00008000
+        }
 
-                Configuration.FlexPartNo = flex.PartNo;
-                Configuration.FlexVersion = flex.Version;
-            }
+        [Category("ONI Configuration")]
+        [Description("The full device hardware address consisting of a hardware slot and device table index.")]
+        [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
+        public override ONIDeviceAddress DeviceAddress
+        {
+            get { return Configuration.DeviceAddress; }
+            set { Configuration.DeviceAddress = value; }
         }
 
         [Category("Configuration")]
@@ -113,11 +80,10 @@ namespace Bonsai.ONIX
             }
         }
 
-
         [Category("Configuration")]
         [Description("The probe serial number.")]
         [System.Xml.Serialization.XmlIgnore]
-        public ulong? ProbeSN => Configuration.ProbeSN;
+        public ulong? ProbeSN => Configuration.FlexProbeSN;
 
         [Category("Configuration")]
         [Description("The probe part number.")]
@@ -138,16 +104,19 @@ namespace Bonsai.ONIX
         [Description("Neuropixels probe hardware configuration.")]
         [Editor("Bonsai.ONIX.Design.NeuropixelsEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         [Externalizable(false)]
-        public NeuropixelsConfiguration Configuration { get; set; }
+        public NeuropixelsV1Configuration Configuration { get; set; } = new NeuropixelsV1Configuration();
 
         [Category("Configuration")]
         [Description("Write configuration twice to perform a bit-wise confirmation of configuration values on the probe.")]
-        public bool PerformReadCheck { get; set; } = false;
+        public bool PerformReadCheck => Configuration.PerformReadCheck;
 
-        [Category("Acquisition")]
+        [Category("Configuration")]
+        [Description("Require configuration and probe serial numbers to match to start acqusition.")]
+        public bool RequireSNMatch { get; set; } = true;
+
+        [Category("Configuration")]
         [Range(1, 1e6)]
         [Description("The size of data blocks, in units of \"ultra-frames\", that are propagated in the observable sequence.")]
         public int BlockSize { get; set; } = 1;
-
     }
 }

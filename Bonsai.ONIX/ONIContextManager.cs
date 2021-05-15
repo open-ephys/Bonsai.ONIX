@@ -46,9 +46,9 @@ namespace Bonsai.ONIX
             });
         }
 
-        public static async Task<ONIContextDisposable> ReserveContextAsync(ONIHardwareSlot slot)
+        public static async Task<ONIContextDisposable> ReserveContextAsync(ONIHardwareSlot slot, bool releaseWaiting = false, CancellationToken ct = default)
         {
-            return await Task.Run(() => ReserveContext(slot));
+            return await Task.Run(() => ReserveContext(slot, releaseWaiting), ct);
         }
 
         public static ONIContextDisposable ReserveContext(ONIHardwareSlot slot, bool release_waiting = false)
@@ -72,17 +72,23 @@ namespace Bonsai.ONIX
                         slot = configuration[slot.MakeKey()];
                     }
 
-                    var ctx = new ONIContextTask(slot.Driver, slot.Index);
+                    // TODO: context open timeout. Is this reasonable??
+                    var generateContext = Task.Run(() => new ONIContextTask(slot.Driver, slot.Index));
+                    if (!generateContext.Wait(1000))
+                    {
+                        throw new TimeoutException("ONI aquisition context creation timed out.");
+                    }
+                    var ctx = generateContext.Result;
 
                     var dispose = Disposable.Create(() =>
-                    {
-                        ctx.Dispose();
-                        contex_wait_handles[slot.MakeKey()].Reset();
+                        {
+                            ctx.Dispose();
+                            contex_wait_handles[slot.MakeKey()].Reset();
 
-                        // Context and wait handles are removed from dictionaries together
-                        open_contexts.Remove(slot.MakeKey());
-                        contex_wait_handles.Remove(slot.MakeKey());
-                    });
+                            // Context and wait handles are removed from dictionaries together
+                            open_contexts.Remove(slot.MakeKey());
+                            contex_wait_handles.Remove(slot.MakeKey());
+                        });
 
                     if (!contex_wait_handles.TryGetValue(slot.MakeKey(), out EventWaitHandle wait_handle))
                     {
@@ -97,9 +103,9 @@ namespace Bonsai.ONIX
                     var ref_count = new RefCountDisposable(dispose);
                     ctx_counted = Tuple.Create(ctx, ref_count);
                     open_contexts.Add(slot.MakeKey(), ctx_counted);
-                    return new ONIContextDisposable(ctx, ref_count, open_ctx_lock);
-                }
+                    return new ONIContextDisposable(ctx, ref_count);
 
+                }
 
                 if (release_waiting)
                 {
@@ -107,8 +113,9 @@ namespace Bonsai.ONIX
                     contex_wait_handles[slot.MakeKey()].Set();
                 }
 
-                return new ONIContextDisposable(ctx_counted.Item1, ctx_counted.Item2.GetDisposable(), open_ctx_lock);
+                return new ONIContextDisposable(ctx_counted.Item1, ctx_counted.Item2.GetDisposable());
             }
+
         }
 
         public static ONIHardwareSlotCollection LoadConfiguration()

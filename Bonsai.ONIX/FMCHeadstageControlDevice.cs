@@ -6,12 +6,11 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. THIS NODE CAN DAMAGE YOUR HEADSTAGE!")]
+    [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. WARNING: THIS NODE CAN DAMAGE YOUR HEADSTAGE!")]
     public class FMCHeadstageControlDevice : ONIFrameReader<FMCHeadstageControlFrame, ushort>
     {
         const double VLIM = 7.0;
 
-        // NB: registers for this device are all write only.
         enum Register
         {
             ENABLE = 0,
@@ -27,7 +26,6 @@ namespace Bonsai.ONIX
         {
             return source.Select(f => { return new FMCHeadstageControlFrame(f); });
         }
-
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
@@ -81,12 +79,11 @@ namespace Bonsai.ONIX
             }
         }
 
-        // TODO: reading voltage does not work with current firmware
         [Category("Acquisition")]
         [Range(3.3, 10.0)]
         [Precision(1, 0.1)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        [Description("Headstage link voltage.")]
+        [Description("Headstage link voltage. WARNING: THIS VOLTAGE CAN DAMAGE YOUR HEADSTAGE IF SET TOO HIGH!")]
         public double LinkVoltage
         {
             get
