@@ -51,7 +51,7 @@ namespace Bonsai.ONIX
             return await Task.Run(() => ReserveContext(slot, releaseWaiting), ct);
         }
 
-        public static ONIContextDisposable ReserveContext(ONIHardwareSlot slot, bool release_waiting = false)
+        public static ONIContextDisposable ReserveContext(ONIHardwareSlot slot, bool release_waiting = false, bool reset_running = false)
         {
             var ctx_counted = default(Tuple<ONIContextTask, RefCountDisposable>);
 
@@ -97,17 +97,21 @@ namespace Bonsai.ONIX
                     var ref_count = new RefCountDisposable(dispose);
                     ctx_counted = Tuple.Create(ctx, ref_count);
                     open_contexts.Add(slot.MakeKey(), ctx_counted);
-                    return new ONIContextDisposable(ctx, ref_count);
+                    return new ONIContextDisposable(ctx, ref_count, open_ctx_lock);
 
                 }
 
+                if (reset_running)
+                {
+                    ctx_counted.Item1.Reset();
+                }
                 if (release_waiting)
                 {
                     // Will already be created if we in this portion of code.
                     contex_wait_handles[slot.MakeKey()].Set();
                 }
 
-                return new ONIContextDisposable(ctx_counted.Item1, ctx_counted.Item2.GetDisposable());
+                return new ONIContextDisposable(ctx_counted.Item1, ctx_counted.Item2.GetDisposable(), open_ctx_lock);
             }
 
         }

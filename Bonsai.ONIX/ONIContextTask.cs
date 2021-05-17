@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
 {
     public class ONIContextTask : IDisposable
     {
-        private readonly oni.Context ctx;
+        private oni.Context ctx;
 
         private Task ReadFrames;
         private Task CollectFrames;
@@ -37,10 +37,10 @@ namespace Bonsai.ONIX
 
         internal event EventHandler<FrameReceivedEventArgs> FrameReceived;
 
-        public readonly uint SystemClockHz;
-        public readonly uint AcquisitionClockHz;
-        public readonly uint MaxReadFrameSize;
-        public readonly uint MaxWriteFrameSize;
+        public uint SystemClockHz;
+        public uint AcquisitionClockHz;
+        public uint MaxReadFrameSize;
+        public uint MaxWriteFrameSize;
         public Dictionary<uint, oni.Device> DeviceTable;
 
         public static readonly string DefaultDriver = "riffa";
@@ -51,9 +51,21 @@ namespace Bonsai.ONIX
         private readonly object writeLock = new object();
         private readonly object regLock = new object();
 
+        private bool running = false;
+        private readonly string contextDriver = DefaultDriver;
+        private readonly int contextIndex = DefaultIndex;
+        private readonly object runLock = new object();
+
         public ONIContextTask(string driver, int index)
         {
-            ctx = new oni.Context(driver, index);
+            contextDriver = driver;
+            contextIndex = index;
+            Init();
+        }
+
+        private void Init()
+        {
+            ctx = new oni.Context(contextDriver, contextIndex);
             SystemClockHz = ctx.SystemClockHz;
             AcquisitionClockHz = ctx.AcquisitionClockHz;
             MaxReadFrameSize = ctx.MaxReadFrameSize;
@@ -61,83 +73,109 @@ namespace Bonsai.ONIX
             DeviceTable = ctx.DeviceTable;
         }
 
+        public void Reset()
+        {
+            lock (runLock)
+            {
+                Stop();
+                lock (readLock)
+                    lock (writeLock)
+                        lock (regLock)
+                        {
+                            ctx?.Dispose();
+                            Init();
+                        }
+
+            }
+        }
+
         internal void Start()
         {
-            ctx.Start(true);
-            TokenSource = new CancellationTokenSource();
-            CollectFramesToken = TokenSource.Token;
-
-            FrameQueue = new BlockingCollection<oni.Frame>(MaxQueuedFrames);
-
-            ReadFrames = Task.Factory.StartNew(() =>
+            lock (runLock)
             {
-                while (!CollectFramesToken.IsCancellationRequested)
+                if (running) return;
+                ctx.Start(true);
+                TokenSource = new CancellationTokenSource();
+                CollectFramesToken = TokenSource.Token;
+
+                FrameQueue = new BlockingCollection<oni.Frame>(MaxQueuedFrames);
+
+                ReadFrames = Task.Factory.StartNew(() =>
                 {
-                    oni.Frame frame = ReadFrame();
+                    while (!CollectFramesToken.IsCancellationRequested)
+                    {
+                        oni.Frame frame = ReadFrame();
 
                     //This should not be needed since we are calling Dispose()
                     //But somehow it seems to improve performance (coupled with GC.RemovePressure)
                     //More investigation might be needed
                     GC.AddMemoryPressure(frame.DataSize);
 
-                    try
-                    {
-                        FrameQueue.Add(frame, CollectFramesToken);
+                        try
+                        {
+                            FrameQueue.Add(frame, CollectFramesToken);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            DisposeFrame(frame);
+                        };
                     }
-                    catch (OperationCanceledException)
-                    {
-                        DisposeFrame(frame);
-                    };
-                }
-            },
-            CollectFramesToken,
-            TaskCreationOptions.LongRunning,
-            TaskScheduler.Default);
+                },
+                CollectFramesToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
 
-            CollectFrames = Task.Factory.StartNew(() =>
-            {
-
-                while (!CollectFramesToken.IsCancellationRequested)
+                CollectFrames = Task.Factory.StartNew(() =>
                 {
 
-                    try
+                    while (!CollectFramesToken.IsCancellationRequested)
                     {
-                        if (FrameQueue.TryTake(out oni.Frame frame, QueueTimeoutMilliseconds, CollectFramesToken))
+
+                        try
                         {
-                            OnFrameReceived(new FrameReceivedEventArgs(frame));
+                            if (FrameQueue.TryTake(out oni.Frame frame, QueueTimeoutMilliseconds, CollectFramesToken))
+                            {
+                                OnFrameReceived(new FrameReceivedEventArgs(frame));
+                            }
                         }
-                    }
-                    catch (OperationCanceledException)
-                    {
+                        catch (OperationCanceledException)
+                        {
                         // If the thread stops no frame has been collected
                     }
-                }
-            },
-            CollectFramesToken,
-            TaskCreationOptions.LongRunning,
-            TaskScheduler.Default);
+                    }
+                },
+                CollectFramesToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
+            }
+            running = true;
         }
 
         internal void Stop()
         {
-            if ((CollectFrames != null || ReadFrames != null) && !CollectFrames.IsCanceled)
+            lock (runLock)
             {
-                TokenSource.Cancel();
-                Task.WaitAll(new Task[] { CollectFrames, ReadFrames });
-            }
-            TokenSource?.Dispose();
-            TokenSource = null;
+                if (!running) return;
+                if ((CollectFrames != null || ReadFrames != null) && !CollectFrames.IsCanceled)
+                {
+                    TokenSource.Cancel();
+                    Task.WaitAll(new Task[] { CollectFrames, ReadFrames });
+                }
+                TokenSource?.Dispose();
+                TokenSource = null;
 
-            // Clear queue and free memory
-            while (FrameQueue?.Count > 0)
-            {
-                oni.Frame frame;
-                frame = FrameQueue.Take();
-                DisposeFrame(frame);
+                // Clear queue and free memory
+                while (FrameQueue?.Count > 0)
+                {
+                    oni.Frame frame;
+                    frame = FrameQueue.Take();
+                    DisposeFrame(frame);
+                }
+                FrameQueue?.Dispose();
+                FrameQueue = null;
+                ctx.Stop();
+                running = false;
             }
-            FrameQueue?.Dispose();
-            FrameQueue = null;
-            ctx.Stop();
         }
 
         #region oni.Context delegates
@@ -265,13 +303,16 @@ namespace Bonsai.ONIX
 
         public void Dispose()
         {
-            Stop();
-            lock (readLock)
-                lock (writeLock)
-                    lock (regLock)
-                    {
-                        ctx?.Dispose();
-                    }
+            lock (runLock)
+            {
+                Stop();
+                lock (readLock)
+                    lock (writeLock)
+                        lock (regLock)
+                        {
+                            ctx?.Dispose();
+                        }
+            }
         }
     }
 }
