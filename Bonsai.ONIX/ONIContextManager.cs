@@ -72,13 +72,7 @@ namespace Bonsai.ONIX
                         slot = configuration[slot.MakeKey()];
                     }
 
-                    // TODO: context open timeout. Is this reasonable??
-                    var generateContext = Task.Run(() => new ONIContextTask(slot.Driver, slot.Index));
-                    if (!generateContext.Wait(1000))
-                    {
-                        throw new TimeoutException("ONI aquisition context creation timed out.");
-                    }
-                    var ctx = generateContext.Result;
+                    var ctx = new ONIContextTask(slot.Driver, slot.Index);
 
                     var dispose = Disposable.Create(() =>
                         {

@@ -21,26 +21,15 @@ namespace Bonsai.ONIX
 
         protected override IObservable<LoadTestingBlockDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-            int numWords = (int)FrameWords;
-            var data_block = new LoadTestingDataBlock(numWords, BlockSize);
             return source
-                .Where(f =>
-                {
-                    return data_block.FillFromFrame(f);
-                })
-                .Select(f =>
-                {
-                    var sample = new LoadTestingBlockDataFrame(data_block);
-                    data_block = new LoadTestingDataBlock(numWords, BlockSize);
-                    return sample;
-                });
-
+                .Buffer(BlockSize)
+                .Select(block => { return new LoadTestingBlockDataFrame(block, (int)FrameWords); });
         }
 
-        [Category("Acquisition")]
-        [Range(10, 10000)]
+        [Category("Configuration")]
+        [Range(1, 10000)]
         [Description("The number of frames making up a single data block that is propagated in the observable sequence.")]
-        public int BlockSize { get; set; } = 250;
+        public int BlockSize { get; set; } = 10;
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]

@@ -30,12 +30,13 @@ namespace Bonsai.ONIX
                    var c = ONIContextManager.ReserveContext(ContextConfiguration.Slot, true);
                    c.Context.BlockReadSize = ContextConfiguration.ReadSize;
                    c.Context.BlockWriteSize = ContextConfiguration.WriteSize;
+                   c.Context.Start();
                    return c;
                },
                c =>
                {
                    return Observable
-                       .Start(() => { c.Context.Start(); return c.Context; })
+                       .Return(c.Context)
                        .Concat(Observable.Never(c.Context));
                });
         }

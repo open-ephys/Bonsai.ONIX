@@ -1,32 +1,39 @@
-﻿using System;
+﻿using OpenCV.Net;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenCV.Net;
 
 namespace Bonsai.ONIX
 {
-    public class LoadTestingBlockDataFrame : DataBlockFrame
+    public class LoadTestingBlockDataFrame : U16DataBlockFrame
     {
+        public readonly int NumberOfFrames;
+        public readonly int FrameWords;
 
-        public LoadTestingBlockDataFrame(LoadTestingDataBlock data_block)
-            : base(data_block)
+        public LoadTestingBlockDataFrame(IList<ONIManagedFrame<ushort>> frameBlock, int frameWords)
+            : base(frameBlock)
         {
-            TestData = GetTestData(data_block.TestData);
-        }
-
-        Mat GetTestData(ushort[,] data)
-        {
-            if (data.Length == 0)
+            if (frameBlock.Count == 0)
             {
-                return null;
+                throw new Bonsai.WorkflowRuntimeException("Load testing input frame buffer is empty.");
             }
 
-            var numChannels = data.GetLength(0);
-            var numSamples = data.GetLength(1);
+            NumberOfFrames = frameBlock.Count;
+            FrameWords = frameWords;
+            var payload = new ushort[FrameWords, NumberOfFrames];
 
-            var output = new Mat(numChannels, numSamples, Depth.U16, 1);
+            for (int j = 0; j < NumberOfFrames; j++)
+            {
+                for (int i = 0; i < FrameWords; i++)
+                {
+                    payload[i, j] = frameBlock[j].Sample[i + 4];
+                }
+
+            }
+            Payload = GetPayload(payload);
+        }
+
+        Mat GetPayload(ushort[,] data)
+        {
+            var output = new Mat(FrameWords, NumberOfFrames, Depth.U16, 1);
             using (var header = Mat.CreateMatHeader(data))
             {
                 CV.Convert(header, output);
@@ -35,7 +42,7 @@ namespace Bonsai.ONIX
             return output;
         }
 
-        public Mat TestData { get; private set; }
+        public Mat Payload { get; private set; }
     }
 
 }
