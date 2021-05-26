@@ -6,31 +6,41 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Linq;
-using System.Reflection;
 
-// TODO: Sweep frequency needs to be in terms of DataClock cycles for this to work or we need to convert the pulse width etc to time in seconds
 namespace Bonsai.ONIX
 {
-    class Visitor : ExpressionVisitor
-    {
-        protected override Expression VisitMember(MemberExpression member)
-        {
-            if (member.Expression is ConstantExpression ex &&
-                member.Member is FieldInfo fi)
-            {
-                object container = ex.Value;
-                object value = fi.GetValue(container);
-                Console.WriteLine("Got value: {0}", value);
-            }
-            return base.VisitMember(member);
-        }
-    }
-
     [Combinator]
     [WorkflowElementCategory(ElementCategory.Transform)]
     [Description("Calculates uncalibrated 3D position of a single photodiode for V1 base stations.")]
     public class TS4321V1FrameToPosition : SingleArgumentExpressionBuilder
     {
+        private class HubFinder : ExpressionVisitor
+        {
+            public oni.Hub Hub { get; private set; }
+
+            public Expression GetUpstreamHub(Expression expression)
+            {
+                return Visit(expression);
+            }
+
+            protected override Expression VisitConstant(ConstantExpression node)
+            {
+                if (node.Type == typeof(TS4231V1Device))
+                {
+                    var device = node.Value as TS4231V1Device;
+                    if (device.Hub != null)
+                    {
+                        // Because this TS4321V1FrameToPosition only accepts TS4321V1DataFrames,
+                        // we have some assurance that we dont need to keep track of multiple
+                        // upstream TS4321V1Devices
+                        Hub = device.Hub;
+                    }
+                }
+
+                return base.VisitConstant(node);
+            }
+        }
+
         // Template pattern
         static readonly bool[] template = {
         //  bad    skip   axis   sweep
@@ -79,22 +89,15 @@ namespace Bonsai.ONIX
         {
             var source = arguments.First();
 
-            // TODO: HACK HACK HACK
-            // Need to do this using visitor searching for upstream node.
-            // This is brittle and will fail if immediately upstream node is not TS4231
-            try
+            var hubFinder = new HubFinder();
+            hubFinder.GetUpstreamHub(source);
+
+            if (hubFinder.Hub == null)
             {
-                DataClockHz = (((((source
-                    as MethodCallExpression).Object
-                    as ConstantExpression).Value
-                    as InspectBuilder).Builder
-                    as CombinatorBuilder).Combinator
-                    as ONIDevice).Hub.ClockHz;
+                throw new Bonsai.WorkflowBuildException("Upstream TS4321V1Device does not have valid hardware link.");
             }
-            catch (NullReferenceException ex)
-            {
-                throw new Bonsai.WorkflowBuildException("Upstream node must be TS4231V1Device.", ex);
-            }
+
+            DataClockHz = hubFinder.Hub.ClockHz;
 
             var thisType = GetType();
             var method = thisType.GetMethod(nameof(Process));

@@ -1,5 +1,6 @@
 ﻿using Bonsai.ONIX.Design.Properties;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -39,38 +40,88 @@ namespace Bonsai.ONIX.Design
             base.OnClosed(e);
         }
 
-        private void AttemptToConnect()
+        private void UpdateDeviceTable(uint selectedHub)
+        {
+            using (var c = ONIContextManager.ReserveContext(Configuration.Slot))
+            {
+                var context = c.Context;
+
+                dataGridViewDeviceTable.Rows.Clear();
+
+                for (int i = 0; i < context.DeviceTable.Count; i++)
+                {
+
+                    var dev = context.DeviceTable.Values.ElementAt(i);
+                    var idx = context.DeviceTable.Keys.ElementAt(i);
+                    var hub = (idx & 0x0000FF00) >> 8;
+
+                    if (dev.ID != (int)ONIXDevices.ID.NULL && hub == selectedHub)
+                    {
+
+                        var ri = dataGridViewDeviceTable.Rows.Add(
+                            idx,
+                            $@" 0x{(byte)(idx >> 8):X2}.0x{(byte)(idx >> 0):X2}",
+                            ((ONIXDevices.ID)dev.ID).ToString(),
+                            dev.Version,
+                            dev.ReadSize,
+                            dev.WriteSize,
+                            dev.Description);
+
+                        dataGridViewDeviceTable.Rows[ri].HeaderCell.Value = ri.ToString();
+                    }
+                }
+            }
+        }
+
+        private void AttemptToConnect(byte selectedHub = 0)
         {
             dataGridViewDeviceTable.Rows.Clear();
+
+            tabControlHubs.SelectedTab = tabControlHubs.TabPages[0];
+            tabControlHubs.SelectedTab.Text = "";
+            while (tabControlHubs.TabPages.Count > 1)
+            {
+                tabControlHubs.TabPages.RemoveAt(tabControlHubs.TabPages.Count - 1);
+            }
 
             try
             {
                 using (var c = ONIContextManager.ReserveContext(Configuration.Slot))
                 {
                     var context = c.Context;
+                    var hubs = new List<oni.Hub>();
 
-
-                    for (int i = 0; i < context.DeviceTable.Count; i++)
+                    foreach (var d in context.DeviceTable.Values)
                     {
-
-                        var dev = context.DeviceTable.Values.ElementAt(i);
-                        var idx = context.DeviceTable.Keys.ElementAt(i);
-
-                        if (dev.ID != (int)ONIXDevices.ID.NULL)
+                        if (d.ID != (int)ONIXDevices.ID.NULL)
                         {
-
-                            var ri = dataGridViewDeviceTable.Rows.Add(
-                                idx,
-                                $@" 0x{(byte)(idx >> 8):X2}.0x{(byte)(idx >> 0):X2}",
-                                ((ONIXDevices.ID)dev.ID).ToString(),
-                                dev.Version,
-                                dev.ReadSize,
-                                dev.WriteSize,
-                                dev.Description);
-
-                            dataGridViewDeviceTable.Rows[ri].HeaderCell.Value = ri.ToString();
+                            try
+                            {
+                                hubs.Add(context.GetHub(d.Address));
+                            }
+                            catch (oni.ONIException)
+                            {
+                                Console.WriteLine($@"Failure to obtain hub information for device at address {d.Address}.");
+                            }
                         }
                     }
+
+                    hubs = hubs.GroupBy(h => h.Address).Select(g => g.First()).ToList();
+
+                    if (hubs.Count > 0)
+                    {
+                        tabControlHubs.TabPages[0].Text = $@"0x{hubs.ElementAt(0).Address:X2} " + hubs[0].Description;
+                        tabControlHubs.TabPages[0].Tag = hubs[0];
+
+                        foreach (var h in hubs.GetRange(1, hubs.Count - 1))
+                        {
+                            var text = $@"0x{h.Address:X2} " + h.Description;
+                            tabControlHubs.TabPages.Add(h.Address.ToString(), text);
+                            tabControlHubs.TabPages[h.Address.ToString()].Tag = h;
+                        }
+                    }
+
+                    UpdateDeviceTable(hubs[0].Address);
 
                     toolStripSplitButton.Text = Resources.ONIConnectionSuccess;
                     toolStripSplitButton.ForeColor = Color.Black;
@@ -161,6 +212,12 @@ namespace Bonsai.ONIX.Design
         private void toolStripSplitButton_ButtonClick(object sender, EventArgs e)
         {
             AttemptToConnect();
+        }
+
+        private void tabControlHubs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            dataGridViewDeviceTable.Parent = tabControlHubs.SelectedTab;
+            UpdateDeviceTable(((oni.Hub)tabControlHubs.SelectedTab.Tag).Address);
         }
     }
 }

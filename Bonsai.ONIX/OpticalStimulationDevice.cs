@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 
-// TODO: Linearize MAXCURRENT
 namespace Bonsai.ONIX
 {
     [Description("Controls a dual channel optical (LED or Laser Diode) stimulator. A boolean input can be" +

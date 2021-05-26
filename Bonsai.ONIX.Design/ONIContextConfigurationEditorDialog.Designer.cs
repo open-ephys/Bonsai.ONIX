@@ -58,6 +58,8 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tabControlHubs = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
@@ -70,6 +72,8 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.tabControlHubs.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label3
@@ -248,13 +252,13 @@
             this.WriteSize,
             this.Description});
             this.dataGridViewDeviceTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewDeviceTable.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewDeviceTable.Location = new System.Drawing.Point(3, 3);
             this.dataGridViewDeviceTable.MultiSelect = false;
             this.dataGridViewDeviceTable.Name = "dataGridViewDeviceTable";
             this.dataGridViewDeviceTable.ReadOnly = true;
             this.dataGridViewDeviceTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataGridViewDeviceTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewDeviceTable.Size = new System.Drawing.Size(894, 415);
+            this.dataGridViewDeviceTable.Size = new System.Drawing.Size(880, 383);
             this.dataGridViewDeviceTable.TabIndex = 20;
             this.dataGridViewDeviceTable.SelectionChanged += new System.EventHandler(this.dataGridViewDeviceTable_SelectionChanged);
             // 
@@ -337,7 +341,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.dataGridViewDeviceTable);
+            this.splitContainer1.Panel1.Controls.Add(this.tabControlHubs);
             // 
             // splitContainer1.Panel2
             // 
@@ -345,6 +349,27 @@
             this.splitContainer1.Size = new System.Drawing.Size(1175, 415);
             this.splitContainer1.SplitterDistance = 894;
             this.splitContainer1.TabIndex = 25;
+            // 
+            // tabControlHubs
+            // 
+            this.tabControlHubs.Controls.Add(this.tabPage1);
+            this.tabControlHubs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControlHubs.Location = new System.Drawing.Point(0, 0);
+            this.tabControlHubs.Name = "tabControlHubs";
+            this.tabControlHubs.SelectedIndex = 0;
+            this.tabControlHubs.Size = new System.Drawing.Size(894, 415);
+            this.tabControlHubs.TabIndex = 21;
+            this.tabControlHubs.SelectedIndexChanged += new System.EventHandler(this.tabControlHubs_SelectedIndexChanged);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.dataGridViewDeviceTable);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(886, 389);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // ONIContextConfigurationEditorDialog
             // 
@@ -374,6 +399,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.tabControlHubs.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -408,5 +435,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn WriteSize;
         private System.Windows.Forms.DataGridViewTextBoxColumn Description;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TabControl tabControlHubs;
+        private System.Windows.Forms.TabPage tabPage1;
     }
 }

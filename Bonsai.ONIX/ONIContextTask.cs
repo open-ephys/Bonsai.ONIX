@@ -37,12 +37,6 @@ namespace Bonsai.ONIX
 
         internal event EventHandler<FrameReceivedEventArgs> FrameReceived;
 
-        public uint SystemClockHz;
-        public uint AcquisitionClockHz;
-        public uint MaxReadFrameSize;
-        public uint MaxWriteFrameSize;
-        public Dictionary<uint, oni.Device> DeviceTable;
-
         public static readonly string DefaultDriver = "riffa";
         public static readonly int DefaultIndex = 0;
 
@@ -85,9 +79,14 @@ namespace Bonsai.ONIX
                             ctx?.Dispose();
                             Init();
                         }
-
             }
         }
+
+        public uint SystemClockHz { get; private set; }
+        public uint AcquisitionClockHz { get; private set; }
+        public uint MaxReadFrameSize { get; private set; }
+        public uint MaxWriteFrameSize { get; private set; }
+        public Dictionary<uint, oni.Device> DeviceTable { get; private set; }
 
         internal void Start()
         {
@@ -106,10 +105,10 @@ namespace Bonsai.ONIX
                     {
                         oni.Frame frame = ReadFrame();
 
-                    //This should not be needed since we are calling Dispose()
-                    //But somehow it seems to improve performance (coupled with GC.RemovePressure)
-                    //More investigation might be needed
-                    GC.AddMemoryPressure(frame.DataSize);
+                        //This should not be needed since we are calling Dispose()
+                        //But somehow it seems to improve performance (coupled with GC.RemovePressure)
+                        //More investigation might be needed
+                        GC.AddMemoryPressure(frame.DataSize);
 
                         try
                         {
@@ -140,8 +139,8 @@ namespace Bonsai.ONIX
                         }
                         catch (OperationCanceledException)
                         {
-                        // If the thread stops no frame has been collected
-                    }
+                            // If the thread stops no frame has been collected
+                        }
                     }
                 },
                 CollectFramesToken,

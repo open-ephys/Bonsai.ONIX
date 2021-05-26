@@ -19,6 +19,10 @@ namespace Bonsai.ONIX
             ctx = ONIContextManager.ReserveContext(device.HardwareSlot);
             dev_idx = device.Address;
             I2C_ADDR = i2c_addr;
+
+#if DEBUG
+            Console.WriteLine("I2C context reserved by " + this.GetType());
+#endif
         }
 
         uint? ReadRegister(uint? dev_index, uint register_address)
@@ -122,6 +126,9 @@ namespace Bonsai.ONIX
 
         public void Dispose()
         {
+#if DEBUG
+            Console.WriteLine("I2C context disposed by " + this.GetType());
+#endif
             ctx?.Dispose();
         }
     }

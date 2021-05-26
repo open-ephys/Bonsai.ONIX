@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
         public const int NumberOfChannels = 12;
         public readonly int NumberOfSamples;
 
-        public AnalogInputDataFrame(IList<ONIManagedFrame<ushort>> frameBlock)
+        public AnalogInputDataFrame(IList<ONIManagedFrame<short>> frameBlock, float[] scale)
             : base(frameBlock)
         {
             if (frameBlock.Count == 0)
@@ -17,7 +17,7 @@ namespace Bonsai.ONIX
             }
 
             NumberOfSamples = frameBlock.Count;
-            var data = new short[NumberOfChannels, NumberOfSamples];
+            var data = new float[NumberOfChannels, NumberOfSamples];
 
             for (int i = 0; i < NumberOfSamples; i++)
             {
@@ -25,16 +25,17 @@ namespace Bonsai.ONIX
 
                 for (int j = 0; j < NumberOfChannels; j++, chan++)
                 {
-                    data[j, i] = (short)frameBlock[i].Sample[chan];
+                    data[j, i] = scale[j] * frameBlock[i].Sample[chan];
                 }
             }
 
             Data = GetData(data);
+
         }
 
-        Mat GetData(short[,] data)
+        Mat GetData(float[,] data)
         {
-            var output = new Mat(NumberOfChannels, NumberOfSamples, Depth.S16, 1);
+            var output = new Mat(NumberOfChannels, NumberOfSamples, Depth.F32, 1);
             using (var header = Mat.CreateMatHeader(data))
             {
                 CV.Convert(header, output);

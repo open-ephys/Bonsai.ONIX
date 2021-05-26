@@ -28,6 +28,25 @@ namespace Bonsai.ONIX
             DataClock = GetClock(dataClock);
         }
 
+        public U16DataBlockFrame(IList<ONIManagedFrame<short>> frameBlock)
+        {
+            var frameClock = new ulong[frameBlock.Count];
+            var dataClock = new ulong[frameBlock.Count];
+
+            for (int i = 0; i < frameBlock.Count; i++)
+            {
+                frameClock[i] = frameBlock[i].FrameClock;
+                dataClock[i] = ((ulong)frameBlock[i].Sample[0] << 48) |
+                               ((ulong)frameBlock[i].Sample[1] << 32) |
+                               ((ulong)frameBlock[i].Sample[2] << 16) |
+                               ((ulong)frameBlock[i].Sample[3] << 0);
+            }
+
+
+            FrameClock = GetClock(frameClock);
+            DataClock = GetClock(dataClock);
+        }
+
         // TODO: This copies!
         Mat GetClock(ulong[] data)
         {

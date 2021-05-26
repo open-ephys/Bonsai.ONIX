@@ -39,6 +39,9 @@ namespace Bonsai.ONIX
                         }
 
                         probe.Start();
+#if DEBUG
+                        Console.WriteLine($"Probe {Configuration.FlexProbeSN} started");
+#endif
                     }
                     observer.OnCompleted();
                     return Disposable.Empty;

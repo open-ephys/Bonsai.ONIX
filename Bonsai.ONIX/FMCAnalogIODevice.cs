@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
     [Description("Acquires data from the twelve 14-bit analog inputs on the Open Ephys FMC Host. " +
         "Optionally, sends data to the 16-bit analog outputs on the Open Ephys FMC Host, if those " +
         "channels are selected to be outputs.")]
-    public class FMCAnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, ushort>
+    public class FMCAnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, short>
     {
         enum Register
         {
@@ -45,9 +45,23 @@ namespace Bonsai.ONIX
             FiveVolts,
         }
 
+        private float[] scale = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
         void SetVoltageRange(Register channel, VoltageRange range)
         {
             WriteRegister(DeviceAddress.Address, (uint)channel, (uint)range);
+
+            switch (range)
+            {
+                case VoltageRange.TwoPointFiveVolts:
+                    scale[(uint)channel - 2] = (float)0.00007629394;
+                    break;
+                case VoltageRange.FiveVolts:
+                    scale[(uint)channel - 2] = (float)0.00015258789;
+                    break;
+                case VoltageRange.TenVolts:
+                    scale[(uint)channel - 2] = (float)0.00030517578;
+                    break;
+            }
         }
 
         VoltageRange GetVoltageRange(Register channel)
@@ -74,11 +88,11 @@ namespace Bonsai.ONIX
             //Enable = true;
         }
 
-        protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<short>> source)
         {
             return source
                 .Buffer(BlockSize)
-                .Select(block => { return new AnalogInputDataFrame(block); });
+                .Select(block => { return new AnalogInputDataFrame(block, scale); });
         }
 
         // TODO: The order of data in the matrix is reverse of the channel index.

@@ -53,6 +53,9 @@ namespace Bonsai.ONIX
 
         public static ONIContextDisposable ReserveContext(ONIHardwareSlot slot, bool release_waiting = false, bool reset_running = false)
         {
+#if DEBUG
+            Console.WriteLine("Context reserved by " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().DeclaringType);
+#endif
             var ctx_counted = default(Tuple<ONIContextTask, RefCountDisposable>);
 
             lock (open_ctx_lock)
