@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
     [WorkflowElementCategory(ElementCategory.Source)]
     public abstract class ONIFrameReader<TResult, TData> : ONIDevice where TData : unmanaged
     {
-        public ONIFrameReader(ONIXDevices.ID dev_id) : base(dev_id) { }
+        public ONIFrameReader(ONIXDevices.ID deviceId) : base(deviceId) { }
 
         public IObservable<TResult> Generate()
         {
@@ -17,8 +17,8 @@ namespace Bonsai.ONIX
                 {
                     var cd = await ONIContextManager.ReserveOpenContextAsync(DeviceAddress.HardwareSlot);
 
-                    var in_table = cd.Context.DeviceTable.TryGetValue(DeviceAddress.Address, out var device);
-                    if (!in_table || device.ID != (int)ID)
+                    var inTable = cd.Context.DeviceTable.TryGetValue(DeviceAddress.Address, out var device);
+                    if (!inTable || device.ID != (int)ID)
                     {
                         throw new WorkflowException("Selected device address is invalid.");
                     }

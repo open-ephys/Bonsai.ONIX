@@ -20,7 +20,7 @@ namespace Bonsai.ONIX
             SAVELINKVOLTAGE = 4,
         }
 
-        public FMCHeadstageControlDevice() : base(ONIXDevices.ID.FMCLINKCTRL) { }
+        public FMCHeadstageControlDevice() : base(ONIXDevices.ID.FMCLinkController) { }
 
         protected override IObservable<FMCHeadstageControlFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

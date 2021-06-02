@@ -31,7 +31,7 @@ namespace Bonsai.ONIX
         }
 
         // Setup context etc
-        public ElectricalStimulationDevice() : base(ONIXDevices.ID.ESTIM) { }
+        public ElectricalStimulationDevice() : base(ONIXDevices.ID.ElectricalStimulator) { }
 
         private uint CurrentK(double currentuA)
         {

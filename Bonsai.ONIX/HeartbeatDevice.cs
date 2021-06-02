@@ -17,7 +17,7 @@ namespace Bonsai.ONIX
             CLK_HZ = 2, // The frequency parameter, CLK_HZ, used in the calculation of CLK_DIV
         }
 
-        public HeartbeatDevice() : base(ONIXDevices.ID.HEARTBEAT) { }
+        public HeartbeatDevice() : base(ONIXDevices.ID.Heartbeat) { }
 
         protected override IObservable<HeartbeatDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

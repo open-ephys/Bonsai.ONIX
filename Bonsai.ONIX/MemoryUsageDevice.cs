@@ -16,7 +16,7 @@ namespace Bonsai.ONIX
             TOTAL_MEM = 3, //Total memory in 32bit words
         }
 
-        public MemoryUsageDevice() : base(ONIXDevices.ID.MEMUSAGE) { }
+        public MemoryUsageDevice() : base(ONIXDevices.ID.MemoryUsage) { }
 
         protected override IObservable<MemoryUsageDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

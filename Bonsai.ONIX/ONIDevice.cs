@@ -4,7 +4,7 @@ namespace Bonsai.ONIX
 {
     public abstract class ONIDevice
     {
-        internal ONIXDevices.ID ID { get; set; } = ONIXDevices.ID.NULL;
+        internal ONIXDevices.ID ID { get; set; } = ONIXDevices.ID.Null;
 
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]

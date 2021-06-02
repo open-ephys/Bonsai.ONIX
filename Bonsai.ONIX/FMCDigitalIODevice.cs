@@ -16,7 +16,7 @@ namespace Bonsai.ONIX
             LEDLVL = 2, // 0-255 overall LED brightness value.
         }
 
-        public FMCDigitalIODevice() : base(ONIXDevices.ID.BREAKDIG1R3) { }
+        public FMCDigitalIODevice() : base(ONIXDevices.ID.BreakoutDigitalIO) { }
 
         protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

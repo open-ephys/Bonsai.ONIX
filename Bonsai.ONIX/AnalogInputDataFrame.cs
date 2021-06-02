@@ -7,8 +7,11 @@ namespace Bonsai.ONIX
     {
         public const int NumberOfChannels = 12;
         public readonly int NumberOfSamples;
+        public readonly FMCAnalogIODevice.SampleUnit Format;
 
-        public AnalogInputDataFrame(IList<ONIManagedFrame<short>> frameBlock, float[] scale)
+        public AnalogInputDataFrame(IList<ONIManagedFrame<short>> frameBlock,
+                                    float[] scale,
+                                    FMCAnalogIODevice.SampleUnit format = FMCAnalogIODevice.SampleUnit.S16)
             : base(frameBlock)
         {
             if (frameBlock.Count == 0)
@@ -17,20 +20,53 @@ namespace Bonsai.ONIX
             }
 
             NumberOfSamples = frameBlock.Count;
-            var data = new float[NumberOfChannels, NumberOfSamples];
+            Format = format;
 
-            for (int i = 0; i < NumberOfSamples; i++)
+            // TODO: Could make a diagonal matrix out of scale and do Volts
+            // conversion using OpenCV but not sure if that would be beneficial.
+            if (Format == FMCAnalogIODevice.SampleUnit.S16)
             {
-                int chan = 4; // Data starts at index 4
-
-                for (int j = 0; j < NumberOfChannels; j++, chan++)
+                var data = new short[NumberOfChannels, NumberOfSamples];
+                for (int i = 0; i < NumberOfSamples; i++)
                 {
-                    data[j, i] = scale[j] * frameBlock[i].Sample[chan];
+                    int chan = 4; // Data starts at index 4
+
+                    for (int j = 0; j < NumberOfChannels; j++, chan++)
+                    {
+                        data[j, i] = frameBlock[i].Sample[chan];
+                    }
                 }
+
+                Data = GetData(data);
+
+            }
+            else
+            {
+
+                var data = new float[NumberOfChannels, NumberOfSamples];
+                for (int i = 0; i < NumberOfSamples; i++)
+                {
+                    int chan = 4; // Data starts at index 4
+
+                    for (int j = 0; j < NumberOfChannels; j++, chan++)
+                    {
+                        data[j, i] = scale[j] * frameBlock[i].Sample[chan];
+                    }
+                }
+
+                Data = GetData(data);
+            }
+        }
+
+        Mat GetData(short[,] data)
+        {
+            var output = new Mat(NumberOfChannels, NumberOfSamples, Depth.S16, 1);
+            using (var header = Mat.CreateMatHeader(data))
+            {
+                CV.Convert(header, output);
             }
 
-            Data = GetData(data);
-
+            return output;
         }
 
         Mat GetData(float[,] data)

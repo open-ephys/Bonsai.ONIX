@@ -14,7 +14,7 @@ namespace Bonsai.ONIX
             MESSAGE,
         }
 
-        public TestDevice() : base(ONIXDevices.ID.TEST) { }
+        public TestDevice() : base(ONIXDevices.ID.Test) { }
 
         protected override IObservable<TestDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

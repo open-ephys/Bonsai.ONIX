@@ -34,7 +34,7 @@ namespace Bonsai.ONIX
             return 100.0 * h / (h + l);
         }
 
-        public FMCCLKOutDevice() : base(ONIXDevices.ID.FMCCLKOUT1R3) { }
+        public FMCCLKOutDevice() : base(ONIXDevices.ID.FMCClockOutput) { }
 
         [Category("Acquisition")]
         [Description("Enable.")]

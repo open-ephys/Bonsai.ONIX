@@ -11,7 +11,7 @@ namespace Bonsai.ONIX
     [DefaultProperty("Configuration")]
     public class NeuropixelsV1Device : ONIFrameReader<NeuropixelsV1DataFrame, ushort>
     {
-        public NeuropixelsV1Device() : base(ONIXDevices.ID.NEUROPIX1R0) { }
+        public NeuropixelsV1Device() : base(ONIXDevices.ID.NeuropixelsV1) { }
 
         protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

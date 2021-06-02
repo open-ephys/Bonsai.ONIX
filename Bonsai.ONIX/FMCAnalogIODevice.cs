@@ -29,70 +29,18 @@ namespace Bonsai.ONIX
             CH11INRANGE = 13,
         }
 
-        public enum InputOutput
+        private readonly float[] scale;
+
+        public FMCAnalogIODevice() : base(ONIXDevices.ID.BreakoutAnalogIO)
         {
-            Input = 0,
-            Output = 1
-        }
-
-        public enum VoltageRange
-        {
-            [Description("+/-10.0 V")]
-            TenVolts = 0,
-            [Description("+/-2.5 V")]
-            TwoPointFiveVolts = 1,
-            [Description("+/-5.0 V")]
-            FiveVolts,
-        }
-
-        private float[] scale = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-        void SetVoltageRange(Register channel, VoltageRange range)
-        {
-            WriteRegister(DeviceAddress.Address, (uint)channel, (uint)range);
-
-            switch (range)
-            {
-                case VoltageRange.TwoPointFiveVolts:
-                    scale[(uint)channel - 2] = (float)0.00007629394;
-                    break;
-                case VoltageRange.FiveVolts:
-                    scale[(uint)channel - 2] = (float)0.00015258789;
-                    break;
-                case VoltageRange.TenVolts:
-                    scale[(uint)channel - 2] = (float)0.00030517578;
-                    break;
-            }
-        }
-
-        VoltageRange GetVoltageRange(Register channel)
-        {
-            return (VoltageRange)ReadRegister(DeviceAddress.Address, (uint)channel);
-        }
-
-        uint io_reg = 0;
-
-        void SetIO(int channel, InputOutput io)
-        {
-            io_reg = (io_reg & ~((uint)1 << channel)) | ((uint)(io) << channel);
-            WriteRegister(DeviceAddress.Address, (uint)Register.CHDIR, io_reg);
-        }
-
-        InputOutput GetIO(int channel)
-        {
-            var io_reg = ReadRegister(DeviceAddress.Address, (int)Register.CHDIR);
-            return (InputOutput)((io_reg >> channel) & 1);
-        }
-
-        public FMCAnalogIODevice() : base(ONIXDevices.ID.FMCANALOG1R3)
-        {
-            //Enable = true;
+            scale = Enumerable.Repeat((float)0.000305, AnalogInputDataFrame.NumberOfChannels).ToArray();
         }
 
         protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<short>> source)
         {
-            return source
-                .Buffer(BlockSize)
-                .Select(block => { return new AnalogInputDataFrame(block, scale); });
+            return Observable
+                .Return(scale.Copy())
+                .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, s, InputDataFormat); });
         }
 
         // TODO: The order of data in the matrix is reverse of the channel index.
@@ -107,18 +55,39 @@ namespace Bonsai.ONIX
                 throw new IndexOutOfRangeException("Source must be a 12 element vector.");
             }
 
-            if (m.Depth != Depth.U16)
+            // TODO: Support all different Mat element types?
+            if (m.Depth == Depth.U16)
+            {
+                ctx.Write(DeviceAddress.Address, m.Data, 2 * AnalogInputDataFrame.NumberOfChannels);
+            }
+            //else if (m.Depth == Depth.S16)
+            //{
+            //    // Convert to offset-binary
+            //    var m_ob = new Mat(m.Size, Depth.U16, 1);
+            //    CV.ConvertScale(m, m_ob, 1, 32768);
+            //    ctx.Write(DeviceAddress.Address, m_ob.Data, 2 * AnalogInputDataFrame.NumberOfChannels);
+            //}
+            else
             {
                 throw new InvalidOperationException("Source elements must be unsigned 16 bit integers");
             }
-
-            ctx.Write(DeviceAddress.Address, m.Data, 2 * AnalogInputDataFrame.NumberOfChannels);
         }
 
         [Category("Configuration")]
-        [Range(1, 1e6)]
+        [Range(1, 1e5)]
         [Description("The size of data blocks, in samples, that are propagated as events in the observable sequence.")]
-        public int BlockSize { get; set; } = 250;
+        public int BlockSize { get; set; } = 100;
+
+        public enum SampleUnit
+        {
+            S16,
+            Volts
+        }
+
+        [Category("Acquisition")]
+        [Range(1, 1e5)]
+        [Description("The format of the analog input data. S16: raw 16-bit signed integer conversion results. Volts: 32-bit floating-point scaled voltages.")]
+        public SampleUnit InputDataFormat { get; set; } = SampleUnit.S16;
 
         [Category("Configuration")]
         [Description("Enable the input data stream.")]
@@ -469,6 +438,75 @@ namespace Bonsai.ONIX
             {
                 SetIO(11, value);
             }
+        }
+
+        public enum InputOutput
+        {
+            Input = 0,
+            Output = 1
+        }
+
+        public enum VoltageRange
+        {
+            [Description("+/-10.0 V")]
+            TenVolts = 0,
+            [Description("+/-2.5 V")]
+            TwoPointFiveVolts = 1,
+            [Description("+/-5.0 V")]
+            FiveVolts,
+        }
+
+
+        void SetVoltageRange(Register channel, VoltageRange range)
+        {
+            WriteRegister(DeviceAddress.Address, (uint)channel, (uint)range);
+
+            switch (range)
+            {
+                case VoltageRange.TwoPointFiveVolts:
+                    scale[(uint)channel - 2] = (float)7.6250e-05;
+                    break;
+                case VoltageRange.FiveVolts:
+                    scale[(uint)channel - 2] = (float)1.5250e-04;
+                    break;
+                case VoltageRange.TenVolts:
+                    scale[(uint)channel - 2] = (float)0.000305;
+                    break;
+            }
+        }
+
+        VoltageRange GetVoltageRange(Register channel)
+        {
+            var range = (VoltageRange)ReadRegister(DeviceAddress.Address, (uint)channel);
+
+            switch (range)
+            {
+                case VoltageRange.TwoPointFiveVolts:
+                    scale[(uint)channel - 2] = (float)7.6250e-05;
+                    break;
+                case VoltageRange.FiveVolts:
+                    scale[(uint)channel - 2] = (float)1.5250e-04;
+                    break;
+                case VoltageRange.TenVolts:
+                    scale[(uint)channel - 2] = (float)0.000305;
+                    break;
+            }
+
+            return range;
+        }
+
+        uint io_reg = 0;
+
+        void SetIO(int channel, InputOutput io)
+        {
+            io_reg = (io_reg & ~((uint)1 << channel)) | ((uint)(io) << channel);
+            WriteRegister(DeviceAddress.Address, (uint)Register.CHDIR, io_reg);
+        }
+
+        InputOutput GetIO(int channel)
+        {
+            var io_reg = ReadRegister(DeviceAddress.Address, (int)Register.CHDIR);
+            return (InputOutput)((io_reg >> channel) & 1);
         }
     }
 }

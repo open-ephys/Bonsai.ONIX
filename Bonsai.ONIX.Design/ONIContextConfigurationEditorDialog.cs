@@ -55,7 +55,7 @@ namespace Bonsai.ONIX.Design
                     var idx = context.DeviceTable.Keys.ElementAt(i);
                     var hub = (idx & 0x0000FF00) >> 8;
 
-                    if (dev.ID != (int)ONIXDevices.ID.NULL && hub == selectedHub)
+                    if (dev.ID != (int)ONIXDevices.ID.Null && hub == selectedHub)
                     {
 
                         var ri = dataGridViewDeviceTable.Rows.Add(
@@ -93,7 +93,7 @@ namespace Bonsai.ONIX.Design
 
                     foreach (var d in context.DeviceTable.Values)
                     {
-                        if (d.ID != (int)ONIXDevices.ID.NULL)
+                        if (d.ID != (int)ONIXDevices.ID.Null)
                         {
                             try
                             {

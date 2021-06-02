@@ -17,7 +17,7 @@ namespace Bonsai.ONIX
                              //There needs to be enough clock cycles CLK_HZ / CLK_DIV >= FRAME_WORDS + NO_TIMER_WORDS (4 usually) + 1. Going
                              // above this will result in _decreased_ bandwidth as samples will be skipped.
         }
-        public LoadTestingBlockDevice() : base(ONIXDevices.ID.LOADTEST) { }
+        public LoadTestingBlockDevice() : base(ONIXDevices.ID.LoadTest) { }
 
         protected override IObservable<LoadTestingBlockDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

@@ -7,7 +7,7 @@ namespace Bonsai.ONIX
 {
     public class RawDevice : ONIFrameReader<RawDataFrame, ushort>
     {
-        public RawDevice() : base(ONIXDevices.ID.NULL) { }
+        public RawDevice() : base(ONIXDevices.ID.Null) { }
 
         protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

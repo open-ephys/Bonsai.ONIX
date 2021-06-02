@@ -27,7 +27,7 @@ namespace Bonsai.ONIX
         }
 
         // Setup context etc
-        public OpticalStimulationDevice() : base(ONIXDevices.ID.OSTIM) { }
+        public OpticalStimulationDevice() : base(ONIXDevices.ID.OpticalStimulator) { }
 
         // Fit from Fig. 10 of CAT4016 datasheet
         // x = (y/a)^(1/b)

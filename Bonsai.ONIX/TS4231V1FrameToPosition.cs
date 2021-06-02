@@ -6,13 +6,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Linq;
+using System.Reflection;
 
 namespace Bonsai.ONIX
 {
     [Combinator]
     [WorkflowElementCategory(ElementCategory.Transform)]
     [Description("Calculates uncalibrated 3D position of a single photodiode for V1 base stations.")]
-    public class TS4321V1FrameToPosition : SingleArgumentExpressionBuilder
+    public class TS4231V1FrameToPosition : SingleArgumentExpressionBuilder
     {
         private class HubFinder : ExpressionVisitor
         {
@@ -38,6 +39,29 @@ namespace Bonsai.ONIX
                 }
 
                 return base.VisitConstant(node);
+            }
+
+            protected override Expression VisitParameter(ParameterExpression node)
+            {
+                return base.VisitParameter(node);
+            }
+
+            protected override Expression VisitExtension(Expression node)
+            {
+                // TODO: This is a hack.
+                // - I should not be using reflection to access properties of private MulticastBranchExpression
+                // - There are probably ways to use the Expression helpers that come with Bonsai to do this, but
+                //   I dont know how.
+                // - I have no clue how brittle this is across different workflow topologies. For instance, I have confirmed
+                //   that this currently does _not_ work across publish/subscribe subject.
+                var type = node.GetType();
+                if (type.Name == "MulticastBranchExpression")
+                {
+                    var source = type.GetRuntimeProperty("Source").GetValue(node);
+                    Visit(source as Expression);
+                }
+
+                return base.VisitExtension(node);
             }
         }
 
@@ -73,7 +97,7 @@ namespace Bonsai.ONIX
         Mat position = new Mat(3, 1, Depth.F64, 1);
         double position_time;
 
-        public TS4321V1FrameToPosition()
+        public TS4231V1FrameToPosition()
         {
             P = new Point3d(0, 0, 0);
             Q = new Point3d(1, 0, 0);

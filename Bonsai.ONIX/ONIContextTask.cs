@@ -10,8 +10,8 @@ namespace Bonsai.ONIX
     {
         private oni.Context ctx;
 
-        private Task ReadFrames;
-        private Task CollectFrames;
+        private Task readFrames;
+        private Task distributeFrames;
 
         /// <summary>
         /// Maximum amount of frames the reading queue will hold.
@@ -54,10 +54,10 @@ namespace Bonsai.ONIX
         {
             contextDriver = driver;
             contextIndex = index;
-            Init();
+            Initialize();
         }
 
-        private void Init()
+        private void Initialize()
         {
             ctx = new oni.Context(contextDriver, contextIndex);
             SystemClockHz = ctx.SystemClockHz;
@@ -77,7 +77,7 @@ namespace Bonsai.ONIX
                         lock (regLock)
                         {
                             ctx?.Dispose();
-                            Init();
+                            Initialize();
                         }
             }
         }
@@ -99,7 +99,7 @@ namespace Bonsai.ONIX
 
                 FrameQueue = new BlockingCollection<oni.Frame>(MaxQueuedFrames);
 
-                ReadFrames = Task.Factory.StartNew(() =>
+                readFrames = Task.Factory.StartNew(() =>
                 {
                     while (!CollectFramesToken.IsCancellationRequested)
                     {
@@ -124,7 +124,7 @@ namespace Bonsai.ONIX
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
 
-                CollectFrames = Task.Factory.StartNew(() =>
+                distributeFrames = Task.Factory.StartNew(() =>
                 {
 
                     while (!CollectFramesToken.IsCancellationRequested)
@@ -155,10 +155,10 @@ namespace Bonsai.ONIX
             lock (runLock)
             {
                 if (!running) return;
-                if ((CollectFrames != null || ReadFrames != null) && !CollectFrames.IsCanceled)
+                if ((distributeFrames != null || readFrames != null) && !distributeFrames.IsCanceled)
                 {
                     TokenSource.Cancel();
-                    Task.WaitAll(new Task[] { CollectFrames, ReadFrames });
+                    Task.WaitAll(new Task[] { distributeFrames, readFrames });
                 }
                 TokenSource?.Dispose();
                 TokenSource = null;
@@ -269,6 +269,7 @@ namespace Bonsai.ONIX
                 ctx.Write(dev_idx, data);
             }
         }
+
         public void Write<T>(uint dev_idx, T[] data) where T : unmanaged
         {
             lock (writeLock)

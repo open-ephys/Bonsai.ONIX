@@ -18,7 +18,7 @@ namespace Bonsai.ONIX
                              // above this will result in _decreased_ bandwidth as samples will be skipped.
         }
 
-        public LoadTestingDevice() : base(ONIXDevices.ID.LOADTEST) { }
+        public LoadTestingDevice() : base(ONIXDevices.ID.LoadTest) { }
 
         protected override IObservable<LoadTestingDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {

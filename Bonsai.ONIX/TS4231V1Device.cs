@@ -14,7 +14,7 @@ namespace Bonsai.ONIX
             ENVMARGIN,
         }
 
-        public TS4231V1Device() : base(ONIXDevices.ID.TS4231V1ARR) { }
+        public TS4231V1Device() : base(ONIXDevices.ID.TS4231V1Array) { }
 
         protected override IObservable<TS4231V1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
