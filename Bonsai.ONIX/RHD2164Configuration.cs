@@ -31,7 +31,7 @@ namespace Bonsai.ONIX
             AnalogLowCutoffToRegisters.Add(AnalogLowCutoff.Low2500mHz, new[] { 42, 2, 0 });
             AnalogLowCutoffToRegisters.Add(AnalogLowCutoff.Low2000mHz, new[] { 8, 3, 0 });
             AnalogLowCutoffToRegisters.Add(AnalogLowCutoff.Low1500mHz, new[] { 9, 4, 0 });
-            AnalogLowCutoffToRegisters.Add(AnalogLowCutoff.Low100mmHz, new[] { 44, 6, 0 });
+            AnalogLowCutoffToRegisters.Add(AnalogLowCutoff.Low1000mHz, new[] { 44, 6, 0 });
             AnalogLowCutoffToRegisters.Add(AnalogLowCutoff.Low750mHz, new[] { 49, 9, 0 });
             AnalogLowCutoffToRegisters.Add(AnalogLowCutoff.Low500mHz, new[] { 35, 17, 0 });
             AnalogLowCutoffToRegisters.Add(AnalogLowCutoff.Low300mHz, new[] { 1, 40, 0 });
@@ -79,7 +79,7 @@ namespace Bonsai.ONIX
             Low2500mHz,
             Low2000mHz,
             Low1500mHz,
-            Low100mmHz,
+            Low1000mHz,
             Low750mHz,
             Low500mHz,
             Low300mHz,

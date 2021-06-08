@@ -9,28 +9,30 @@ namespace Bonsai.ONIX
     [WorkflowElementCategory(ElementCategory.Sink)]
     public abstract class ONISink<TSource> : ONIDevice
     {
-        public ONISink(ONIXDevices.ID dev_id) : base(dev_id) { }
+        public ONISink(ONIXDevices.ID deviceID) : base(deviceID) { }
 
         public IObservable<TSource> Process(IObservable<TSource> source)
         {
             return Observable.Using(
                 cancellationToken => ONIContextManager.ReserveOpenContextAsync(DeviceAddress.HardwareSlot),
-                (cd, cancellationToken) =>
+                (contextDisposable, cancellationToken) =>
                 {
-                    var in_table = cd.Context.DeviceTable.TryGetValue(DeviceAddress.Address, out var device);
-                    if (!in_table || device.ID != (int)ID)
+                    var inTable = contextDisposable.Context.DeviceTable.TryGetValue(DeviceAddress.Address, out var device);
+                    if (!inTable || device.ID != (int)ID)
                     {
                         throw new WorkflowException("Selected device address is invalid.");
                     }
 
-                    return Task.FromResult(source.Do(input =>
-                    {
-                        Write(cd.Context, input);
-                    }));
+                    return Task.FromResult(source
+                        .Do(input => { OnNext(contextDisposable.Context, input); })
+                        .Finally(() => OnFinally(contextDisposable.Context))
+                    );
                 }
             );
         }
 
-        protected abstract void Write(ONIContextTask ctx, TSource source);
+        protected abstract void OnNext(ONIContextTask ctx, TSource source);
+
+        protected virtual void OnFinally(ONIContextTask ctx) { }
     }
 }

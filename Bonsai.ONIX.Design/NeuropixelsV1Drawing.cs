@@ -21,7 +21,7 @@ namespace Bonsai.ONIX.Design
         private bool electrodeSelect;
         private bool multiSelect = false;
         private bool drawMaintainedSelection = false;
-        private List<int> selectedElectrodes = new List<int>();
+        private readonly List<int> selectedElectrodes = new List<int>();
 
         public NeuropixelsV1Drawing(Panel panel)
         {

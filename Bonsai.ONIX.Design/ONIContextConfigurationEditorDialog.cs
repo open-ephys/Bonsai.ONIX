@@ -175,36 +175,36 @@ namespace Bonsai.ONIX.Design
         {
             if (dataGridViewDeviceTable.SelectedRows.Count == 0)
             {
-                propertyGrid.SelectedObject = null;
+                propertyGridSelecteDevice.SelectedObject = null;
                 return;
             }
 
             var row = dataGridViewDeviceTable.SelectedRows[0];
-            var dev_idx = (uint)row.Cells[0].Value;
+            var deviceIndex = (uint)row.Cells[0].Value;
 
             using (var c = ONIContextManager.ReserveContext(Configuration.Slot))
             {
 
                 var context = c.Context;
-                if (context.DeviceTable.TryGetValue(dev_idx, out oni.Device dev))
+                if (context.DeviceTable.TryGetValue(deviceIndex, out oni.Device dev))
                 {
                     var device = ONIDeviceFactory.Make((ONIXDevices.ID)dev.ID);
                     if (device != null)
                     {
                         // Hacky "back door" into ONIDeviceIndexTypeConverter's functionality
-                        device.DeviceAddress = new ONIDeviceAddress { HardwareSlot = Configuration.Slot, Address = dev_idx, Valid = true };
-                        propertyGrid.SelectedObject = device;
+                        device.DeviceAddress = new ONIDeviceAddress { HardwareSlot = Configuration.Slot, Address = deviceIndex, Valid = true };
+                        propertyGridSelecteDevice.SelectedObject = device;
                         device.FrameClockHz = c.Context.AcquisitionClockHz;
                         device.Hub = c.Context.GetHub(device.DeviceAddress.Address);
                     }
                     else
                     {
-                        propertyGrid.SelectedObject = null;
+                        propertyGridSelecteDevice.SelectedObject = null;
                     }
                 }
                 else
                 {
-                    propertyGrid.SelectedObject = null;
+                    propertyGridSelecteDevice.SelectedObject = null;
                 }
             }
         }

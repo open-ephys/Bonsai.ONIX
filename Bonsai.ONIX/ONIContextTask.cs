@@ -294,7 +294,7 @@ namespace Bonsai.ONIX
             DisposeFrame(e.Frame);
         }
 
-        void DisposeFrame(oni.Frame frame)
+        private static void DisposeFrame(oni.Frame frame)
         {
             long dataSize = frame.DataSize;
             frame.Dispose();
@@ -313,6 +313,8 @@ namespace Bonsai.ONIX
                             ctx?.Dispose();
                         }
             }
+
+            GC.SuppressFinalize(this);
         }
     }
 }

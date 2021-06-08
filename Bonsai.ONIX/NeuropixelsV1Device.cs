@@ -63,7 +63,7 @@ namespace Bonsai.ONIX
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        public override ONIDeviceAddress DeviceAddress
+        public new ONIDeviceAddress DeviceAddress
         {
             get { return Configuration.DeviceAddress; }
             set { Configuration.DeviceAddress = value; }

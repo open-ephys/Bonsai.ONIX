@@ -37,6 +37,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -49,6 +50,9 @@
       <DependentUpon>HubConfigurationEditor.cs</DependentUpon>
     </Compile>
     <Compile Update="NeuropixelsEditorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="StimulatorEditorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="ONIContextConfigurationEditorDialog.cs">
@@ -72,6 +76,7 @@
     <PackageReference Include="clroni" Version="4.3.3" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="TinyCsvParser" Version="2.6.0" />
+    <PackageReference Include="ZedGraph" Version="5.1.7" />
   </ItemGroup>
   
   <ItemGroup>

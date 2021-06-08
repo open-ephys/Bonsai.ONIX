@@ -117,12 +117,12 @@ namespace Bonsai.ONIX
             FrameCounter = GetCounter(frameCounter);
         }
 
-        Mat GetClock(ulong[] data)
+        private static Mat GetClock(ulong[] data)
         {
             return Mat.FromArray(data, 1, data.Length, Depth.F64, 1); // TODO: abusing double to fit uint64_t
         }
 
-        Mat GetEphysData(ushort[,] data)
+        private static Mat GetEphysData(ushort[,] data)
         {
             var numChannels = data.GetLength(0);
             var numSamples = data.GetLength(1);
@@ -136,7 +136,7 @@ namespace Bonsai.ONIX
             return output;
         }
 
-        Mat GetCounter(int[] data)
+        private static Mat GetCounter(int[] data)
         {
             return Mat.FromArray(data, 1, data.Length, Depth.S32, 1);
         }

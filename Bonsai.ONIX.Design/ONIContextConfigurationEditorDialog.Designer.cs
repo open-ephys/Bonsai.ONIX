@@ -44,7 +44,7 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hubsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.propertyGridSelecteDevice = new System.Windows.Forms.PropertyGrid();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panel3 = new System.Windows.Forms.Panel();
             this.dataGridViewDeviceTable = new System.Windows.Forms.DataGridView();
@@ -212,11 +212,11 @@
             // 
             // propertyGrid
             // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(0, 0);
-            this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(277, 415);
-            this.propertyGrid.TabIndex = 19;
+            this.propertyGridSelecteDevice.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridSelecteDevice.Location = new System.Drawing.Point(0, 0);
+            this.propertyGridSelecteDevice.Name = "propertyGrid";
+            this.propertyGridSelecteDevice.Size = new System.Drawing.Size(277, 415);
+            this.propertyGridSelecteDevice.TabIndex = 19;
             // 
             // panel3
             // 
@@ -345,7 +345,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.propertyGrid);
+            this.splitContainer1.Panel2.Controls.Add(this.propertyGridSelecteDevice);
             this.splitContainer1.Size = new System.Drawing.Size(1175, 415);
             this.splitContainer1.SplitterDistance = 894;
             this.splitContainer1.TabIndex = 25;
@@ -421,7 +421,7 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hubsToolStripMenuItem;
         private System.Windows.Forms.ErrorProvider errorProvider;
-        private System.Windows.Forms.PropertyGrid propertyGrid;
+        private System.Windows.Forms.PropertyGrid propertyGridSelecteDevice;
         private System.Windows.Forms.Panel panel3;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.StatusStrip statusStrip;

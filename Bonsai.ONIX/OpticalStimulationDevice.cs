@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace Bonsai.ONIX
 {
     [Description("Controls a dual channel optical (LED or Laser Diode) stimulator. A boolean input can be" +
         "used to trigger stimulation: True = Stimulation triggered, False = Stimulation untriggered.")]
+    [DefaultProperty("DeviceAddress")]
     public sealed class OpticalStimulationDevice : ONISink<bool>
     {
         enum Register
@@ -58,10 +60,10 @@ namespace Bonsai.ONIX
         private double PotSettingToCurrent(uint setting)
         {
             double R = MinRheostatResistance + setting * PotResistance / 256;
-            return 3.833e+05 * Math.Pow(R, -0.9632);
+            return Math.Round(3.833e+05 * Math.Pow(R, -0.9632), 2);
         }
 
-        double MinRheostatResistance
+        private double MinRheostatResistance
         {
             get
             {
@@ -69,7 +71,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        double PotResistance
+        private double PotResistance
         {
             get
             {
@@ -77,8 +79,41 @@ namespace Bonsai.ONIX
             }
         }
 
+        private void WritePulseMask(int channel, double percent)
+        {
+            uint mask = 0x00000000;
+            var p = 0.0;
+            while (p < percent)
+            {
+                mask = (mask << 1) | 1;
+                p += 12.5;
+            }
+
+            var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
+            val = channel == 0 ? (val & 0x0000FF00) | mask : (mask << 8) | (val & 0x000000FF);
+            WriteRegister(DeviceAddress.Address, (int)Register.PULSEMASK, val);
+        }
+
+        private double ReadPulseMask(int channel)
+        {
+            var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
+            var mask = channel == 0 ? (val & 0x000000FF) : (val & 0x0000FF00) >> 8;
+
+            double percent = 0.0;
+            while (mask > 0)
+            {
+                mask >>= 1;
+                percent += 12.5;
+            }
+
+            return percent;
+        }
+
         [Category("Acquisition")]
-        [Description("Max current per channel (mA).")]
+        [Description("Maximum current per channel per pulse (mA). " +
+            "This value is used by both channels. To get different amplitudes " +
+            "for each channel use the Channel0Level and Channel1Level parameters.")]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
         [Range(0, 800)]
         public double MaxCurrent
         {
@@ -93,15 +128,13 @@ namespace Bonsai.ONIX
             }
         }
 
-        // LED outputs 1-8 are tied to channel 0
         [Category("Acquisition")]
-        [Description("Global Enable. If false, all triggers will be ignored.")]
-        public bool GlobalEnable
+        [Description("If false, triggers will be ignored.")]
+        public bool Enable
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.ENABLE);
-                return val > 0;
+                return ReadRegister(DeviceAddress.Address, (int)Register.ENABLE) > 0;
             }
             set
             {
@@ -109,52 +142,47 @@ namespace Bonsai.ONIX
             }
         }
 
-        // LED outputs 1-8 are tied to channel 0
+        // Outputs 1-8 are tied to channel 0
         [Category("Acquisition")]
-        [Description("Channel 0 Enable. If true, channel 0 will respond to triggers.")]
-        public bool Channel0Enable
+        [Description("Channel 0 percent of max current. If greater than 0, channel 0 will respond to triggers.")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
+        [Range(0, 100)]
+        [Precision(1, 12.5)]
+        public double ChannelZeroCurrent
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
-                val &= 0x000000FF;
-                return val > 0;
+                return ReadPulseMask(0);
             }
             set
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
-                var ub = val & 0x0000FF00;
-                var lb = value ? 0x000000FF : (uint)0x00000000;
-                val = ub | lb;
-                WriteRegister(DeviceAddress.Address, (int)Register.PULSEMASK, val);
+                WritePulseMask(0, value);
             }
         }
 
-        // LED outputs 9-16are tied to channel 1
+        // Outputs 9-16 are tied to channel 1
         [Category("Acquisition")]
-        [Description("Channel 1 Enable. If true, channel1 will respond to triggers.")]
-        public bool Channel1Enable
+        [Description("Channel 1 percent of max current. If greater than 0, channel 1 will respond to triggers.")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
+        [Range(0, 100)]
+        [Precision(1, 12.5)]
+        public double ChannelOneCurrent
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
-                val &= 0x0000FF00;
-                return val > 0;
+                return ReadPulseMask(1);
             }
             set
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.PULSEMASK);
-                var lb = val & 0x000000FF;
-                var ub = value ? 0x0000FF00 : (uint)0x00000000;
-                val = ub | lb;
-                WriteRegister(DeviceAddress.Address, (int)Register.PULSEMASK, val);
+                WritePulseMask(1, value);
             }
         }
 
         [Category("Acquisition")]
         [Description("Pulse duration (msec).")]
-        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Range(0.0, 50.0)]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
+        [Range(0.0, 100.0)]
+        [Precision(3, 1)]
         public double PulseDuration
         {
             get
@@ -163,14 +191,23 @@ namespace Bonsai.ONIX
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR, (uint)(1000 * value));
+                var pulsePeriod = PulsePeriod;
+                if (value > pulsePeriod)
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR, (uint)(1000 * pulsePeriod - 1));
+                }
+                else
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR, (uint)(1000 * value));
+                }
             }
         }
 
         [Category("Acquisition")]
         [Description("Pulse period (msec).")]
-        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0.0, 1000.0)]
+        [Precision(3, 1)]
         public double PulsePeriod
         {
             get
@@ -179,13 +216,23 @@ namespace Bonsai.ONIX
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, (uint)(1000 * value));
+                var pulseDuration = PulseDuration;
+                if (value > pulseDuration)
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, (uint)(1000 * value));
+                }
+                else
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, (uint)(1000 * pulseDuration + 1));
+                }
             }
         }
 
         [Category("Acquisition")]
         [Description("Number of pulses to deliver in a burst.")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
+        [Precision(0, 1)]
         public uint BurstPulseCount
         {
             get
@@ -201,7 +248,9 @@ namespace Bonsai.ONIX
         [Category("Acquisition")]
         [Description("Interburst interval (msec).")]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0.0, 10000.0)]
+        [Precision(3, 1)]
         public double InterBurstInterval
         {
             get
@@ -216,7 +265,9 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Description("Number of bursts to deliver in a train.")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
+        [Precision(0, 1)]
         public uint TrainBurstCount
         {
             get
@@ -232,7 +283,9 @@ namespace Bonsai.ONIX
         [Category("Acquisition")]
         [Description("Delay between issue of trigger and start of train (msec).")]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0.0, 1000.0)]
+        [Precision(3, 1)]
         public double TrainDelay
         {
             get
@@ -245,23 +298,24 @@ namespace Bonsai.ONIX
             }
         }
 
-        //[Category("Acquisition")]
-        //[Description("Triggered (True = Stimulation triggered, False = Stimulation untriggered,).")]
-        //public bool Triggered
-        //{
-        //    get
-        //    {
-        //        var val = ReadRegister(DeviceIndex.Index, (int)Register.TRIGGER);
-        //        return val != 0;
-        //    }
-        //    set
-        //    {
-        //        WriteRegister(DeviceIndex.Index, (int)Register.TRIGGER, (uint)(value ? 1 : 0));
-        //    }
-        //}
-        protected override void Write(ONIContextTask ctx, bool triggered)
+        [Category("ONI Configuration")]
+        [Description("The full device hardware address consisting of a hardware slot and device table index.")]
+        [Editor("Bonsai.ONIX.Design.StimulatorEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
+        [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
+        public new ONIDeviceAddress DeviceAddress
+        {
+            get => base.DeviceAddress;
+            set => base.DeviceAddress = value;
+        }
+
+        protected override void OnNext(ONIContextTask ctx, bool triggered)
         {
             WriteRegister(DeviceAddress.Address, (int)Register.TRIGGER, (uint)(triggered ? 1 : 0));
+        }
+
+        protected override void OnFinally(ONIContextTask ctx)
+        {
+            WriteRegister(DeviceAddress.Address, (int)Register.TRIGGER, 0);
         }
     }
 }

@@ -138,10 +138,9 @@ namespace Bonsai.ONIX
             }
         }
 
-        protected override void Write(ONIContextTask ctx, bool enabled)
+        protected override void OnNext(ONIContextTask ctx, bool enabled)
         {
             ClockEnabled = enabled;
         }
-
     }
 }

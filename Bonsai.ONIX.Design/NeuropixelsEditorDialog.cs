@@ -14,7 +14,7 @@ namespace Bonsai.ONIX.Design
     public partial class NeuropixelsEditorDialog : Form
     {
         public NeuropixelsV1Configuration Config;
-        NeuropixelsV1Drawing probeDrawing;
+        private readonly NeuropixelsV1Drawing probeDrawing;
         List<int> selectedElectrodes = new List<int>();
         private bool closeContextMenu = true;
 
@@ -212,8 +212,7 @@ namespace Bonsai.ONIX.Design
 
         private void loadCalibrationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var fd = new FolderBrowserDialog();
-            fd.ShowNewFolderButton = false;
+            var fd = new FolderBrowserDialog { ShowNewFolderButton = false };
 
             if (Config.CalibrationFolderPath != null && Directory.Exists(Config.CalibrationFolderPath))
             {

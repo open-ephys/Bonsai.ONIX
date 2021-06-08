@@ -4,12 +4,13 @@ namespace Bonsai.ONIX
 {
     public abstract class ONIDevice
     {
+        [Description("The device type/ID.")]
         internal ONIXDevices.ID ID { get; set; } = ONIXDevices.ID.Null;
 
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        public virtual ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+        public ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("ONI Configuration")]
         [Description("The hub that this device belongs to.")]
@@ -24,9 +25,15 @@ namespace Bonsai.ONIX
         [ReadOnly(true)]
         public double? FrameClockHz { get; set; }
 
-        public ONIDevice(ONIXDevices.ID dev_id)
+        public ONIDevice(ONIXDevices.ID deviceID)
         {
-            ID = dev_id;
+            ID = deviceID;
+        }
+
+        public ONIDevice(ONIXDevices.ID deviceID, ONIDeviceAddress deviceAddress)
+        {
+            ID = deviceID;
+            DeviceAddress = deviceAddress;
         }
 
         // NB: Write/ReadRegister are used extensively in node property settings.

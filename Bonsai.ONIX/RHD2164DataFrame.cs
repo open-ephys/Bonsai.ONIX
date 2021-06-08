@@ -25,11 +25,10 @@ namespace Bonsai.ONIX
             EphysFormat = ephysFormat;
             AuxFormat = auxFormat;
 
-
             if (EphysFormat == RHD2164Configuration.EphysDataFormat.Unsigned)
             {
                 var ephysData = new ushort[NumberOfEphysChannels, NumberOfSamples];
-                var auxiliaryData = new int[NumberOfAuxChannels, NumberOfSamples];
+                var auxiliaryData = new ushort[NumberOfAuxChannels, NumberOfSamples];
 
                 for (int i = 0; i < NumberOfSamples; i++)
                 {
@@ -53,7 +52,7 @@ namespace Bonsai.ONIX
             else
             {
                 var ephysData = new short[NumberOfEphysChannels, NumberOfSamples];
-                var auxiliaryData = new int[NumberOfAuxChannels, NumberOfSamples];
+                var auxiliaryData = new ushort[NumberOfAuxChannels, NumberOfSamples];
 
                 for (int i = 0; i < NumberOfSamples; i++)
                 {
@@ -74,7 +73,6 @@ namespace Bonsai.ONIX
                 AuxiliaryData = GetAuxiliaryData(auxiliaryData);
             }
         }
-
 
         Mat GetEphysDataU16(ushort[,] data)
         {
@@ -109,23 +107,22 @@ namespace Bonsai.ONIX
             return output;
         }
 
-        Mat GetAuxiliaryData(int[,] data)
+        Mat GetAuxiliaryData(ushort[,] data)
         {
-            var output = new Mat(NumberOfAuxChannels, NumberOfSamples, Depth.U16, 1);
             using (var header = Mat.CreateMatHeader(data))
             {
-                CV.Convert(header, output);
-            }
-
-            if (AuxFormat == RHD2164Configuration.AuxDataFormat.Volts)
-            {
-                var scaled = new Mat(NumberOfAuxChannels, NumberOfSamples, Depth.F32, 1);
-                CV.ConvertScale(output, scaled, 0.0000374);
-                return scaled;
-            }
-            else
-            {
-                return output;
+                if (AuxFormat == RHD2164Configuration.AuxDataFormat.Volts)
+                {
+                    var output = new Mat(NumberOfAuxChannels, NumberOfSamples, Depth.F32, 1);
+                    CV.ConvertScale(header, output, 0.0000374);
+                    return output;
+                }
+                else
+                {
+                    var output = new Mat(NumberOfAuxChannels, NumberOfSamples, Depth.U16, 1);
+                    CV.Convert(header, output);
+                    return output;
+                }
             }
         }
 

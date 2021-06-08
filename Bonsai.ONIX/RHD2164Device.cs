@@ -43,9 +43,12 @@ namespace Bonsai.ONIX
 
         protected override IObservable<RHD2164DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
+            var ephysDataFormat = EphysDataFormat;
+            var auxDataFormat = AuxDataFormat;
+
             return source
                 .Buffer(BlockSize)
-                .Select(block => { return new RHD2164DataFrame(block, EphysDataFormat, AuxDataFormat); });
+                .Select(block => { return new RHD2164DataFrame(block, ephysDataFormat, auxDataFormat); });
         }
 
         [Category("Configuration")]
@@ -67,7 +70,7 @@ namespace Bonsai.ONIX
         [Description("The number of frames making up a single data block that is propagated in the observable sequence.")]
         public int BlockSize { get; set; } = 30;
 
-        private RHD2164Configuration.EphysDataFormat ephysDataFormat = default(RHD2164Configuration.EphysDataFormat);
+        private RHD2164Configuration.EphysDataFormat ephysDataFormat = default;
         [Category("Configuration")]
         [Description("Ephys data format. See http://intantech.com/files/Intan_RHD2164_datasheet.pdf.")]
         public RHD2164Configuration.EphysDataFormat EphysDataFormat

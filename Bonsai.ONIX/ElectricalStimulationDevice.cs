@@ -6,6 +6,7 @@ namespace Bonsai.ONIX
 {
     [Description("Controls a single microstimulator circuit. A boolean input can be" +
         "used to trigger stimulation: True = Stimulation triggered, False = Stimulation untriggered.")]
+    [DefaultProperty("DeviceAddress")]
     public sealed class ElectricalStimulationDevice : ONISink<bool>
     {
         enum Register
@@ -42,13 +43,13 @@ namespace Bonsai.ONIX
         private double InvCurrent(uint current_k)
         {
             double k = 3000 / (Math.Pow(2, DACResolution) - 1);
-            return current_k * k - 1500;
+            return Math.Round(current_k * k - 1500, 2);
         }
 
         [System.Xml.Serialization.XmlIgnore]
         [Category("Configuration")]
         [Description("Resolution of stimulation waveform generation DAC in bits.")]
-        public uint DACResolution
+        private uint DACResolution
         {
             get
             {
@@ -60,7 +61,7 @@ namespace Bonsai.ONIX
         [Description("Phase 1 pulse current (uA).")]
         [Range(-1500, 1500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        public double Phase1CurrentuA
+        public double PhaseOneCurrent
         {
             get
             {
@@ -77,7 +78,7 @@ namespace Bonsai.ONIX
         [Description("Phase 2 pulse current (uA).")]
         [Range(-1500, 1500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        public double Phase2CurrentuA
+        public double PhaseTwoCurrent
         {
             get
             {
@@ -97,7 +98,7 @@ namespace Bonsai.ONIX
         [Description("Resting current between pulse phases(uA).")]
         [Range(-1500, 1500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        public double RestingCurrentuA
+        public double InterPhaseCurrent
         {
             get
             {
@@ -111,62 +112,106 @@ namespace Bonsai.ONIX
         }
 
         [Category("Acquisition")]
-        [Description("Phase 1 pulse duration (usec).")]
+        [Description("Phase 1 pulse duration (msec).")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
-        public uint PulsePhase1DurationuSec
+        [Precision(3, 1)]
+        public double PhaseOneDuration
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.PULSEDUR1);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.PULSEDUR1);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR1, value);
+                var freeTime = PulsePeriod - (InterPhaseDuration + PhaseTwoDuration);
+
+                if (value > freeTime)
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR1, (uint)(1000 * freeTime - 1));
+                }
+                else
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR1, (uint)(1000 * value + 1));
+                }
             }
         }
 
         [Category("Acquisition")]
-        [Description("Inter-pulse phase duration (usec).")]
+        [Description("Inter-pulse phase duration (msec).")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
-        public uint InterPulsePhaseDurationuSec
+        [Precision(3, 1)]
+        public double InterPhaseDuration
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.IPI);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.IPI);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.IPI, value);
+                var freeTime = PulsePeriod - (PhaseOneDuration + PhaseTwoDuration);
+
+                if (value > freeTime)
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.IPI, (uint)(1000 * freeTime - 1));
+                }
+                else
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.IPI, (uint)(1000 * value + 1));
+                }
             }
         }
 
         [Category("Acquisition")]
-        [Description("Phase 2 pulse duration (usec).")]
+        [Description("Phase 2 pulse duration (msec).")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
-        public uint PulsePhase2DurationuSec
+        [Precision(3, 1)]
+        public double PhaseTwoDuration
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.PULSEDUR2);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.PULSEDUR2);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR2, value);
+                var freeTime = PulsePeriod - (PhaseOneDuration + InterPhaseDuration);
+
+                if (value > freeTime)
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR2, (uint)(1000 * freeTime - 1));
+                }
+                else
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR2, (uint)(1000 * value + 1));
+                }
             }
         }
 
         [Category("Acquisition")]
-        [Description("Pulse period (usec).")]
+        [Description("Pulse period (msec).")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
-        public uint PulsePerioduSec
+        [Precision(3, 1)]
+        public double PulsePeriod
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, value);
+                var pulseDuration = PhaseOneDuration + InterPhaseDuration + PhaseTwoDuration;
+
+                if (value > pulseDuration)
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, (uint)(1000 * value));
+                }
+                else
+                {
+                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, (uint)(1000 * pulseDuration + 1));
+                }
             }
         }
 
@@ -186,23 +231,27 @@ namespace Bonsai.ONIX
         }
 
         [Category("Acquisition")]
-        [Description("Interburst interval (usec).")]
+        [Description("Interburst interval (msec).")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
-        public uint InterBurstIntervaluSec
+        [Precision(3, 1)]
+        public double InterBurstInterval
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.IBI);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.IBI);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.IBI, value);
+                WriteRegister(DeviceAddress.Address, (int)Register.IBI, (uint)(1000 * value));
             }
         }
 
         [Category("Acquisition")]
         [Description("Number of bursts to deliver in a train.")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
+        [Precision(0, 1)]
         public uint TrainBurstCount
         {
             get
@@ -216,17 +265,19 @@ namespace Bonsai.ONIX
         }
 
         [Category("Acquisition")]
-        [Description("Delay between issue of trigger and start of train (usec).")]
+        [Description("Delay between issue of trigger and start of train (msec).")]
+        [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
         [Range(0, int.MaxValue)]
-        public uint TrainDelayuSec
+        [Precision(3, 1)]
+        public double TrainDelay
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.TRAINDELAY);
+                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.TRAINDELAY);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.TRAINDELAY, value);
+                WriteRegister(DeviceAddress.Address, (int)Register.TRAINDELAY, (uint)(1000 * value));
             }
         }
 
@@ -260,24 +311,21 @@ namespace Bonsai.ONIX
             }
         }
 
-        //[Category("Acquisition")]
-        //[Description("Triggered (True = Stimulation triggered, False = Stimulation untriggered).")]
-        //public bool Triggered
-        //{
-        //    get
-        //    {
-        //        var val = ReadRegister(DeviceIndex.Index, (int)Register.TRIGGER);
-        //        return val != 0;
-        //    }
-        //    set
-        //    {
-        //        WriteRegister(DeviceIndex.Index, (int)Register.TRIGGER, (uint)(value ? 1 : 0));
-        //    }
-        //}
+        [Editor("Bonsai.ONIX.Design.StimulatorEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
+        new public ONIDeviceAddress DeviceAddress
+        {
+            get => base.DeviceAddress;
+            set => base.DeviceAddress = value;
+        }
 
-        protected override void Write(ONIContextTask ctx, bool triggered)
+        protected override void OnNext(ONIContextTask ctx, bool triggered)
         {
             WriteRegister(DeviceAddress.Address, (int)Register.TRIGGER, (uint)(triggered ? 1 : 0));
+        }
+
+        protected override void OnFinally(ONIContextTask ctx)
+        {
+            WriteRegister(DeviceAddress.Address, (int)Register.TRIGGER, 0);
         }
     }
 }
