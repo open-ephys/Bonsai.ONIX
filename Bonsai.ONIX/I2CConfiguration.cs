@@ -69,7 +69,7 @@ namespace Bonsai.ONIX
 
         public byte? ReadByte(uint addr)
         {
-            uint reg_addr = (addr << 8) | I2C_ADDR;
+            uint reg_addr = (addr << 7) | (I2C_ADDR & 0x7F);
             var val = ReadRegister(dev_idx, reg_addr);
 
             if (val != null && val <= byte.MaxValue)
@@ -84,7 +84,7 @@ namespace Bonsai.ONIX
 
         public void WriteByte(uint addr, uint value)
         {
-            uint reg_addr = (addr << 8) | I2C_ADDR;
+            uint reg_addr = (addr << 7) | (I2C_ADDR & 0x7F);
             WriteRegister(dev_idx, reg_addr, value);
         }
 
@@ -94,7 +94,7 @@ namespace Bonsai.ONIX
 
             for (uint i = 0; i < size; i++)
             {
-                uint reg_addr = ((offset + i) << 8) | I2C_ADDR;
+                uint reg_addr = ((offset + i) << 7) | (I2C_ADDR & 0x7F);
                 var val = ReadRegister(dev_idx, reg_addr);
 
                 if (val != null && val <= byte.MaxValue)
