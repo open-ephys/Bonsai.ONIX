@@ -18,37 +18,48 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:RHD2164Device">
+        <Combinator xsi:type="p1:BNO055Device">
           <p1:DeviceAddress>
-            <p1:Valid>true</p1:Valid>
             <p1:HardwareSlot>
               <p1:Driver>riffa</p1:Driver>
               <p1:Index>0</p1:Index>
             </p1:HardwareSlot>
-            <p1:Address>256</p1:Address>
+            <p1:Address>258</p1:Address>
           </p1:DeviceAddress>
           <p1:Hub>
             <p1:Address>1</p1:Address>
-            <p1:HardwareID>1</p1:HardwareID>
+            <p1:HardwareID>3</p1:HardwareID>
             <p1:FirmwareVersion>256</p1:FirmwareVersion>
-            <p1:ClockHz>42000000</p1:ClockHz>
-            <p1:DelayNanoSeconds>2547</p1:DelayNanoSeconds>
+            <p1:ClockHz>40000000</p1:ClockHz>
+            <p1:DelayNanoSeconds>1</p1:DelayNanoSeconds>
           </p1:Hub>
           <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:EnableStream>true</p1:EnableStream>
-          <p1:BlockSize>30</p1:BlockSize>
-          <p1:EphysDataFormat>MicroVolts</p1:EphysDataFormat>
-          <p1:AuxDataFormat>Unsigned</p1:AuxDataFormat>
-          <p1:DSPCutoff>DSP146mHz</p1:DSPCutoff>
-          <p1:AnalogLowCutoff>Low100mHz</p1:AnalogLowCutoff>
-          <p1:AnalogHighCutoff>High7500Hz</p1:AnalogHighCutoff>
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
-        <Selector>EphysData</Selector>
+        <Selector>AccelerometerCalibrated</Selector>
       </Expression>
       <Expression xsi:type="MemberSelector">
-        <Selector>AuxiliaryData</Selector>
+        <Selector>GyroscopeCalibrated</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>MagnitometerCalibrated</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Temperature</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Quaternion</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>LinearAcceleration</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>GravityVector</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Euler</Selector>
       </Expression>
       <Expression xsi:type="MemberSelector">
         <Selector>DataClock</Selector>
@@ -62,6 +73,12 @@
       <Edge From="1" To="3" Label="Source1" />
       <Edge From="1" To="4" Label="Source1" />
       <Edge From="1" To="5" Label="Source1" />
+      <Edge From="1" To="6" Label="Source1" />
+      <Edge From="1" To="7" Label="Source1" />
+      <Edge From="1" To="8" Label="Source1" />
+      <Edge From="1" To="9" Label="Source1" />
+      <Edge From="1" To="10" Label="Source1" />
+      <Edge From="1" To="11" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

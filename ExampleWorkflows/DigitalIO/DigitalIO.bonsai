@@ -47,7 +47,7 @@
             <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
           </p1:Hub>
           <p1:FrameClockHz>250000000</p1:FrameClockHz>
-          <p1:LEDBrightness>0</p1:LEDBrightness>
+          <p1:LEDBrightness>3</p1:LEDBrightness>
           <p1:EnableStream>true</p1:EnableStream>
           <p1:LEDMode>ON</p1:LEDMode>
         </Combinator>

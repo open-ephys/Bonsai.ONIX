@@ -15,17 +15,14 @@ namespace Bonsai.ONIX
             LEDMODE = 1, // 0 = All off, 1 = Power only, 2 = Power and running, 3 = normal
             LEDLVL = 2, // 0-255 overall LED brightness value.
         }
-
         public FMCDigitalIODevice() : base(ONIXDevices.ID.BreakoutDigitalIO) { }
-
         protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
         }
-
         protected override void Write(ONIContextTask ctx, int input)
         {
-            ctx.Write(DeviceAddress.Address, (uint)input);
+            ctx.Write((uint)DeviceAddress.Address, (uint)input);
         }
 
         [Category("Acquisition")]
@@ -35,14 +32,13 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.LEDLVL);
+                return ReadRegister((int)Register.LEDLVL);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.LEDLVL, value);
+                WriteRegister((int)Register.LEDLVL, value);
             }
         }
-
         public enum LEDModes
         {
             OFF = 0,
@@ -57,11 +53,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+                return ReadRegister((uint)Register.ENABLE) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 
@@ -70,11 +66,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return (LEDModes)ReadRegister(DeviceAddress.Address, (int)Register.LEDMODE);
+                return (LEDModes)ReadRegister((int)Register.LEDMODE);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.LEDMODE, (uint)value);
+                WriteRegister((uint)Register.LEDMODE, (uint)value);
             }
         }
     }

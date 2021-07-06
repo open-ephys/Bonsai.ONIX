@@ -27,11 +27,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+                return ReadRegister((uint)Register.ENABLE) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 
@@ -41,11 +41,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return (short)ReadRegister(DeviceAddress.Address, (uint)Register.MESSAGE);
+                return (short)ReadRegister((uint)Register.MESSAGE);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.MESSAGE, (uint)value);
+                WriteRegister((uint)Register.MESSAGE, (uint)value);
             }
         }
     }

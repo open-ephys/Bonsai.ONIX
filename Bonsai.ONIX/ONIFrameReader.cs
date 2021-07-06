@@ -17,7 +17,7 @@ namespace Bonsai.ONIX
                 {
                     var cd = await ONIContextManager.ReserveOpenContextAsync(DeviceAddress.HardwareSlot);
 
-                    var inTable = cd.Context.DeviceTable.TryGetValue(DeviceAddress.Address, out var device);
+                    var inTable = cd.Context.DeviceTable.TryGetValue((uint)DeviceAddress.Address, out var device);
                     if (!inTable || device.ID != (int)ID)
                     {
                         throw new WorkflowException("Selected device address is invalid.");

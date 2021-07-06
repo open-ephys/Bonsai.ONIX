@@ -42,11 +42,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.ENABLE) != 0;
+                return ReadRegister((int)Register.ENABLE) != 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.ENABLE, (uint)(value ? 1 : 0));
+                WriteRegister((int)Register.ENABLE, (uint)(value ? 1 : 0));
             }
         }
 
@@ -54,7 +54,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.BASE_CLOCK_HZ);
+                return ReadRegister((int)Register.BASE_CLOCK_HZ);
             }
         }
 
@@ -66,8 +66,8 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var h = ReadRegister(DeviceAddress.Address, (uint)Register.HIGH_CYCLES);
-                var l = ReadRegister(DeviceAddress.Address, (uint)Register.LOW_CYCLES);
+                var h = ReadRegister((uint)Register.HIGH_CYCLES);
+                var l = ReadRegister((uint)Register.LOW_CYCLES);
                 frequency_hz = GetFreq(h, l);
                 return frequency_hz;
             }
@@ -75,8 +75,8 @@ namespace Bonsai.ONIX
             {
                 frequency_hz = value;
                 var hl = GetHL(frequency_hz, duty);
-                WriteRegister(DeviceAddress.Address, (uint)Register.HIGH_CYCLES, hl.Item1);
-                WriteRegister(DeviceAddress.Address, (uint)Register.LOW_CYCLES, hl.Item2);
+                WriteRegister((uint)Register.HIGH_CYCLES, hl.Item1);
+                WriteRegister((uint)Register.LOW_CYCLES, hl.Item2);
             }
         }
 
@@ -88,8 +88,8 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var h = ReadRegister(DeviceAddress.Address, (uint)Register.HIGH_CYCLES);
-                var l = ReadRegister(DeviceAddress.Address, (uint)Register.LOW_CYCLES);
+                var h = ReadRegister((uint)Register.HIGH_CYCLES);
+                var l = ReadRegister((uint)Register.LOW_CYCLES);
                 h = h == 0 ? 1 : h; // the firmware does this as well
                 l = l == 0 ? 1 : l; // the firmware does this as well
                 duty = GetDuty(h, l);
@@ -99,8 +99,8 @@ namespace Bonsai.ONIX
             {
                 duty = value;
                 var hl = GetHL(frequency_hz, duty);
-                WriteRegister(DeviceAddress.Address, (uint)Register.HIGH_CYCLES, hl.Item1);
-                WriteRegister(DeviceAddress.Address, (uint)Register.LOW_CYCLES, hl.Item2);
+                WriteRegister((uint)Register.HIGH_CYCLES, hl.Item1);
+                WriteRegister((uint)Register.LOW_CYCLES, hl.Item2);
             }
         }
 
@@ -112,7 +112,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var d = ReadRegister(DeviceAddress.Address, (uint)Register.DELAY_CYCLES);
+                var d = ReadRegister((uint)Register.DELAY_CYCLES);
                 delay = (double)d / BaseClockHz;
                 return delay;
             }
@@ -120,7 +120,7 @@ namespace Bonsai.ONIX
             {
                 delay = value;
                 var d = delay * BaseClockHz;
-                WriteRegister(DeviceAddress.Address, (uint)Register.DELAY_CYCLES, (uint)d);
+                WriteRegister((uint)Register.DELAY_CYCLES, (uint)d);
             }
         }
 
@@ -130,11 +130,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.GATE_WITH_RUNNING) == 1;
+                return ReadRegister((int)Register.GATE_WITH_RUNNING) == 1;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.GATE_WITH_RUNNING, (uint)(value ? 1 : 0));
+                WriteRegister((int)Register.GATE_WITH_RUNNING, (uint)(value ? 1 : 0));
             }
         }
 

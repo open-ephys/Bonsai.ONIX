@@ -17,7 +17,7 @@ namespace Bonsai.ONIX
                 cancellationToken => ONIContextManager.ReserveOpenContextAsync(DeviceAddress.HardwareSlot),
                 (contextDisposable, cancellationToken) =>
                 {
-                    var inTable = contextDisposable.Context.DeviceTable.TryGetValue(DeviceAddress.Address, out var device);
+                    var inTable = contextDisposable.Context.DeviceTable.TryGetValue((uint)DeviceAddress.Address, out var device);
                     if (!inTable || device.ID != (int)ID)
                     {
                         throw new WorkflowException("Selected device address is invalid.");

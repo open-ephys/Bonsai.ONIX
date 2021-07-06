@@ -57,11 +57,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+                return ReadRegister((uint)Register.ENABLE) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 
@@ -205,12 +205,11 @@ namespace Bonsai.ONIX
 
         void SetRawRegister(uint address, int value)
         {
-            WriteRegister(DeviceAddress.Address, address, (uint)value);
+            WriteRegister( address, (uint)value);
         }
-
-        int GetRawRegister(uint address)
+                int GetRawRegister(uint address)
         {
-            return (int)ReadRegister(DeviceAddress.Address, address);
+            return (int)ReadRegister(address);
         }
 
         #region RawRegisters

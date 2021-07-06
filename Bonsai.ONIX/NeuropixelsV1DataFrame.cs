@@ -28,7 +28,7 @@ namespace Bonsai.ONIX
                                                          5, 12, 19, 26, 33,
                                                          6, 13 };
 
-        public NeuropixelsV1DataFrame(IList<ONIManagedFrame<ushort>> frameBlock, int numberOfUltraFrames)
+        public NeuropixelsV1DataFrame(IList<ONIManagedFrame<ushort>> frameBlock)
             : base(frameBlock)
         {
             if (frameBlock.Count == 0)
@@ -41,7 +41,7 @@ namespace Bonsai.ONIX
                 throw new Bonsai.WorkflowRuntimeException("Neuropixels V1 frame buffer is not a multiple of ultraframe size.");
             }
 
-            NumberofUltraFrames = numberOfUltraFrames;
+            NumberofUltraFrames = frameBlock.Count / SuperframesPerUltraFrame;
             NumberOfSuperFrames = frameBlock.Count;
             var lfpFrameClock = new ulong[NumberofUltraFrames];
             var spikeFrameClock = new ulong[NumberofUltraFrames * SuperframesPerUltraFrame];

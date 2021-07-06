@@ -37,8 +37,7 @@ namespace Bonsai.ONIX
                 result = new ONIDeviceAddress
                 {
                     HardwareSlot = new ONIHardwareSlot { Driver = matches[0], Index = Convert.ToInt32(matches[1]) },
-                    Address = Convert.ToUInt32(matches[2]),
-                    Valid = true
+                    Address = Convert.ToUInt32(matches[2])
                 };
 
             }
@@ -113,7 +112,7 @@ namespace Bonsai.ONIX
                                 foreach (var d in device_addrs)
                                 {
                                     hubs.Add(d.ToString(),
-                                        new Tuple<uint, oni.Hub>(c.Context.AcquisitionClockHz, c.Context.GetHub(d.Address)));
+                                        new Tuple<uint, oni.Hub>(c.Context.AcquisitionClockHz, c.Context.GetHub((uint)d.Address)));
                                 }
                             }
                         }

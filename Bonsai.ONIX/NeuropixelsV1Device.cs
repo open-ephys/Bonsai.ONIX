@@ -50,7 +50,7 @@ namespace Bonsai.ONIX
                 // Process frame stream
                 source
                     .Buffer(BlockSize * NeuropixelsV1DataFrame.SuperframesPerUltraFrame)
-                    .Select(block => { return new NeuropixelsV1DataFrame(block, BlockSize); })
+                    .Select(block => { return new NeuropixelsV1DataFrame(block); })
             );
         }
 
@@ -63,7 +63,7 @@ namespace Bonsai.ONIX
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        public new ONIDeviceAddress DeviceAddress
+        public override ONIDeviceAddress DeviceAddress
         {
             get { return Configuration.DeviceAddress; }
             set { Configuration.DeviceAddress = value; }
@@ -75,11 +75,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+                return ReadRegister((uint)Register.ENABLE) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 

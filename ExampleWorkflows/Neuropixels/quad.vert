@@ -1,14 +1,12 @@
 #version 400
-uniform int channel;
-uniform int numstrips = 72;
+uniform vec2 scale = vec2(1, 1);
+uniform vec2 shift;
 in vec2 vp;
 in vec2 vt;
-out vec2 tex_coord;
+out vec2 texCoord;
 
 void main()
 {
-  vec2 scale = vec2(1.0 / numstrips, 1);
-  vec2 shift = vec2(channel * scale.x * 2 - 1 + scale.x, 0);
   gl_Position = vec4(vp * scale + shift, 0.0, 1.0);
-  tex_coord = vt;
+  texCoord = vt;
 }

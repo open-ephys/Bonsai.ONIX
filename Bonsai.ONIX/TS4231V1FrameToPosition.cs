@@ -97,6 +97,12 @@ namespace Bonsai.ONIX
         Mat position = new Mat(3, 1, Depth.F64, 1);
         double position_time;
 
+        // Base station IR sweep frequency in Hz
+        private const double SweepFrequency = 60;
+
+        // Rate of clock timing the IR reception times
+        private double? DataClockHz;
+
         public TS4231V1FrameToPosition()
         {
             P = new Point3d(0, 0, 0);
@@ -261,12 +267,5 @@ namespace Bonsai.ONIX
                 q[2] = new Scalar(value.Z);
             }
         }
-
-        [Description("Base station IR sweep frequency in Hz.")]
-        public double SweepFrequency { get; set; } = 60;
-
-        [System.Xml.Serialization.XmlIgnore]
-        [Description("Rate of clock timing the IR reception times.")]
-        public double? DataClockHz { get; private set; }
     }
 }

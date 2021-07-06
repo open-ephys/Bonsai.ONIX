@@ -53,7 +53,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.REZ);
+                return ReadRegister((int)Register.REZ);
             }
         }
 
@@ -65,12 +65,12 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.CURRENT1);
+                var val = ReadRegister((int)Register.CURRENT1);
                 return InvCurrent(val);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.CURRENT1, CurrentK((double)value));
+                WriteRegister((int)Register.CURRENT1, CurrentK((double)value));
             }
         }
 
@@ -82,14 +82,14 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.CURRENT2);
+                var val = ReadRegister((int)Register.CURRENT2);
                 return InvCurrent(val);
             }
             set
             {
 
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.CURRENT2, CurrentK((double)value));
+                    WriteRegister((int)Register.CURRENT2, CurrentK((double)value));
                 }
             }
         }
@@ -102,12 +102,12 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.RESTCURR);
+                var val = ReadRegister((int)Register.RESTCURR);
                 return InvCurrent(val);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.RESTCURR, CurrentK((double)value));
+                WriteRegister((int)Register.RESTCURR, CurrentK((double)value));
             }
         }
 
@@ -120,7 +120,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.PULSEDUR1);
+                return 0.001 * ReadRegister((int)Register.PULSEDUR1);
             }
             set
             {
@@ -128,11 +128,11 @@ namespace Bonsai.ONIX
 
                 if (value > freeTime)
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR1, (uint)(1000 * freeTime - 1));
+                    WriteRegister((int)Register.PULSEDUR1, (uint)(1000 * freeTime - 1));
                 }
                 else
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR1, (uint)(1000 * value + 1));
+                    WriteRegister((int)Register.PULSEDUR1, (uint)(1000 * value + 1));
                 }
             }
         }
@@ -146,7 +146,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.IPI);
+                return 0.001 * ReadRegister((int)Register.IPI);
             }
             set
             {
@@ -154,11 +154,11 @@ namespace Bonsai.ONIX
 
                 if (value > freeTime)
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.IPI, (uint)(1000 * freeTime - 1));
+                    WriteRegister((int)Register.IPI, (uint)(1000 * freeTime - 1));
                 }
                 else
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.IPI, (uint)(1000 * value + 1));
+                    WriteRegister((int)Register.IPI, (uint)(1000 * value + 1));
                 }
             }
         }
@@ -172,7 +172,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.PULSEDUR2);
+                return 0.001 * ReadRegister((int)Register.PULSEDUR2);
             }
             set
             {
@@ -180,11 +180,11 @@ namespace Bonsai.ONIX
 
                 if (value > freeTime)
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR2, (uint)(1000 * freeTime - 1));
+                    WriteRegister((int)Register.PULSEDUR2, (uint)(1000 * freeTime - 1));
                 }
                 else
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEDUR2, (uint)(1000 * value + 1));
+                    WriteRegister((int)Register.PULSEDUR2, (uint)(1000 * value + 1));
                 }
             }
         }
@@ -198,7 +198,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD);
+                return 0.001 * ReadRegister((int)Register.PULSEPERIOD);
             }
             set
             {
@@ -206,11 +206,11 @@ namespace Bonsai.ONIX
 
                 if (value > pulseDuration)
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, (uint)(1000 * value));
+                    WriteRegister((int)Register.PULSEPERIOD, (uint)(1000 * value));
                 }
                 else
                 {
-                    WriteRegister(DeviceAddress.Address, (int)Register.PULSEPERIOD, (uint)(1000 * pulseDuration + 1));
+                    WriteRegister((int)Register.PULSEPERIOD, (uint)(1000 * pulseDuration + 1));
                 }
             }
         }
@@ -222,11 +222,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.BURSTCOUNT);
+                return ReadRegister((int)Register.BURSTCOUNT);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.BURSTCOUNT, value);
+                WriteRegister((int)Register.BURSTCOUNT, value);
             }
         }
 
@@ -239,11 +239,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.IBI);
+                return 0.001 * ReadRegister((int)Register.IBI);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.IBI, (uint)(1000 * value));
+                WriteRegister((int)Register.IBI, (uint)(1000 * value));
             }
         }
 
@@ -256,11 +256,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.TRAINCOUNT);
+                return ReadRegister((int)Register.TRAINCOUNT);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.TRAINCOUNT, value);
+                WriteRegister((int)Register.TRAINCOUNT, value);
             }
         }
 
@@ -273,11 +273,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister(DeviceAddress.Address, (int)Register.TRAINDELAY);
+                return 0.001 * ReadRegister((int)Register.TRAINDELAY);
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.TRAINDELAY, (uint)(1000 * value));
+                WriteRegister((int)Register.TRAINDELAY, (uint)(1000 * value));
             }
         }
 
@@ -287,12 +287,12 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.POWERON);
+                var val = ReadRegister((int)Register.POWERON);
                 return val != 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.POWERON, (uint)(value ? 1 : 0));
+                WriteRegister((int)Register.POWERON, (uint)(value ? 1 : 0));
             }
         }
 
@@ -302,12 +302,12 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.ENABLE);
+                var val = ReadRegister((int)Register.ENABLE);
                 return val != 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.ENABLE, (uint)((bool)value ? 1 : 0));
+                WriteRegister((int)Register.ENABLE, (uint)((bool)value ? 1 : 0));
             }
         }
 
@@ -320,12 +320,12 @@ namespace Bonsai.ONIX
 
         protected override void OnNext(ONIContextTask ctx, bool triggered)
         {
-            WriteRegister(DeviceAddress.Address, (int)Register.TRIGGER, (uint)(triggered ? 1 : 0));
+            WriteRegister((int)Register.TRIGGER, (uint)(triggered ? 1 : 0));
         }
 
         protected override void OnFinally(ONIContextTask ctx)
         {
-            WriteRegister(DeviceAddress.Address, (int)Register.TRIGGER, 0);
+            WriteRegister((int)Register.TRIGGER, 0);
         }
     }
 }

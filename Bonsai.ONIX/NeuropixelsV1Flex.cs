@@ -6,7 +6,6 @@ namespace Bonsai.ONIX
     {
         public NeuropixelsV1Flex(ONIDeviceAddress device) : base(device, 0x50)
         {
-
             var sn = ReadBytes((uint)EEPROM.OFFSET_ID, 8);
             ProbeSN = (sn == null) ? null : (ulong?)BitConverter.ToUInt64(sn, 0);
             Version = ReadByte((uint)EEPROM.OFFSET_VERSION).ToString() + "." + ReadByte((uint)EEPROM.OFFSET_REVISION).ToString();

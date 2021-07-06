@@ -10,7 +10,7 @@ namespace Bonsai.ONIX
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        public ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+        public virtual ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("ONI Configuration")]
         [Description("The hub that this device belongs to.")]
@@ -30,26 +30,24 @@ namespace Bonsai.ONIX
             ID = deviceID;
         }
 
-        public ONIDevice(ONIXDevices.ID deviceID, ONIDeviceAddress deviceAddress)
-        {
-            ID = deviceID;
-            DeviceAddress = deviceAddress;
-        }
-
         // NB: Write/ReadRegister are used extensively in node property settings.
         // This means they cannot throw or there will be a variety of consequences
         // such as errors loading XML descriptions of workflows and terrible performance
         // if a valid device is not yet selected. As an intermediate solution,
         // I'm just dumping errors to the Console and returning 0 or doing nothing.
-        protected uint ReadRegister(uint dev_index, uint register_address)
+        protected uint ReadRegister(uint address)
         {
-            if (!DeviceAddress.Valid) return 0;
+            if (!DeviceAddress.Valid)
+            {
+                System.Console.WriteLine("Device is not valid.");
+                return 0;
+            }
 
             try
             {
                 using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
                 {
-                    return c.Context.ReadRegister(dev_index, register_address);
+                    return c.Context.ReadRegister((uint)DeviceAddress.Address, address);
                 }
             }
             catch (oni.ONIException ex)
@@ -59,15 +57,19 @@ namespace Bonsai.ONIX
             }
         }
 
-        protected void WriteRegister(uint dev_index, uint register_address, uint value)
+        protected void WriteRegister(uint address, uint value)
         {
-            if (!DeviceAddress.Valid) return;
+            if (!DeviceAddress.Valid)
+            {
+                System.Console.WriteLine("Device is not valid.");
+                return;
+            }
 
             try
             {
                 using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
                 {
-                    c.Context.WriteRegister(dev_index, register_address, value);
+                    c.Context.WriteRegister((uint)DeviceAddress.Address, address, value);
                 }
             }
             catch (oni.ONIException ex)

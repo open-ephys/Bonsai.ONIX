@@ -37,11 +37,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+                return ReadRegister((uint)Register.ENABLE) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 
@@ -52,13 +52,13 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.FRAME_WORDS);
+                return ReadRegister((int)Register.FRAME_WORDS);
             }
             set
             {
                 var max_size = ValidSize();
                 var bounded = value > max_size ? max_size : value;
-                WriteRegister(DeviceAddress.Address, (int)Register.FRAME_WORDS, bounded);
+                WriteRegister((int)Register.FRAME_WORDS, bounded);
             }
         }
 
@@ -68,14 +68,12 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
-                return ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val;
+                var val = ReadRegister((int)Register.CLK_DIV);
+                return ReadRegister((int)Register.CLK_HZ) / val;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address,
-                                            (int)Register.CLK_DIV,
-                                             ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / value);
+                WriteRegister((int)Register.CLK_DIV, ReadRegister((int)Register.CLK_HZ) / value);
                 var max_size = ValidSize();
                 if (FrameWords > max_size)
                 {
@@ -87,7 +85,7 @@ namespace Bonsai.ONIX
         // Assumes 8-byte timer
         uint ValidSize()
         {
-            var clk_div = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
+            var clk_div = ReadRegister((int)Register.CLK_DIV);
             return clk_div - 4 - 10; // -10 is overhead hack
         }
     }

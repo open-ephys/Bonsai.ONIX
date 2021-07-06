@@ -33,11 +33,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+                return ReadRegister((uint)Register.ENABLE) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 
@@ -51,11 +51,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.DESERIALIZERPOWER) > 0;
+                return ReadRegister((int)Register.DESERIALIZERPOWER) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (int)Register.DESERIALIZERPOWER, (uint)(value ? 1 : 0));
+                WriteRegister((int)Register.DESERIALIZERPOWER, (uint)(value ? 1 : 0));
             }
         }
 
@@ -88,13 +88,13 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (int)Register.LINKVOLTAGE) / 10.0;
+                return ReadRegister((int)Register.LINKVOLTAGE) / 10.0;
             }
             set
             {
                 var link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
                 link_v = link_enabled ? link_v : 0.0;
-                WriteRegister(DeviceAddress.Address, (int)Register.LINKVOLTAGE, (uint)(link_v * 10));
+                WriteRegister((int)Register.LINKVOLTAGE, (uint)(link_v * 10));
             }
         }
 
@@ -106,7 +106,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.GPOSTATE);
+                var val = ReadRegister((int)Register.GPOSTATE);
                 gpo_register = val;
                 return (gpo_register & 0x01) > 0;
             }
@@ -114,7 +114,7 @@ namespace Bonsai.ONIX
             {
 
                 gpo_register = (gpo_register & ~((uint)1 << 0)) | (((bool)value ? 1 : (uint)0) << 0);
-                WriteRegister(DeviceAddress.Address, (int)Register.GPOSTATE, gpo_register);
+                WriteRegister((int)Register.GPOSTATE, gpo_register);
             }
         }
 

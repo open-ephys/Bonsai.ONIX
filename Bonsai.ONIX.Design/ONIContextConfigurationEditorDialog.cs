@@ -123,7 +123,7 @@ namespace Bonsai.ONIX.Design
 
                     UpdateDeviceTable(hubs[0].Address);
 
-                    toolStripSplitButton.Text = Resources.ONIConnectionSuccess;
+                    toolStripSplitButton.Text = Properties.Resources.ONIConnectionSuccess;
                     toolStripSplitButton.ForeColor = Color.Black;
 
                     if (Configuration.ReadSize < context.MaxReadFrameSize)
@@ -164,13 +164,11 @@ namespace Bonsai.ONIX.Design
             var f = new HubConfigurationEditor(Configuration);
             f.Show();
         }
-
         private void numericUpDownPCIeIndex_ValueChanged(object sender, EventArgs e)
         {
             Configuration.Slot.Index = (int)numericUpDownPCIeIndex.Value;
             AttemptToConnect();
         }
-
         private void dataGridViewDeviceTable_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridViewDeviceTable.SelectedRows.Count == 0)
@@ -192,10 +190,10 @@ namespace Bonsai.ONIX.Design
                     if (device != null)
                     {
                         // Hacky "back door" into ONIDeviceIndexTypeConverter's functionality
-                        device.DeviceAddress = new ONIDeviceAddress { HardwareSlot = Configuration.Slot, Address = deviceIndex, Valid = true };
+                        device.DeviceAddress = new ONIDeviceAddress { HardwareSlot = Configuration.Slot, Address = deviceIndex };
                         propertyGridSelecteDevice.SelectedObject = device;
                         device.FrameClockHz = c.Context.AcquisitionClockHz;
-                        device.Hub = c.Context.GetHub(device.DeviceAddress.Address);
+                        device.Hub = c.Context.GetHub((uint)device.DeviceAddress.Address);
                     }
                     else
                     {

@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
 {
     [Description("Acquires data from the twelve 14-bit analog inputs on the Open Ephys FMC Host. " +
         "Optionally, sends data to the 16-bit analog outputs on the Open Ephys FMC Host, if those " +
-        "channels are selected to be outputs.")]
+        "channels are selected to be outputs. The output range is fixed to +/-10V.")]
     public class FMCAnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, short>
     {
         enum Register
@@ -40,36 +40,37 @@ namespace Bonsai.ONIX
         {
             return Observable
                 .Return(scale.Copy())
-                .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, s, InputDataFormat); });
+                .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, s, DataType); });
         }
 
         // TODO: The order of data in the matrix is reverse of the channel index.
         // m[11] => channel 0, etc.
         protected override void Write(ONIContextTask ctx, Arr input)
         {
-            var m = input.GetMat();
+            var inputMatrix = input.GetMat();
 
             // Check dims
-            if (m.Rows * m.Cols != AnalogInputDataFrame.NumberOfChannels)
+            var size = inputMatrix.Rows * inputMatrix.Cols;
+            if (size % AnalogInputDataFrame.NumberOfChannels != 0)
             {
-                throw new IndexOutOfRangeException("Source must be a 12 element vector.");
+                throw new IndexOutOfRangeException("Source must contain a multiple of 12 elements.");
             }
 
-            // TODO: Support all different Mat element types?
-            if (m.Depth == Depth.U16)
+            if (DataType == AnalogDataType.S16 && inputMatrix.Depth == Depth.S16)
             {
-                ctx.Write(DeviceAddress.Address, m.Data, 2 * AnalogInputDataFrame.NumberOfChannels);
+                var data = new Mat(inputMatrix.Size, Depth.U16, 1);
+                CV.ConvertScale(inputMatrix, data, 1, 32768);
+                ctx.Write((uint)DeviceAddress.Address, data.Data, 2 * size);
             }
-            //else if (m.Depth == Depth.S16)
-            //{
-            //    // Convert to offset-binary
-            //    var m_ob = new Mat(m.Size, Depth.U16, 1);
-            //    CV.ConvertScale(m, m_ob, 1, 32768);
-            //    ctx.Write(DeviceAddress.Address, m_ob.Data, 2 * AnalogInputDataFrame.NumberOfChannels);
-            //}
+            else if (DataType == AnalogDataType.Volts && (inputMatrix.Depth == Depth.F32 || inputMatrix.Depth == Depth.F64))
+            {
+                var data = new Mat(inputMatrix.Size, Depth.U16, 1);
+                CV.ConvertScale(inputMatrix, data, 3276.75, 32768);
+                ctx.Write((uint)DeviceAddress.Address, data.Data, 2 * size);
+            }
             else
             {
-                throw new InvalidOperationException("Source elements must be unsigned 16 bit integers");
+                throw new Bonsai.WorkflowRuntimeException("Source element depth must Depth.S16 when DataType is S16 and either Depth.F32 or Depth.F64 when Datatype is Volts.");
             }
         }
 
@@ -78,7 +79,7 @@ namespace Bonsai.ONIX
         [Description("The size of data blocks, in samples, that are propagated as events in the observable sequence.")]
         public int BlockSize { get; set; } = 100;
 
-        public enum SampleUnit
+        public enum AnalogDataType
         {
             S16,
             Volts
@@ -86,8 +87,8 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Range(1, 1e5)]
-        [Description("The format of the analog input data. S16: raw 16-bit signed integer conversion results. Volts: 32-bit floating-point scaled voltages.")]
-        public SampleUnit InputDataFormat { get; set; } = SampleUnit.S16;
+        [Description("The format of the analog data consumed and produced by this node. S16: raw 16-bit signed integer conversion results or DAC values. Volts: 32-bit floating-point voltages.")]
+        public AnalogDataType DataType { get; set; } = AnalogDataType.S16;
 
         [Category("Configuration")]
         [Description("Enable the input data stream.")]
@@ -95,11 +96,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+                return ReadRegister((uint)Register.ENABLE) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 
@@ -459,7 +460,7 @@ namespace Bonsai.ONIX
 
         void SetVoltageRange(Register channel, VoltageRange range)
         {
-            WriteRegister(DeviceAddress.Address, (uint)channel, (uint)range);
+            WriteRegister((uint)channel, (uint)range);
 
             switch (range)
             {
@@ -477,7 +478,7 @@ namespace Bonsai.ONIX
 
         VoltageRange GetVoltageRange(Register channel)
         {
-            var range = (VoltageRange)ReadRegister(DeviceAddress.Address, (uint)channel);
+            var range = (VoltageRange)ReadRegister((uint)channel);
 
             switch (range)
             {
@@ -500,12 +501,12 @@ namespace Bonsai.ONIX
         void SetIO(int channel, InputOutput io)
         {
             io_reg = (io_reg & ~((uint)1 << channel)) | ((uint)(io) << channel);
-            WriteRegister(DeviceAddress.Address, (uint)Register.CHDIR, io_reg);
+            WriteRegister((uint)Register.CHDIR, io_reg);
         }
 
         InputOutput GetIO(int channel)
         {
-            var io_reg = ReadRegister(DeviceAddress.Address, (int)Register.CHDIR);
+            var io_reg = ReadRegister((int)Register.CHDIR);
             return (InputOutput)((io_reg >> channel) & 1);
         }
     }

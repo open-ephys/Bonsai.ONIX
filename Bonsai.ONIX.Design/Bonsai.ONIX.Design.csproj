@@ -35,6 +35,14 @@
     <EmbeddedResource Remove="ControllerSelectionControl.resx" />
     <EmbeddedResource Remove="DeviceIndexSelectionControl.resx" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Bonsai.ONIX.Design.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Bonsai.ONIX.Design.svg" />
+  </ItemGroup>
   
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -73,6 +81,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="Bonsai.Shaders" Version="0.24.0" />
     <PackageReference Include="clroni" Version="4.3.3" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="TinyCsvParser" Version="2.6.0" />

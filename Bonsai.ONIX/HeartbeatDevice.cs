@@ -30,11 +30,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister(DeviceAddress.Address, (uint)Register.ENABLE) > 0;
+                return ReadRegister((uint)Register.ENABLE) > 0;
             }
             set
             {
-                WriteRegister(DeviceAddress.Address, (uint)Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
 
@@ -46,8 +46,8 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister(DeviceAddress.Address, (int)Register.CLK_DIV);
-                if (val != 0) { beat_hz = ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / val; }
+                var val = ReadRegister((int)Register.CLK_DIV);
+                if (val != 0) { beat_hz = ReadRegister((int)Register.CLK_HZ) / val; }
                 return beat_hz;
             }
             set
@@ -55,9 +55,7 @@ namespace Bonsai.ONIX
                 beat_hz = value;
                 if (beat_hz != 0)
                 {
-                    WriteRegister(DeviceAddress.Address,
-                                                (int)Register.CLK_DIV,
-                                                ReadRegister(DeviceAddress.Address, (int)Register.CLK_HZ) / beat_hz);
+                    WriteRegister((int)Register.CLK_DIV, ReadRegister((int)Register.CLK_HZ) / beat_hz);
                 }
             }
         }

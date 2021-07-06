@@ -18,7 +18,7 @@ namespace Bonsai.ONIX.Design
             {
 
                 var context = c.Context;
-                if (context.DeviceTable.TryGetValue(address.Address, out oni.Device dev))
+                if (context.DeviceTable.TryGetValue((uint)address.Address, out oni.Device dev))
                 {
                     device = ONIDeviceFactory.Make((ONIXDevices.ID)dev.ID);
                     if (device != null)
@@ -30,7 +30,7 @@ namespace Bonsai.ONIX.Design
 
                         // Copy Device metadata
                         device.FrameClockHz = c.Context.AcquisitionClockHz;
-                        device.Hub = c.Context.GetHub(device.DeviceAddress.Address);
+                        device.Hub = c.Context.GetHub((uint)device.DeviceAddress.Address);
                     }
                     else
                     {

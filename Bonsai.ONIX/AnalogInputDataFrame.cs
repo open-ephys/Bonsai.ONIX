@@ -7,11 +7,11 @@ namespace Bonsai.ONIX
     {
         public const int NumberOfChannels = 12;
         public readonly int NumberOfSamples;
-        public readonly FMCAnalogIODevice.SampleUnit Format;
+        public readonly FMCAnalogIODevice.AnalogDataType Format;
 
         public AnalogInputDataFrame(IList<ONIManagedFrame<short>> frameBlock,
                                     float[] scale,
-                                    FMCAnalogIODevice.SampleUnit format = FMCAnalogIODevice.SampleUnit.S16)
+                                    FMCAnalogIODevice.AnalogDataType format = FMCAnalogIODevice.AnalogDataType.S16)
             : base(frameBlock)
         {
             if (frameBlock.Count == 0)
@@ -24,7 +24,7 @@ namespace Bonsai.ONIX
 
             // TODO: Could make a diagonal matrix out of scale and do Volts
             // conversion using OpenCV but not sure if that would be beneficial.
-            if (Format == FMCAnalogIODevice.SampleUnit.S16)
+            if (Format == FMCAnalogIODevice.AnalogDataType.S16)
             {
                 var data = new short[NumberOfChannels, NumberOfSamples];
                 for (int i = 0; i < NumberOfSamples; i++)
