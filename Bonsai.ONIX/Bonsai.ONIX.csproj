@@ -48,7 +48,6 @@
     <Compile Remove="DS90UB9XBuffer3.cs" />
     <Compile Remove="DS90UB9XBuffer4.cs" />
     <Compile Remove="DS90UB9XDataFrame.cs" />
-    <Compile Remove="DS90UB9XDevice.cs" />
     <Compile Remove="MiniscopeImage.cs" />
     <Compile Remove="MiniscopeV3.cs" />
     <Compile Remove="ONIHardwareSlotTypeConverter.cs" />
