@@ -60,6 +60,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControlHubs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.boardSyncToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
@@ -194,7 +195,8 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hubsToolStripMenuItem});
+            this.hubsToolStripMenuItem,
+            this.boardSyncToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -202,7 +204,7 @@
             // hubsToolStripMenuItem
             // 
             this.hubsToolStripMenuItem.Name = "hubsToolStripMenuItem";
-            this.hubsToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.hubsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.hubsToolStripMenuItem.Text = "Hubs...";
             this.hubsToolStripMenuItem.Click += new System.EventHandler(this.hubsToolStripMenuItem_Click);
             // 
@@ -210,11 +212,11 @@
             // 
             this.errorProvider.ContainerControl = this;
             // 
-            // propertyGrid
+            // propertyGridSelecteDevice
             // 
             this.propertyGridSelecteDevice.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridSelecteDevice.Location = new System.Drawing.Point(0, 0);
-            this.propertyGridSelecteDevice.Name = "propertyGrid";
+            this.propertyGridSelecteDevice.Name = "propertyGridSelecteDevice";
             this.propertyGridSelecteDevice.Size = new System.Drawing.Size(277, 415);
             this.propertyGridSelecteDevice.TabIndex = 19;
             // 
@@ -371,6 +373,13 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // boardSyncToolStripMenuItem
+            // 
+            this.boardSyncToolStripMenuItem.Name = "boardSyncToolStripMenuItem";
+            this.boardSyncToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.boardSyncToolStripMenuItem.Text = "Board Sync";
+            this.boardSyncToolStripMenuItem.Click += new System.EventHandler(this.boardSyncToolStripMenuItem_Click);
+            // 
             // ONIContextConfigurationEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -437,5 +446,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabControl tabControlHubs;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.ToolStripMenuItem boardSyncToolStripMenuItem;
     }
 }

@@ -162,7 +162,7 @@ namespace Bonsai.ONIX.Design
         private void hubsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var f = new HubConfigurationEditor(Configuration);
-            f.Show();
+            f.ShowDialog();
         }
         private void numericUpDownPCIeIndex_ValueChanged(object sender, EventArgs e)
         {
@@ -216,6 +216,12 @@ namespace Bonsai.ONIX.Design
         {
             dataGridViewDeviceTable.Parent = tabControlHubs.SelectedTab;
             UpdateDeviceTable(((oni.Hub)tabControlHubs.SelectedTab.Tag).Address);
+        }
+
+        private void boardSyncToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var f = new MultiBoardSyncDialog(Configuration);
+            f.ShowDialog();
         }
     }
 }
