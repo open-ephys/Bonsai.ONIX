@@ -93,7 +93,19 @@ namespace Bonsai.ONIX
             lock (runLock)
             {
                 if (running) return;
-                ctx.Start(true);
+
+                //NOTE: Stuff related to sync mode is 100% ONIX, not pure ONI, so long term another place to do this separation might be needed
+                int addr = ctx.HardwareAddress;
+                int mode = (addr & 0x00FF0000) >> 16;
+                if (mode == 0) //standalone mode
+                {
+                    ctx.Start(true);
+                }
+                else //if synchronized mode, reset counter independently
+                {
+                    ctx.ResetFrameClock();
+                    ctx.Start(false);
+                }
                 TokenSource = new CancellationTokenSource();
                 CollectFramesToken = TokenSource.Token;
 
