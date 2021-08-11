@@ -61,6 +61,7 @@
             this.tabControlHubs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.buttonBlockMin = new System.Windows.Forms.Button();
+            this.boardSyncToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
@@ -195,7 +196,8 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hubsToolStripMenuItem});
+            this.hubsToolStripMenuItem,
+            this.boardSyncToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -383,6 +385,13 @@
             this.buttonBlockMin.UseVisualStyleBackColor = true;
             this.buttonBlockMin.Click += new System.EventHandler(this.buttonBlockMin_Click);
             // 
+            // boardSyncToolStripMenuItem
+            // 
+            this.boardSyncToolStripMenuItem.Name = "boardSyncToolStripMenuItem";
+            this.boardSyncToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.boardSyncToolStripMenuItem.Text = "Board Sync";
+            this.boardSyncToolStripMenuItem.Click += new System.EventHandler(this.boardSyncToolStripMenuItem_Click);
+            // 
             // ONIContextConfigurationEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -449,6 +458,7 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabControl tabControlHubs;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.ToolStripMenuItem boardSyncToolStripMenuItem;
         private System.Windows.Forms.Button buttonBlockMin;
     }
 }

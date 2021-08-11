@@ -19,6 +19,7 @@
     <FileVersion>1.0.0.0</FileVersion>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/jonnew/Bonsai.ONIX</RepositoryUrl>
+	 <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>

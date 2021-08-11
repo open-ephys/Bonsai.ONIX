@@ -29,12 +29,6 @@ namespace Bonsai.ONIX
                            ((ulong)frameBlock[j].Sample[5] << 32) |
                            ((ulong)frameBlock[j].Sample[6] << 16) |
                            ((ulong)frameBlock[j].Sample[7] << 0);
-
-                //for (int i = 0; i < FrameWords; i++)
-                //{
-                //    payload[i, j] = frameBlock[j].Sample[i + 8];
-                //}
-
             }
 
             Delta = GetDelta(delta);
