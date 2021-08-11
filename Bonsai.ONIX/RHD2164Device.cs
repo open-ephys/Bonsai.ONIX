@@ -205,9 +205,9 @@ namespace Bonsai.ONIX
 
         void SetRawRegister(uint address, int value)
         {
-            WriteRegister( address, (uint)value);
+            WriteRegister(address, (uint)value);
         }
-                int GetRawRegister(uint address)
+        int GetRawRegister(uint address)
         {
             return (int)ReadRegister(address);
         }

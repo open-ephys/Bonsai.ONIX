@@ -32,16 +32,16 @@
                 //case ONIXDevices.ID.AD576X:
                 //case ONIXDevices.ID.TESTREG0:
                 case ONIXDevices.ID.BreakoutDigitalIO:
-                    return new FMCDigitalIODevice();
+                    return new DigitalIODevice();
                 //case ONIXDevices.ID.FMCCLKIN1R3:
                 case ONIXDevices.ID.FMCClockOutput:
-                    return new FMCCLKOutDevice();
+                    return new ClockOutputDevice();
                 //case ONIXDevices.ID.TS4231V2ARR:
                 //    return new TS4231V2Device();
                 case ONIXDevices.ID.BreakoutAnalogIO:
-                    return new FMCAnalogIODevice();
+                    return new AnalogIODevice();
                 case ONIXDevices.ID.FMCLinkController:
-                    return new FMCHeadstageControlDevice();
+                    return new HeadstagePortControlDevice();
                 //case ONIXDevices.ID.DS90UB9X:
                 case ONIXDevices.ID.TS4231V1Array:
                     return new TS4231V1Device();

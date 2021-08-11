@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Bonsai.ONIX
+﻿namespace Bonsai.ONIX
 {
     public static class DS90UB9xConfiguration
     {
@@ -43,5 +37,5 @@ namespace Bonsai.ONIX
             VSYNC_NEGATIVE = 0b111
         }
 
-    }       
+    }
 }

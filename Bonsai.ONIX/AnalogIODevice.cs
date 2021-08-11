@@ -6,10 +6,11 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Acquires data from the twelve 14-bit analog inputs on the Open Ephys FMC Host. " +
-        "Optionally, sends data to the 16-bit analog outputs on the Open Ephys FMC Host, if those " +
-        "channels are selected to be outputs. The output range is fixed to +/-10V.")]
-    public class FMCAnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, short>
+    [Description("Acquires data from the twelve 14-bit analog inputs on the Open Ephys Host board. " +
+        "Optionally, sends data to the 16-bit analog outputs on the Open Ephys Host bpard, if those " +
+        "channels are selected to be outputs. The output range is fixed to +/-10V. Usually these signals" +
+        "are accessed via the ONIX breakout board.")]
+    public class AnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, short>
     {
         enum Register
         {
@@ -31,7 +32,7 @@ namespace Bonsai.ONIX
 
         private readonly float[] scale;
 
-        public FMCAnalogIODevice() : base(ONIXDevices.ID.BreakoutAnalogIO)
+        public AnalogIODevice() : base(ONIXDevices.ID.BreakoutAnalogIO)
         {
             scale = Enumerable.Repeat((float)0.000305, AnalogInputDataFrame.NumberOfChannels).ToArray();
         }

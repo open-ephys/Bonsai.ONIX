@@ -32,8 +32,8 @@ namespace Bonsai.ONIX
             INTERNAL = 2
         }
 
-        ElectrodeBank bank = ElectrodeBank.ZERO;
-        List<int> electrodeIndicies;
+        private ElectrodeBank bank = ElectrodeBank.ZERO;
+        private List<int> electrodeIndicies;
 
         private NeuropixelsV1Channel()
         {

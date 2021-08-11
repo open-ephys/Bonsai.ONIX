@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. WARNING: THIS NODE CAN DAMAGE YOUR HEADSTAGE!")]
-    public class FMCHeadstageControlDevice : ONIFrameReader<FMCHeadstageControlFrame, ushort>
+    public class HeadstagePortControlDevice : ONIFrameReader<HeadstagePortControlFrame, ushort>
     {
         const double VLIM = 7.0;
 
@@ -20,11 +20,11 @@ namespace Bonsai.ONIX
             SAVELINKVOLTAGE = 4,
         }
 
-        public FMCHeadstageControlDevice() : base(ONIXDevices.ID.FMCLinkController) { }
+        public HeadstagePortControlDevice() : base(ONIXDevices.ID.FMCLinkController) { }
 
-        protected override IObservable<FMCHeadstageControlFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<HeadstagePortControlFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
-            return source.Select(f => { return new FMCHeadstageControlFrame(f); });
+            return source.Select(f => { return new HeadstagePortControlFrame(f); });
         }
 
         [Category("Configuration")]

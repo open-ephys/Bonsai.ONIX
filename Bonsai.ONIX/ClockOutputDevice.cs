@@ -3,8 +3,10 @@ using System.ComponentModel;
 
 namespace Bonsai.ONIX
 {
-    [Description("Controls the high performance output clock that is synchronized to the system clock on the Open Ephys FMC Host. A boolean input can be used to toggle the Enable register.")]
-    public class FMCCLKOutDevice : ONISink<bool>
+    [Description("Controls the high performance output clock that is synchronized to the system " +
+        "clock on the Open Ephys FMC Host. A boolean input can be used to toggle the Enable " +
+        "register.")]
+    public class ClockOutputDevice : ONISink<bool>
     {
         enum Register
         {
@@ -34,7 +36,7 @@ namespace Bonsai.ONIX
             return 100.0 * h / (h + l);
         }
 
-        public FMCCLKOutDevice() : base(ONIXDevices.ID.FMCClockOutput) { }
+        public ClockOutputDevice() : base(ONIXDevices.ID.FMCClockOutput) { }
 
         [Category("Acquisition")]
         [Description("Enable.")]
@@ -125,7 +127,8 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
-        [Description("Should the clock start synchronously with acquisition (true) or free run whenever enabled (false) ?")]
+        [Description("Should the clock start synchronously with acquisition (true) or free run " +
+            "whenever enabled (false)?")]
         public bool SyncToRun
         {
             get

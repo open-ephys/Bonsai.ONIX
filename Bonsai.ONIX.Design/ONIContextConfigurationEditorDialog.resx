@@ -154,17 +154,18 @@
   <data name="toolStripSplitButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         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
-        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
+        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
+        gg==
 </value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

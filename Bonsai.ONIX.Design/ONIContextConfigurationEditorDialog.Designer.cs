@@ -60,6 +60,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControlHubs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.buttonBlockMin = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
@@ -202,7 +203,7 @@
             // hubsToolStripMenuItem
             // 
             this.hubsToolStripMenuItem.Name = "hubsToolStripMenuItem";
-            this.hubsToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.hubsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.hubsToolStripMenuItem.Text = "Hubs...";
             this.hubsToolStripMenuItem.Click += new System.EventHandler(this.hubsToolStripMenuItem_Click);
             // 
@@ -210,16 +211,17 @@
             // 
             this.errorProvider.ContainerControl = this;
             // 
-            // propertyGrid
+            // propertyGridSelecteDevice
             // 
             this.propertyGridSelecteDevice.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridSelecteDevice.Location = new System.Drawing.Point(0, 0);
-            this.propertyGridSelecteDevice.Name = "propertyGrid";
+            this.propertyGridSelecteDevice.Name = "propertyGridSelecteDevice";
             this.propertyGridSelecteDevice.Size = new System.Drawing.Size(277, 415);
             this.propertyGridSelecteDevice.TabIndex = 19;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.buttonBlockMin);
             this.panel3.Controls.Add(this.okButton);
             this.panel3.Controls.Add(this.numericUpDownWriteAlloc);
             this.panel3.Controls.Add(this.label3);
@@ -371,6 +373,16 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // buttonBlockMin
+            // 
+            this.buttonBlockMin.Location = new System.Drawing.Point(443, 21);
+            this.buttonBlockMin.Name = "buttonBlockMin";
+            this.buttonBlockMin.Size = new System.Drawing.Size(68, 21);
+            this.buttonBlockMin.TabIndex = 18;
+            this.buttonBlockMin.Text = "Set to Min.";
+            this.buttonBlockMin.UseVisualStyleBackColor = true;
+            this.buttonBlockMin.Click += new System.EventHandler(this.buttonBlockMin_Click);
+            // 
             // ONIContextConfigurationEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -437,5 +449,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabControl tabControlHubs;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Button buttonBlockMin;
     }
 }

@@ -18,7 +18,7 @@ namespace Bonsai.ONIX
         public const int INTERNAL_REF_CHANNEL = 191;
 
         // Configuration bit array sizes
-        const int SHANK_CONFIG_BITS = 967;
+        const int SHANK_CONFIG_BITS = 968;
         const int BASE_CONFIG_BITS = 2448;
 
         // Configuration bit indices
@@ -144,7 +144,7 @@ namespace Bonsai.ONIX
 
         public async Task<int> WriteConfigurationAsync(NeuropixelsV1Configuration config, IProgress<int> progress, bool read_check = false)
         {
-            return await Task.Run<int>(() =>
+            return await Task.Run(() =>
             {
                 if (config.Channels.ToList().GetRange(192, 192).Any(c => c.Bank == Channel.ElectrodeBank.TWO))
                 {
@@ -210,14 +210,12 @@ namespace Bonsai.ONIX
             var shank_config = new BitArray(SHANK_CONFIG_BITS, false);
 
             // If external reference is used by any channel
-            var b = config.Channels.Where(ch => ch.Reference == Channel.Ref.EXTERNAL).Count() > 0;
-            shank_config[SHANK_BIT_EXT1] = b;
-            shank_config[SHANK_BIT_EXT2] = b;
+            shank_config[SHANK_BIT_EXT1] = config.Channels.Where(ch => ch.Reference == Channel.Ref.EXTERNAL && ch.ElectrodeNumber % 2 == 1).Count() > 0;
+            shank_config[SHANK_BIT_EXT2] = config.Channels.Where(ch => ch.Reference == Channel.Ref.EXTERNAL && ch.ElectrodeNumber % 2 == 0).Count() > 0;
 
             // If tip reference is used by any channel
-            b = config.Channels.Where(ch => ch.Reference == Channel.Ref.TIP).Count() > 0;
-            shank_config[SHANK_BIT_TIP1] = b;
-            shank_config[SHANK_BIT_TIP2] = b;
+            shank_config[SHANK_BIT_TIP1] = config.Channels.Where(ch => ch.Reference == Channel.Ref.TIP && ch.ElectrodeNumber % 2 == 1).Count() > 0;
+            shank_config[SHANK_BIT_TIP2] = config.Channels.Where(ch => ch.Reference == Channel.Ref.TIP && ch.ElectrodeNumber % 2 == 0).Count() > 0;
 
             // If internal reference is used by any channel
             var refs = BankToIntRef.Values.ToArray();
@@ -225,7 +223,7 @@ namespace Bonsai.ONIX
             shank_config[refs[1]] = false;
             shank_config[refs[2]] = false;
 
-            b = config.Channels.Where(ch => ch.Reference == Channel.Ref.INTERNAL).Count() > 0;
+            var b = config.Channels.Where(ch => ch.Reference == Channel.Ref.INTERNAL).Count() > 0;
             shank_config[refs[(int)config.Channels[INTERNAL_REF_CHANNEL].Bank]] = b;
 
             // Update active channels
@@ -261,7 +259,6 @@ namespace Bonsai.ONIX
             // Channels section
             for (int i = 0; i < config.Channels.Length; i++)
             {
-
                 var config_idx = i % 2;
 
                 // References
@@ -283,7 +280,7 @@ namespace Bonsai.ONIX
                 base_configs[config_idx][ch_opts_idx + 5] = Gains[config.Channels[i].LFPGain][2];
 
                 base_configs[config_idx][ch_opts_idx + 6] = config.Channels[i].Standby;
-                base_configs[config_idx][ch_opts_idx + 7] = config.Channels[i].APFilter;
+                base_configs[config_idx][ch_opts_idx + 7] = config.Channels[i].APFilter; // Correct? 
 
             }
 
@@ -365,8 +362,10 @@ namespace Bonsai.ONIX
             return base_configs;
         }
 
+        // Creates a *bit-reversed* byte array from a bit array
         static byte[] BitArrayToBytes(BitArray bits)
         {
+            // Bits go into the shift registers MSB first
             if (bits.Length == 0)
             {
                 throw new ArgumentException("Shift register data is empty", "data");
@@ -374,6 +373,12 @@ namespace Bonsai.ONIX
 
             var bytes = new byte[(bits.Length - 1) / 8 + 1];
             bits.CopyTo(bytes, 0);
+
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                // NB: http://graphics.stanford.edu/~seander/bithacks.html
+                bytes[i] = (byte)((bytes[i] * 0x0202020202ul & 0x010884422010ul) % 1023);
+            }
 
             return bytes;
         }
@@ -396,7 +401,7 @@ namespace Bonsai.ONIX
 
             if (read_check && ReadByte((uint)RegAddr.STATUS) != (uint)Status.SR_OK)
             {
-                throw new IOException("Shift register programming check failed.");
+                throw new WorkflowException("Shift register programming check failed.");
             }
         }
 
@@ -475,8 +480,8 @@ namespace Bonsai.ONIX
             SR_CHAIN3 = 0X0C,
             SR_CHAIN2 = 0X0D,
             SR_CHAIN1 = 0X0E,
-            SR_LENGTH1 = 0X0F,
-            SR_LENGTH2 = 0X10,
+            SR_LENGTH2 = 0X0F,
+            SR_LENGTH1 = 0X10,
             SOFT_RESET = 0X11,
         };
 

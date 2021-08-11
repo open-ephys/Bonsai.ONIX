@@ -21,7 +21,7 @@
         <Combinator xsi:type="p1:RealTimeFunctionGenerator">
           <p1:BufferLength>120</p1:BufferLength>
           <p1:Frequency>100</p1:Frequency>
-          <p1:Waveform>Triangular</p1:Waveform>
+          <p1:Waveform>Sine</p1:Waveform>
           <p1:Depth>F64</p1:Depth>
           <p1:Amplitude>1</p1:Amplitude>
           <p1:Offset>0</p1:Offset>
@@ -29,7 +29,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:FMCAnalogIODevice">
+        <Combinator xsi:type="p1:AnalogIODevice">
           <p1:DeviceAddress>
             <p1:HardwareSlot>
               <p1:Driver>riffa</p1:Driver>

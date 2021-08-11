@@ -2,7 +2,6 @@
 <WorkflowBuilder Version="2.6.0"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
-                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -19,25 +18,18 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="rx:Timer">
-          <rx:DueTime>PT0S</rx:DueTime>
-          <rx:Period>PT0.1S</rx:Period>
+        <Combinator xsi:type="BooleanProperty">
+          <Value>true</Value>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="IntProperty">
-          <Value>1</Value>
-        </Combinator>
-      </Expression>
-      <Expression xsi:type="rx:Accumulate" />
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:DigitalIODevice">
+        <Combinator xsi:type="p1:ClockOutputDevice">
           <p1:DeviceAddress>
             <p1:HardwareSlot>
               <p1:Driver>riffa</p1:Driver>
               <p1:Index>0</p1:Index>
             </p1:HardwareSlot>
-            <p1:Address>7</p1:Address>
+            <p1:Address>5</p1:Address>
           </p1:DeviceAddress>
           <p1:Hub>
             <p1:Address>0</p1:Address>
@@ -47,27 +39,16 @@
             <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
           </p1:Hub>
           <p1:FrameClockHz>250000000</p1:FrameClockHz>
-          <p1:LEDBrightness>40</p1:LEDBrightness>
-          <p1:EnableStream>true</p1:EnableStream>
+          <p1:ClockEnabled>true</p1:ClockEnabled>
+          <p1:Frequency>1000</p1:Frequency>
+          <p1:DutyCycle>50</p1:DutyCycle>
+          <p1:Delay>0</p1:Delay>
+          <p1:SyncToRun>true</p1:SyncToRun>
         </Combinator>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>Port</Selector>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>Buttons</Selector>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>DataClock</Selector>
       </Expression>
     </Nodes>
     <Edges>
       <Edge From="1" To="2" Label="Source1" />
-      <Edge From="2" To="3" Label="Source1" />
-      <Edge From="3" To="4" Label="Source1" />
-      <Edge From="4" To="5" Label="Source1" />
-      <Edge From="4" To="6" Label="Source1" />
-      <Edge From="4" To="7" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

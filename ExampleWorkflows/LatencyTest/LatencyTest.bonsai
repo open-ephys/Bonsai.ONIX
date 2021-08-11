@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.6.0"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
+                 xmlns:io="clr-namespace:Bonsai.IO;assembly=Bonsai.System"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:scr="clr-namespace:Bonsai.Scripting;assembly=Bonsai.Scripting"
+                 xmlns:dsp="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:ONIContext">
+          <p1:ContextConfiguration>
+            <p1:Slot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:Slot>
+            <p1:ReadSize>1024</p1:ReadSize>
+            <p1:WriteSize>2048</p1:WriteSize>
+          </p1:ContextConfiguration>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="io:CsvWriter">
+        <io:FileName>context_state.csv</io:FileName>
+        <io:Append>false</io:Append>
+        <io:Overwrite>false</io:Overwrite>
+        <io:Suffix>Timestamp</io:Suffix>
+        <io:IncludeHeader>true</io:IncludeHeader>
+        <io:Selector>SystemClockHz,AcquisitionClockHz,MaxReadFrameSize,MaxWriteFrameSize,BlockReadSize,BlockWriteSize</io:Selector>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:LoadTestingDevice">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>11</p1:Address>
+          </p1:DeviceAddress>
+          <p1:Hub>
+            <p1:Address>0</p1:Address>
+            <p1:HardwareID>1</p1:HardwareID>
+            <p1:FirmwareVersion>1</p1:FirmwareVersion>
+            <p1:ClockHz>250000000</p1:ClockHz>
+            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
+          </p1:Hub>
+          <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:EnableStream>true</p1:EnableStream>
+          <p1:ReceivedWords>100</p1:ReceivedWords>
+          <p1:TransmittedWords>0</p1:TransmittedWords>
+          <p1:FrameHz>10000</p1:FrameHz>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Delta</Selector>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:DistinctUntilChanged" />
+      </Expression>
+      <Expression xsi:type="scr:ExpressionTransform">
+        <scr:Expression>double(it) * 4e-6</scr:Expression>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="dsp:Histogram1D">
+          <dsp:Min>0</dsp:Min>
+          <dsp:Max>100</dsp:Max>
+          <dsp:Bins>100</dsp:Bins>
+          <dsp:Normalize>false</dsp:Normalize>
+          <dsp:Accumulate>true</dsp:Accumulate>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>DataClock</Selector>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Buffer">
+          <rx:Count>1</rx:Count>
+          <rx:Skip>100</rx:Skip>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="scr:ExpressionTransform">
+        <scr:Expression>it[0]</scr:Expression>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:LoadTestingDevice">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>11</p1:Address>
+          </p1:DeviceAddress>
+          <p1:Hub>
+            <p1:Address>0</p1:Address>
+            <p1:HardwareID>1</p1:HardwareID>
+            <p1:FirmwareVersion>1</p1:FirmwareVersion>
+            <p1:ClockHz>250000000</p1:ClockHz>
+            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
+          </p1:Hub>
+          <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:EnableStream>true</p1:EnableStream>
+          <p1:ReceivedWords>100</p1:ReceivedWords>
+          <p1:TransmittedWords>0</p1:TransmittedWords>
+          <p1:FrameHz>10000</p1:FrameHz>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:MemoryUsageDevice">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>10</p1:Address>
+          </p1:DeviceAddress>
+          <p1:Hub>
+            <p1:Address>0</p1:Address>
+            <p1:HardwareID>1</p1:HardwareID>
+            <p1:FirmwareVersion>1</p1:FirmwareVersion>
+            <p1:ClockHz>250000000</p1:ClockHz>
+            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
+          </p1:Hub>
+          <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:EnableStream>true</p1:EnableStream>
+          <p1:UpdateHz>100</p1:UpdateHz>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>MemoryUsagePercentage</Selector>
+      </Expression>
+      <Expression xsi:type="PropertySource" TypeArguments="p1:LoadTestingDevice,sys:UInt32">
+        <MemberName>ReceivedWords</MemberName>
+        <Value>1000</Value>
+      </Expression>
+      <Expression xsi:type="PropertySource" TypeArguments="p1:LoadTestingDevice,sys:UInt32">
+        <MemberName>TransmittedWords</MemberName>
+        <Value>0</Value>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="io:CsvWriter">
+        <io:FileName>load_state.csv</io:FileName>
+        <io:Append>false</io:Append>
+        <io:Overwrite>false</io:Overwrite>
+        <io:Suffix>Timestamp</io:Suffix>
+        <io:IncludeHeader>false</io:IncludeHeader>
+        <io:Selector>Item1,Item2</io:Selector>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="2" To="7" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="8" To="9" Label="Source1" />
+      <Edge From="9" To="10" Label="Source1" />
+      <Edge From="11" To="12" Label="Source1" />
+      <Edge From="13" To="15" Label="Source1" />
+      <Edge From="14" To="15" Label="Source2" />
+      <Edge From="15" To="16" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

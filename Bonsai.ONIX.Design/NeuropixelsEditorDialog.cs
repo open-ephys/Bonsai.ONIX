@@ -29,6 +29,9 @@ namespace Bonsai.ONIX.Design
             // Display probe and config SNs
             CheckStatus();
 
+            // Recall if we need to perform a read check
+            performSRReadCheckToolStripMenuItem.Checked = Config.PerformReadCheck;
+
             // Need to manually add the SelectedIndexChange event handler or assigning the data source will trigger it
             comboBox_CalibrationMode.DataSource = Enum.GetValues(typeof(NeuropixelsV1Configuration.OperationMode));
             comboBox_CalibrationMode.SelectedItem = Config.Mode;

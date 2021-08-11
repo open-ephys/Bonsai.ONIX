@@ -8,11 +8,26 @@ namespace Bonsai.ONIX
         public LoadTestingDataFrame(ONIManagedFrame<ushort> frame)
             : base(frame)
         {
-            var data = new ushort[frame.Sample.Length - 4];
-            Array.Copy(frame.Sample, 4, data, 0, data.Length);
+
+            Delta = ((ulong)frame.Sample[4] << 48) |
+                ((ulong)frame.Sample[5] << 32) |
+                ((ulong)frame.Sample[6] << 16) |
+                ((ulong)frame.Sample[7] << 0);
+
+            var data = new ushort[frame.Sample.Length - 8];
+            Array.Copy(frame.Sample, 8, data, 0, data.Length);
             Payload = Mat.FromArray(data, data.Length, 1, Depth.U16, 1);
         }
 
+        /// <summary>
+        /// Delta
+        /// </summary>
+        public ulong Delta { get; private set; }
+
+        /// <summary>
+        /// Matrix containing the payload used for stress testing host communication.
+        /// This matrix contains the number 42 over and over again.
+        /// </summary>
         public Mat Payload { get; private set; }
     }
 }

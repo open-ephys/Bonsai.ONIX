@@ -4,9 +4,9 @@
                  xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:dsp="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp"
+                 xmlns:p2="clr-namespace:Bonsai.ONIX.Design;assembly=Bonsai.ONIX.Design"
                  xmlns:gl="clr-namespace:Bonsai.Shaders;assembly=Bonsai.Shaders"
                  xmlns:res="clr-namespace:Bonsai.Resources;assembly=Bonsai.System"
-                 xmlns:p2="clr-namespace:Bonsai.ONIX.Design;assembly=Bonsai.ONIX.Design"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -50740,6 +50740,30 @@
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="res:LoadResources" />
       </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:MemoryUsageDevice">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>10</p1:Address>
+          </p1:DeviceAddress>
+          <p1:Hub>
+            <p1:Address>0</p1:Address>
+            <p1:HardwareID>1</p1:HardwareID>
+            <p1:FirmwareVersion>1</p1:FirmwareVersion>
+            <p1:ClockHz>250000000</p1:ClockHz>
+            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
+          </p1:Hub>
+          <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:EnableStream>true</p1:EnableStream>
+          <p1:UpdateHz>100</p1:UpdateHz>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>MemoryUsagePercentage</Selector>
+      </Expression>
     </Nodes>
     <Edges>
       <Edge From="1" To="2" Label="Source1" />
@@ -50751,6 +50775,7 @@
       <Edge From="7" To="8" Label="Source1" />
       <Edge From="9" To="10" Label="Source1" />
       <Edge From="10" To="11" Label="Source1" />
+      <Edge From="12" To="13" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

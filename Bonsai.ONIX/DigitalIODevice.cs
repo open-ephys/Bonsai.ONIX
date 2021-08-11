@@ -6,8 +6,10 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Acquires digital data from an Open-Ephys FMC Breakout Board.")]
-    public class FMCDigitalIODevice : ONIFrameReaderAndWriter<int, BreakoutDigitalInputDataFrame, ushort>
+    [Description("Acquires digital data from, and sends digital data to, an Open-Ephys FMC " +
+        "Breakout Board and controls the indication LED state. The least significant bits of " +
+        "the integer input are used to determine the output port state.")]
+    public class DigitalIODevice : ONIFrameReaderAndWriter<int, BreakoutDigitalInputDataFrame, ushort>
     {
         enum Register
         {
@@ -15,30 +17,38 @@ namespace Bonsai.ONIX
             LEDMODE = 1, // 0 = All off, 1 = Power only, 2 = Power and running, 3 = normal
             LEDLVL = 2, // 0-255 overall LED brightness value.
         }
-        public FMCDigitalIODevice() : base(ONIXDevices.ID.BreakoutDigitalIO) { }
+
+        public DigitalIODevice() : base(ONIXDevices.ID.BreakoutDigitalIO) { }
+
         protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
         }
+
         protected override void Write(ONIContextTask ctx, int input)
         {
             ctx.Write((uint)DeviceAddress.Address, (uint)input);
         }
 
         [Category("Acquisition")]
-        [Range(0, 15)]
+        [Range(0, 100)]
+        [Precision(0, 1)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        public uint LEDBrightness
+        [Description("Adjust the breakout board's indication LED brightness.")]
+        public double LEDBrightness
         {
             get
             {
-                return ReadRegister((int)Register.LEDLVL);
+                var level = ReadRegister((int)Register.LEDLVL);
+                return 100d * (level / 15.0d);
             }
             set
             {
-                WriteRegister((int)Register.LEDLVL, value);
+                var level = (uint) Math.Ceiling(15 * value / 100);
+                WriteRegister((int)Register.LEDLVL, level);
             }
         }
+
         public enum LEDModes
         {
             OFF = 0,
@@ -58,19 +68,6 @@ namespace Bonsai.ONIX
             set
             {
                 WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
-            }
-        }
-
-        [Category("Acquisition")]
-        public LEDModes LEDMode
-        {
-            get
-            {
-                return (LEDModes)ReadRegister((int)Register.LEDMODE);
-            }
-            set
-            {
-                WriteRegister((uint)Register.LEDMODE, (uint)value);
             }
         }
     }

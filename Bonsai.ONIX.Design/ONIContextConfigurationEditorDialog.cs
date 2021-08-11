@@ -217,5 +217,15 @@ namespace Bonsai.ONIX.Design
             dataGridViewDeviceTable.Parent = tabControlHubs.SelectedTab;
             UpdateDeviceTable(((oni.Hub)tabControlHubs.SelectedTab.Tag).Address);
         }
+
+        private void buttonBlockMin_Click(object sender, EventArgs e)
+        {
+            using (var c = ONIContextManager.ReserveContext(Configuration.Slot))
+            {
+                var context = c.Context;
+                Configuration.ReadSize = (int)context.MaxReadFrameSize;
+                numericUpDownReadSize.Value = Configuration.ReadSize;
+            }
+        }
     }
 }
