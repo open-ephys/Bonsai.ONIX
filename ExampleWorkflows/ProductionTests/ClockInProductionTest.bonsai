@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.6.0"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:scr="clr-namespace:Bonsai.Scripting;assembly=Bonsai.Scripting"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:ONIContext">
+          <p1:ContextConfiguration>
+            <p1:Slot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:Slot>
+            <p1:ReadSize>2048</p1:ReadSize>
+            <p1:WriteSize>2048</p1:WriteSize>
+          </p1:ContextConfiguration>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:RawDevice">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>3</p1:Address>
+          </p1:DeviceAddress>
+          <p1:Hub>
+            <p1:Address>0</p1:Address>
+            <p1:HardwareID>1</p1:HardwareID>
+            <p1:FirmwareVersion>1</p1:FirmwareVersion>
+            <p1:ClockHz>250000000</p1:ClockHz>
+            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
+          </p1:Hub>
+          <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:DeviceType>DigitalInput32</p1:DeviceType>
+          <p1:RegisterIndex>0</p1:RegisterIndex>
+          <p1:RegisterValue>1</p1:RegisterValue>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>FrameClock</Selector>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Skip">
+          <rx:Count>1</rx:Count>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="Subtract" />
+      <Expression xsi:type="scr:ExpressionTransform">
+        <scr:Expression>250000000.0/Double(it)/2.0</scr:Expression>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="1" To="2" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="2" To="4" Label="Source2" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

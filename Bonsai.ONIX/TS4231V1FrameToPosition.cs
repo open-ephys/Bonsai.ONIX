@@ -108,8 +108,8 @@ namespace Bonsai.ONIX
             P = new Point3d(0, 0, 0);
             Q = new Point3d(1, 0, 0);
 
-            var fill0 = new double[template.Count() / 4];
-            var fill1 = new bool[template.Count()];
+            var fill0 = new double[template.Length / 4];
+            var fill1 = new bool[template.Length];
             pulse_times = new Queue<double>(fill0);
             pulse_widths = new Queue<double>(fill0);
             pulse_parse = new Queue<bool>(fill1);

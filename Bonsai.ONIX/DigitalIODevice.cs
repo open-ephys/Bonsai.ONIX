@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Acquires digital data from, and sends digital data to, an Open-Ephys FMC " +
+    [Description("Acquires digital data from, and sends digital data to, an ONIX " +
         "Breakout Board and controls the indication LED state. The least significant bits of " +
         "the integer input are used to determine the output port state.")]
     public class DigitalIODevice : ONIFrameReaderAndWriter<int, BreakoutDigitalInputDataFrame, ushort>
@@ -44,7 +44,7 @@ namespace Bonsai.ONIX
             }
             set
             {
-                var level = (uint) Math.Ceiling(15 * value / 100);
+                var level = (uint)Math.Ceiling(15 * value / 100);
                 WriteRegister((int)Register.LEDLVL, level);
             }
         }

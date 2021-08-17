@@ -181,7 +181,7 @@ namespace Bonsai.ONIX.Design
             this.Controls.Add(this.groupMode);
             this.Name = "MultiBoardSyncDialog";
             this.ShowIcon = false;
-            this.Text = "Board Synchronization";
+            this.Text = "Host Synchronization";
             this.groupMode.ResumeLayout(false);
             this.groupMode.PerformLayout();
             this.groupChannel.ResumeLayout(false);

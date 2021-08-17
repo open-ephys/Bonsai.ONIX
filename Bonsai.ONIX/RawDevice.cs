@@ -30,7 +30,37 @@ namespace Bonsai.ONIX
                     DeviceAddress = null;
                     FrameClockHz = null;
                     Hub = null;
+                    RegisterIndex = 0;
                 }
+            }
+        }
+
+        uint registerIndex;
+        [Category("Acquisition")]
+        [Description("Register index.")]
+        public uint RegisterIndex {
+
+            get {
+                return registerIndex;
+            }
+            set
+            {
+                registerIndex = value;
+                RegisterValue = ReadRegister(value);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("Register value.")]
+        public uint RegisterValue
+        {
+            get
+            {
+                return ReadRegister(registerIndex);
+            }
+            set
+            {
+                WriteRegister(registerIndex, value);
             }
         }
     }

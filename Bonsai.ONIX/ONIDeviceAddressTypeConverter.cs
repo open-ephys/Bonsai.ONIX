@@ -139,7 +139,7 @@ namespace Bonsai.ONIX
         }
 
         // NB: Taken from https://stackoverflow.com/questions/5346158/parse-string-using-format-template
-        private List<string> ReverseStringFormat(string template, string str)
+        private static List<string> ReverseStringFormat(string template, string str)
         {
             //Handles regex special characters.
             template = Regex.Replace(template, @"[\\\^\$\.\|\?\*\+\(\)]", match => "\\"

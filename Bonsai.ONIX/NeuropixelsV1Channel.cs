@@ -33,7 +33,7 @@ namespace Bonsai.ONIX
         }
 
         private ElectrodeBank bank = ElectrodeBank.ZERO;
-        private List<int> electrodeIndicies;
+        private readonly List<int> electrodeIndicies;
 
         private NeuropixelsV1Channel()
         {
@@ -47,9 +47,11 @@ namespace Bonsai.ONIX
         public NeuropixelsV1Channel(int index)
         {
             Index = index;
-            electrodeIndicies = new List<int>();
-            electrodeIndicies.Add(index);
-            electrodeIndicies.Add(index + NeuropixelsV1Probe.CHANNEL_COUNT);
+            electrodeIndicies = new List<int>
+            {
+                index,
+                index + NeuropixelsV1Probe.CHANNEL_COUNT
+            };
 
             if (index < NeuropixelsV1Probe.INTERNAL_REF_CHANNEL)
             {

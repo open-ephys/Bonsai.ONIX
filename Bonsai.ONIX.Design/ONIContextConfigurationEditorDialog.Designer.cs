@@ -43,10 +43,12 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hubsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.boardSyncToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.propertyGridSelecteDevice = new System.Windows.Forms.PropertyGrid();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.buttonBlockMin = new System.Windows.Forms.Button();
             this.dataGridViewDeviceTable = new System.Windows.Forms.DataGridView();
             this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -60,8 +62,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControlHubs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.buttonBlockMin = new System.Windows.Forms.Button();
-            this.boardSyncToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
@@ -209,6 +209,13 @@
             this.hubsToolStripMenuItem.Text = "Hubs...";
             this.hubsToolStripMenuItem.Click += new System.EventHandler(this.hubsToolStripMenuItem_Click);
             // 
+            // boardSyncToolStripMenuItem
+            // 
+            this.boardSyncToolStripMenuItem.Name = "boardSyncToolStripMenuItem";
+            this.boardSyncToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.boardSyncToolStripMenuItem.Text = "Host Sync...";
+            this.boardSyncToolStripMenuItem.Click += new System.EventHandler(this.boardSyncToolStripMenuItem_Click);
+            // 
             // errorProvider
             // 
             this.errorProvider.ContainerControl = this;
@@ -239,6 +246,16 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1175, 46);
             this.panel3.TabIndex = 23;
+            // 
+            // buttonBlockMin
+            // 
+            this.buttonBlockMin.Location = new System.Drawing.Point(443, 21);
+            this.buttonBlockMin.Name = "buttonBlockMin";
+            this.buttonBlockMin.Size = new System.Drawing.Size(68, 21);
+            this.buttonBlockMin.TabIndex = 18;
+            this.buttonBlockMin.Text = "Set to Min.";
+            this.buttonBlockMin.UseVisualStyleBackColor = true;
+            this.buttonBlockMin.Click += new System.EventHandler(this.buttonBlockMin_Click);
             // 
             // dataGridViewDeviceTable
             // 
@@ -374,23 +391,6 @@
             this.tabPage1.Size = new System.Drawing.Size(886, 389);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // buttonBlockMin
-            // 
-            this.buttonBlockMin.Location = new System.Drawing.Point(443, 21);
-            this.buttonBlockMin.Name = "buttonBlockMin";
-            this.buttonBlockMin.Size = new System.Drawing.Size(68, 21);
-            this.buttonBlockMin.TabIndex = 18;
-            this.buttonBlockMin.Text = "Set to Min.";
-            this.buttonBlockMin.UseVisualStyleBackColor = true;
-            this.buttonBlockMin.Click += new System.EventHandler(this.buttonBlockMin_Click);
-            // 
-            // boardSyncToolStripMenuItem
-            // 
-            this.boardSyncToolStripMenuItem.Name = "boardSyncToolStripMenuItem";
-            this.boardSyncToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.boardSyncToolStripMenuItem.Text = "Board Sync";
-            this.boardSyncToolStripMenuItem.Click += new System.EventHandler(this.boardSyncToolStripMenuItem_Click);
             // 
             // ONIContextConfigurationEditorDialog
             // 

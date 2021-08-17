@@ -6,16 +6,16 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Controls a SERDES link to a remote headstage on the Open Ephys FMC Host. WARNING: THIS NODE CAN DAMAGE YOUR HEADSTAGE!")]
+    [Description("Controls a digital communication link to a remote headstage on the Open Ephys FMC Host.")]
     public class HeadstagePortControlDevice : ONIFrameReader<HeadstagePortControlFrame, ushort>
     {
-        const double VLIM = 7.0;
+        const double VLIM = 8.0;
 
         enum Register
         {
             ENABLE = 0,
             GPOSTATE = 1,
-            DESERIALIZERPOWER = 2,
+            DESERIALIZERPOWER = 2, // NB: Could eventually be used in a lock loss recovery routine, but currently unused.
             LINKVOLTAGE = 3,
             SAVELINKVOLTAGE = 4,
         }
@@ -43,47 +43,33 @@ namespace Bonsai.ONIX
 
         //[Description("Save link A voltage to internal EEPROM.")]
         //public bool SaveLinkAVoltage { get; set; } = false;
-        //        if (SaveLinkAVoltage) ctx.Environment.AcqContext.WriteRegister((uint)DeviceIndex.Index, (int)Register.SAVELINKA, 0);
+
+        //[Category("Acquisition")]
+        //[Description("Headstage deserializer power enabled or disabled.")]
+        //public bool DeserializerPowerEnabled
+        //{
+        //    get
+        //    {
+        //        return ReadRegister((int)Register.DESERIALIZERPOWER) > 0;
+        //    }
+        //    set
+        //    {
+        //        WriteRegister((int)Register.DESERIALIZERPOWER, (uint)(value ? 1 : 0));
+        //    }
+        //}
 
         [Category("Acquisition")]
-        [Description("Headstage deserializer power enabled or disabled.")]
-        public bool DeserializerPowerEnabled
-        {
-            get
-            {
-                return ReadRegister((int)Register.DESERIALIZERPOWER) > 0;
-            }
-            set
-            {
-                WriteRegister((int)Register.DESERIALIZERPOWER, (uint)(value ? 1 : 0));
-            }
-        }
-
-        [Category("Acquisition")]
-        [Description("Type \"BE CAREFUL\" here to enable the extended link voltage range.")]
+        [Description("Type \"BE CAREFUL\" here to enable the extended link voltage range to 10V.")]
         public string EnableExtendedVoltageRange { get; set; }
 
-        bool link_enabled = true;
-        [Category("Acquisition")]
-        [Description("Headstage power enabled or disabled.")]
-        public bool LinkPowerEnabled
-        {
-            get
-            {
-                return link_enabled;
-            }
-            set
-            {
-                link_enabled = value;
-                LinkVoltage = 0;
-            }
-        }
 
         [Category("Acquisition")]
         [Range(3.3, 10.0)]
         [Precision(1, 0.1)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
-        [Description("Headstage link voltage. WARNING: THIS VOLTAGE CAN DAMAGE YOUR HEADSTAGE IF SET TOO HIGH!")]
+        [Description("Headstage link voltage. WARNING: THIS VOLTAGE CAN DAMAGE YOUR HEADSTAGE IF SET TOO HIGH! " +
+            "The standard allowable voltage range is 0-8V. By using the EnableExtendedVoltageRange setting, " +
+            "this can be expanded to 10V.")]
         public double LinkVoltage
         {
             get
@@ -93,13 +79,11 @@ namespace Bonsai.ONIX
             set
             {
                 var link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
-                link_v = link_enabled ? link_v : 0.0;
                 WriteRegister((int)Register.LINKVOLTAGE, (uint)(link_v * 10));
             }
         }
 
-        uint gpo_register;
-
+        uint gpoRegister;
         [Category("Acquisition")]
         [Description("GPO1 state. Used to trigger certain functionality on the headstage. Check headstage documentation.")]
         public bool? GPO1
@@ -107,17 +91,16 @@ namespace Bonsai.ONIX
             get
             {
                 var val = ReadRegister((int)Register.GPOSTATE);
-                gpo_register = val;
-                return (gpo_register & 0x01) > 0;
+                gpoRegister = val;
+                return (gpoRegister & 0x01) > 0;
             }
             set
             {
 
-                gpo_register = (gpo_register & ~((uint)1 << 0)) | (((bool)value ? 1 : (uint)0) << 0);
-                WriteRegister((int)Register.GPOSTATE, gpo_register);
+                gpoRegister = (gpoRegister & ~((uint)1 << 0)) | (((bool)value ? 1 : (uint)0) << 0);
+                WriteRegister((int)Register.GPOSTATE, gpoRegister);
             }
         }
-
 
         //[Category("Acquisition")]
         //[Description("GPO Line state. Used to trigger certain functionality on the headstage. Check headstage documentation.")]

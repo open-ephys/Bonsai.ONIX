@@ -7,8 +7,8 @@ namespace Bonsai.ONIX
 {
     public sealed class ONIContextDisposable : ICancelable, IDisposable
     {
-        IDisposable resource;
-        object lockObject;
+        private IDisposable resource;
+        private readonly object lockObject;
 
         public ONIContextDisposable(ONIContextTask contextTask, IDisposable disposable, object ctx_lock)
         {
@@ -37,7 +37,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        private async Task DelayDisposeAsync(IDisposable disposable, object ctx_lock)
+        private static async Task DelayDisposeAsync(IDisposable disposable, object ctx_lock)
         {
             // TODO: This may be causing big issues when the workflow is restarted and somehow prevents Context.Stop() from being called because this is part of the Dispose() procedure.
             await Task.Delay(100);

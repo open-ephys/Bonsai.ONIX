@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,25 +17,25 @@ namespace Bonsai.ONIX
         public const int INTERNAL_REF_CHANNEL = 191;
 
         // Configuration bit array sizes
-        const int SHANK_CONFIG_BITS = 968;
-        const int BASE_CONFIG_BITS = 2448;
+        private const int SHANK_CONFIG_BITS = 968;
+        private const int BASE_CONFIG_BITS = 2448;
 
         // Configuration bit indices
-        const int SHANK_BIT_EXT1 = 965;
-        const int SHANK_BIT_EXT2 = 2;
-        const int SHANK_BIT_TIP1 = 484;
-        const int SHANK_BIT_TIP2 = 483;
+        private const int SHANK_BIT_EXT1 = 965;
+        private const int SHANK_BIT_EXT2 = 2;
+        private const int SHANK_BIT_TIP1 = 484;
+        private const int SHANK_BIT_TIP2 = 483;
 
         // Bit index of base configurations where we start talking about channel configs
-        const int PROBE_SRBASECONFIG_BIT_GAINBASE = 576;
+        private const int PROBE_SRBASECONFIG_BIT_GAINBASE = 576;
 
         // Bit index of base configurations where we start talking about ADC calibrations
         // NB: ADC portions of base configurations are _never mutated_ by the NP API
         // It seems that they maybe planned for on-ASIC DSP but then deferred to the FPGA later,
         // where these parameters are actually used.
-        const int PROBE_SRBASECONFIG_BIT_ADCBASE = 2114;
+        // const int PROBE_SRBASECONFIG_BIT_ADCBASE = 2114;
 
-        enum Register
+        private enum Register
         {
             // Unmangaged register access handled by I2C base class
 
@@ -92,11 +91,11 @@ namespace Bonsai.ONIX
             WriteByte((uint)RegAddr.REC_MOD, (uint)RecMod.ACTIVE);
         }
 
-        public void WriteConfiguration(NeuropixelsV1Configuration config, bool read_check = false)
+        public void WriteConfiguration(NeuropixelsV1Configuration config, bool performReadCheck = false)
         {
             if (config.Channels.ToList().GetRange(192, 192).Any(c => c.Bank == Channel.ElectrodeBank.TWO))
             {
-                throw new ArgumentException("Electrode selection is out of bounds. Only bank 0 and 1 are valid for channels in range 192..383.", "config");
+                throw new ArgumentException("Electrode selection is out of bounds. Only bank 0 and 1 are valid for channels in range 192..383.", nameof(config));
             }
 
             // Turn on calibration if necessary
@@ -124,7 +123,7 @@ namespace Bonsai.ONIX
 
             // Shank configuration
             // NB: ASIC bug, read_check on SR_CHAIN1 ignored
-            WriteShiftRegister((uint)RegAddr.SR_CHAIN1, ShankConfig(config), false);
+            WriteShiftRegister((uint)RegAddr.SR_CHAIN1, GenerateShankBits(config), false);
 
             // Gain and ADC corrections
             WriteLFPGainCorrections(config);
@@ -133,22 +132,22 @@ namespace Bonsai.ONIX
             ConfigProbeSN = config.ConfigProbeSN;
 
             // Base configurations
-            var base_configs = BaseConfig(config);
-            WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], read_check);
-            WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], read_check);
+            var base_configs = GenerateBaseBits(config);
+            WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], performReadCheck);
+            WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], performReadCheck);
 
             // Configuration has been uploaded
             config.RefreshNeeded = false;
         }
 
 
-        public async Task<int> WriteConfigurationAsync(NeuropixelsV1Configuration config, IProgress<int> progress, bool read_check = false)
+        public async Task<int> WriteConfigurationAsync(NeuropixelsV1Configuration config, IProgress<int> progress, bool performReadCheck = false)
         {
             return await Task.Run(() =>
             {
                 if (config.Channels.ToList().GetRange(192, 192).Any(c => c.Bank == Channel.ElectrodeBank.TWO))
                 {
-                    throw new ArgumentException("Electrode selection is out of bounds. Only bank 0 and 1 are valid for channels in range 192..383.", "config");
+                    throw new ArgumentException("Electrode selection is out of bounds. Only bank 0 and 1 are valid for channels in range 192..383.", nameof(config));
                 }
 
                 // Turn on calibration if necessary
@@ -177,7 +176,7 @@ namespace Bonsai.ONIX
 
                 // Shank configuration
                 // NB: ASIC bug, read_check on SR_CHAIN1 ignored
-                WriteShiftRegister((uint)RegAddr.SR_CHAIN1, ShankConfig(config), false);
+                WriteShiftRegister((uint)RegAddr.SR_CHAIN1, GenerateShankBits(config), false);
                 progress.Report(30);
 
                 // Gain and ADC corrections
@@ -190,10 +189,10 @@ namespace Bonsai.ONIX
                 ConfigProbeSN = config.ConfigProbeSN;
 
                 // Base configurations
-                var base_configs = BaseConfig(config);
-                WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], read_check);
+                var base_configs = GenerateBaseBits(config);
+                WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], performReadCheck);
                 progress.Report(80);
-                WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], read_check);
+                WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], performReadCheck);
                 progress.Report(100);
 
                 // Configuration has been uploaded
@@ -204,18 +203,18 @@ namespace Bonsai.ONIX
         }
 
         // Convert Channels into BitArray
-        BitArray ShankConfig(NeuropixelsV1Configuration config)
+        private static BitArray GenerateShankBits(NeuropixelsV1Configuration config)
         {
             // Default
             var shank_config = new BitArray(SHANK_CONFIG_BITS, false);
 
             // If external reference is used by any channel
-            shank_config[SHANK_BIT_EXT1] = config.Channels.Where(ch => ch.Reference == Channel.Ref.EXTERNAL && ch.ElectrodeNumber % 2 == 1).Count() > 0;
-            shank_config[SHANK_BIT_EXT2] = config.Channels.Where(ch => ch.Reference == Channel.Ref.EXTERNAL && ch.ElectrodeNumber % 2 == 0).Count() > 0;
+            shank_config[SHANK_BIT_EXT1] = config.Channels.Where(ch => ch.Reference == Channel.Ref.EXTERNAL && ch.ElectrodeNumber % 2 == 1).Any();
+            shank_config[SHANK_BIT_EXT2] = config.Channels.Where(ch => ch.Reference == Channel.Ref.EXTERNAL && ch.ElectrodeNumber % 2 == 0).Any();
 
             // If tip reference is used by any channel
-            shank_config[SHANK_BIT_TIP1] = config.Channels.Where(ch => ch.Reference == Channel.Ref.TIP && ch.ElectrodeNumber % 2 == 1).Count() > 0;
-            shank_config[SHANK_BIT_TIP2] = config.Channels.Where(ch => ch.Reference == Channel.Ref.TIP && ch.ElectrodeNumber % 2 == 0).Count() > 0;
+            shank_config[SHANK_BIT_TIP1] = config.Channels.Where(ch => ch.Reference == Channel.Ref.TIP && ch.ElectrodeNumber % 2 == 1).Any();
+            shank_config[SHANK_BIT_TIP2] = config.Channels.Where(ch => ch.Reference == Channel.Ref.TIP && ch.ElectrodeNumber % 2 == 0).Any();
 
             // If internal reference is used by any channel
             var refs = BankToIntRef.Values.ToArray();
@@ -223,7 +222,7 @@ namespace Bonsai.ONIX
             shank_config[refs[1]] = false;
             shank_config[refs[2]] = false;
 
-            var b = config.Channels.Where(ch => ch.Reference == Channel.Ref.INTERNAL).Count() > 0;
+            var b = config.Channels.Where(ch => ch.Reference == Channel.Ref.INTERNAL).Any();
             shank_config[refs[(int)config.Channels[INTERNAL_REF_CHANNEL].Bank]] = b;
 
             // Update active channels
@@ -249,7 +248,7 @@ namespace Bonsai.ONIX
         }
 
         // Convert Channels & ADCs into BitArray
-        BitArray[] BaseConfig(NeuropixelsV1Configuration config)
+        private static BitArray[] GenerateBaseBits(NeuropixelsV1Configuration config)
         {
 
             // MSB [Full, standby, LFPGain(3 downto 0), APGain(3 downto0)] LSB
@@ -362,13 +361,13 @@ namespace Bonsai.ONIX
             return base_configs;
         }
 
-        // Creates a *bit-reversed* byte array from a bit array
-        static byte[] BitArrayToBytes(BitArray bits)
+        // Bits go into the shift registers MSB first
+        // This creates a *bit-reversed* byte array from a bit array
+        private static byte[] BitArrayToBytes(BitArray bits)
         {
-            // Bits go into the shift registers MSB first
             if (bits.Length == 0)
             {
-                throw new ArgumentException("Shift register data is empty", "data");
+                throw new ArgumentException("Shift register data is empty", nameof(bits));
             }
 
             var bytes = new byte[(bits.Length - 1) / 8 + 1];
@@ -383,7 +382,7 @@ namespace Bonsai.ONIX
             return bytes;
         }
 
-        void WriteShiftRegister(uint sr_addr, BitArray data, bool read_check = false)
+        private void WriteShiftRegister(uint sr_addr, BitArray data, bool read_check = false)
         {
             var bytes = BitArrayToBytes(data);
 
@@ -405,9 +404,9 @@ namespace Bonsai.ONIX
             }
         }
 
-        void WriteLFPGainCorrections(NeuropixelsV1Configuration config)
+        private void WriteLFPGainCorrections(NeuropixelsV1Configuration config)
         {
-            for (int i = 0; i < config.Channels.Count(); i += 2)
+            for (int i = 0; i < config.Channels.Length; i += 2)
             {
                 var addr = (uint)Register.CHAN001_000_LFPGAIN + (uint)i / 2;
                 var gain_fixed0 = (uint)(config.Channels[i].LFPGainCorrection * (1 << 14));
@@ -417,9 +416,9 @@ namespace Bonsai.ONIX
             }
         }
 
-        void WriteAPGainCorrections(NeuropixelsV1Configuration config)
+        private void WriteAPGainCorrections(NeuropixelsV1Configuration config)
         {
-            for (int i = 0; i < config.Channels.Count(); i += 2)
+            for (int i = 0; i < config.Channels.Length; i += 2)
             {
                 var addr = (uint)Register.CHAN001_000_APGAIN + (uint)i / 2;
                 var gain_fixed0 = (uint)(config.Channels[i].APGainCorrection * (1 << 14));
@@ -429,9 +428,9 @@ namespace Bonsai.ONIX
             }
         }
 
-        void WriteADCCorrections(NeuropixelsV1Configuration config)
+        private void WriteADCCorrections(NeuropixelsV1Configuration config)
         {
-            for (int i = 0; i < config.ADCs.Count(); i += 2)
+            for (int i = 0; i < config.ADCs.Length; i += 2)
             {
                 var addr = (uint)Register.ADC01_00_OFF_THRESH + (uint)i / 2;
                 var adc0 = (uint)config.ADCs[i].Offset << 10 | (uint)config.ADCs[i].Threshold;

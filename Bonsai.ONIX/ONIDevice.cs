@@ -37,9 +37,9 @@ namespace Bonsai.ONIX
         // I'm just dumping errors to the Console and returning 0 or doing nothing.
         protected uint ReadRegister(uint address)
         {
-            if (!DeviceAddress.Valid)
+            if (DeviceAddress == null || !DeviceAddress.Valid)
             {
-                System.Console.WriteLine("Device is not valid.");
+                System.Console.Error.WriteLine("Device is not valid.");
                 return 0;
             }
 
@@ -52,16 +52,16 @@ namespace Bonsai.ONIX
             }
             catch (oni.ONIException ex)
             {
-                System.Console.WriteLine(ex.Message);
+                System.Console.Error.WriteLine(ex.Message);
                 return 0;
             }
         }
 
         protected void WriteRegister(uint address, uint value)
         {
-            if (!DeviceAddress.Valid)
+            if (DeviceAddress == null || !DeviceAddress.Valid)
             {
-                System.Console.WriteLine("Device is not valid.");
+                System.Console.Error.WriteLine("Device is not valid.");
                 return;
             }
 
@@ -74,7 +74,7 @@ namespace Bonsai.ONIX
             }
             catch (oni.ONIException ex)
             {
-                System.Console.WriteLine(ex.Message);
+                System.Console.Error.WriteLine(ex.Message);
                 return;
             }
         }

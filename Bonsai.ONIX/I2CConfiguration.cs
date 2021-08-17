@@ -9,8 +9,8 @@ namespace Bonsai.ONIX
     /// </summary>
     public class I2CConfiguration : IDisposable
     {
-        readonly ONIContextDisposable ctx;
-        readonly uint? dev_idx;
+        private readonly ONIContextDisposable ctx;
+        private readonly uint? dev_idx;
 
         public readonly uint I2C_ADDR;
 
@@ -25,16 +25,16 @@ namespace Bonsai.ONIX
 #endif
         }
 
-        uint? ReadRegister(uint? dev_index, uint register_address)
+        private uint? ReadRegister(uint? deviceIndex, uint registerAddress)
         {
-            if (dev_index == null)
+            if (deviceIndex == null)
             {
-                throw new ArgumentNullException("dev_index", "Attempt to read register from invalid device.");
+                throw new ArgumentNullException(nameof(deviceIndex), "Attempt to read register from invalid device.");
             }
 
             try
             {
-                return ctx.Context.ReadRegister((uint)dev_index, register_address);
+                return ctx.Context.ReadRegister((uint)deviceIndex, registerAddress);
             }
             catch (oni.ONIException)
             {
@@ -42,19 +42,19 @@ namespace Bonsai.ONIX
             }
         }
 
-        void WriteRegister(uint? dev_index, uint register_address, uint? value)
+        private void WriteRegister(uint? deviceIndex, uint registerAddress, uint? value)
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value", "Attempt to write null value to register.");
+                throw new ArgumentNullException(nameof(value), "Attempt to write null value to register.");
             }
 
-            if (dev_index == null)
+            if (deviceIndex == null)
             {
-                throw new ArgumentNullException("dev_index", "Attempt to write to register of invalid device.");
+                throw new ArgumentNullException(nameof(deviceIndex), "Attempt to write to register of invalid device.");
             }
 
-            ctx.Context.WriteRegister((uint)dev_index, register_address, (uint)value);
+            ctx.Context.WriteRegister((uint)deviceIndex, registerAddress, (uint)value);
         }
 
         public uint? ReadManagedRegister(uint register_address)
@@ -130,6 +130,7 @@ namespace Bonsai.ONIX
             Console.WriteLine("I2C context disposed by " + this.GetType());
 #endif
             ctx?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

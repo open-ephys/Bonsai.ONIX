@@ -120,54 +120,19 @@
   <metadata name="toolTipReadSize.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>23, 15</value>
   </metadata>
+  <metadata name="toolTipReadSize.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>23, 15</value>
+  </metadata>
   <metadata name="menuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>154, 11</value>
   </metadata>
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>397, 15</value>
   </metadata>
-  <metadata name="Index.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Address.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="DeviceID.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="FirmwareVersion.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="ReadSize.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="WriteSize.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="Description.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
   <metadata name="statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>527, 15</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="toolStripSplitButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJmSURBVDhP1VQ9ixpRFF0hkC4BJUQFURT/gIqVKCkUtAqI
-        CLqWEURB0cZuy0Xxq0iVShdBTcDCwiAiEsFSRBPFCIsiEmQJiOCyCyHevDPMYHZFt00OPObj3Tnv3nPP
-        nbP/B+PxWDYcDm8bjcYok8nIJpPJ+WAwoKurK4rH49wqFotUqVQCuVzu9XQ6fUVEz/jPDwHCbre7dTqd
-        vxnhNpvN3tntdtLpdKTRaLil1+vJaDTep1Kpba/X+zqbzd4cJRUIbTYbqdVq0mq1pFAoyGAwkMVi4RbI
-        5XI5qVQqCgaDu3a7fXuUVCA0m80kEolIKpWSx+Ohi4uLH4lE4svl5WUnmUyuIpEIRywWiykQCOyQKftW
-        wtPsIRCaTCZijySTySgUClGhUKg3m001YhaLRbBer3+ORqM3IEWmTJ476I39B2AnyRnhvd/vJ6/XSy6X
-        i9xuN6XTaWKEKT6MA0jD4TB3qMPhINZMJPEQ19fXL1mWuVKp9IllValWq9/y+fxH9vyh0+m85cM4zOfz
-        IMpHllhwAr+1x263e75arcLr9fodu3+x2Wzs7HqoDQ9oCr3RfViKf71Hq9V6Xy6Xf7HOfe/3+37+9VGA
-        EJ0/Slir1cjn83GNYGX+RFn81gGWyyVXMnx5tGSWFVmtVpJIJATBITy/dQA2Teg058mjTRmNRuewgFKp
-        5E6FNUD6d6bIDGSxWOwGhj9pG5gTJsUEwLQgRaYoDXoJxkZmIHvS2BgfjBHGCYHIFD4DsTB60EwYPcSc
-        HD1AIMWpKOXxzwH30Ax7iDlJJgABKAGaPv594R4NgGaIeZLsH8TZ2R+VefbAyPlS/wAAAABJRU5ErkJg
-        gg==
-</value>
-  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAQAAAAAAAAAGAAoIAMARgAAAICAAAAAABgAKMgAAG4gAwAgIAAAAAAYAKgMAACW6AMAEBAAAAAA
@@ -4513,4 +4478,62 @@
   <metadata name="backgroundWorker1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>636, 15</value>
   </metadata>
+  <metadata name="Index.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Address.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="DeviceID.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="FirmwareVersion.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="ReadSize.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="WriteSize.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Description.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Index.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Address.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="DeviceID.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="FirmwareVersion.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="ReadSize.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="WriteSize.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Description.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="toolStripSplitButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJkSURBVDhP1VTPq2FhGL5qanYzdTUNSkT+AWQlmgXFalJS
+        XMtRooiNnaXIr8WsZuVKyUxZWJgkaZSlxAwZJZIm3aak3O6tabzzPadzMveKu5156uv8+N7zfM/7vs97
+        Lv4fjMdj6XA4vG00GqNsNiudTCZXg8GAisUixWIxbpVKJapUKv58Pv96Op2+IqJn/OfHAGG32905HI7f
+        jHCXy+XubDYbabVaUqvV3NLpdGQwGO7T6fSu1+t9nc/nb06SCoRWq5VUKhVpNBqSy+Wk1+vJbDZzC+Qy
+        mYyUSiUFAoF9u92+PUkqEJpMJhKJRCSRSMjtdlM8Hv+RTCa/JBKJTiqVWofDYY748vKS/H7/HkrZt2Ke
+        5gCB0Gg0EnskqVRKwWCQrq+v681mU4WY5XIZqNfrnyORyA1IoZSV5w71xv4DsJNkjPDe5/ORx+Mhp9NJ
+        LpeLMpkMMcI0H8YBpKFQiDvUbrcTayZEPMRsNnvJVObL5fInpqpSrVa/FQqFj+z5Q6fTecuHcVgsFgGk
+        D5VYcAK/dcB+v3++Xq9Dm83mHbt/sd1ubex6XBseqCnqje7DUvzrA1qt1num5hfr3Pd+v+/jX58ECNH5
+        k4S1Wo28Xi/XCEb8E2nxW0dYrVZcyvDlyZSZKrJYLCQWiwkFR+H5rSOwaUKnOU+ebMpoNLqCBRQKBXcq
+        rAHSv5VCGcii0egNDH/WNjAnTIoJgGlBCqVIDfUSjA1lIHvS2BgfjBHGCYFQCp+BWBg91EwYPcScHT1A
+        IMWpSOXxzwH3qBn2EHOWTAACkAJq+vj3hXs0ADVDzJNk/yAuLv4AfDj2utdwDK0AAAAASUVORK5CYII=
+</value>
+  </data>
 </root>

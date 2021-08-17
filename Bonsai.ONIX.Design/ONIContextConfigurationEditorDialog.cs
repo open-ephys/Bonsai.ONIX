@@ -73,7 +73,7 @@ namespace Bonsai.ONIX.Design
             }
         }
 
-        private void AttemptToConnect(byte selectedHub = 0)
+        private void AttemptToConnect()
         {
             dataGridViewDeviceTable.Rows.Clear();
 

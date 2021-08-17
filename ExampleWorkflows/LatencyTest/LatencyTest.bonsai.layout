@@ -126,7 +126,7 @@
         <XMin>0</XMin>
         <XMax>100</XMax>
         <YMin>0</YMin>
-        <YMax>1600</YMax>
+        <YMax>800</YMax>
         <AutoScaleX>false</AutoScaleX>
         <AutoScaleY>true</AutoScaleY>
         <SelectedPage>0</SelectedPage>
@@ -153,8 +153,8 @@
     <VisualizerSettings>
       <TimeSeriesVisualizer>
         <Capacity>640</Capacity>
-        <Min>4054000000</Min>
-        <Max>4072000000</Max>
+        <Min>1938000000</Min>
+        <Max>1956000000</Max>
         <AutoScale>true</AutoScale>
       </TimeSeriesVisualizer>
     </VisualizerSettings>
@@ -222,8 +222,8 @@
     <VisualizerSettings>
       <TimeSeriesVisualizer>
         <Capacity>640</Capacity>
-        <Min>0</Min>
-        <Max>0.0012000000000000001</Max>
+        <Min>-1</Min>
+        <Max>1</Max>
         <AutoScale>true</AutoScale>
       </TimeSeriesVisualizer>
     </VisualizerSettings>

@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Bonsai.ONIX
 {
@@ -15,26 +13,26 @@ namespace Bonsai.ONIX
             Message = CodeToString(Code);
         }
 
-        private string CodeToString(int code)
+        static private string CodeToString(int code)
         {
             var messages = new List<string>();
 
-            if ((Code & 0x0001) > 0)
+            if ((code & 0x0001) > 0)
             {
                 messages.Add("CRC error");
             }
 
-            if ((Code & 0x0002) > 0) 
+            if ((code & 0x0002) > 0)
             {
                 messages.Add("Too many devices in device table");
             }
 
-            if ((Code & 0x0004) > 0)
+            if ((code & 0x0004) > 0)
             {
                 messages.Add("Remote initialization error");
             }
-            
-            if ((Code & 0x0008) > 0)
+
+            if ((code & 0x0008) > 0)
             {
                 messages.Add("Bad remote packet formatting");
             }

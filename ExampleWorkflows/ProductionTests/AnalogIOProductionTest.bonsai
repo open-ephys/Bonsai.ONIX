@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.6.0"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
+                 xmlns:dsp="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:ONIContext">
+          <p1:ContextConfiguration>
+            <p1:Slot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:Slot>
+            <p1:ReadSize>2048</p1:ReadSize>
+            <p1:WriteSize>2048</p1:WriteSize>
+          </p1:ContextConfiguration>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Timer">
+          <rx:DueTime>PT0S</rx:DueTime>
+          <rx:Period>PT1S</rx:Period>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="dsp:Range">
+          <dsp:BufferLength>12</dsp:BufferLength>
+          <dsp:Depth>F32</dsp:Depth>
+          <dsp:Start>-9</dsp:Start>
+          <dsp:End>10</dsp:End>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:AnalogIODevice">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>6</p1:Address>
+          </p1:DeviceAddress>
+          <p1:Hub>
+            <p1:Address>0</p1:Address>
+            <p1:HardwareID>1</p1:HardwareID>
+            <p1:FirmwareVersion>1</p1:FirmwareVersion>
+            <p1:ClockHz>250000000</p1:ClockHz>
+            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
+          </p1:Hub>
+          <p1:FrameClockHz>250000000</p1:FrameClockHz>
+          <p1:BlockSize>100</p1:BlockSize>
+          <p1:DataType>Volts</p1:DataType>
+          <p1:EnableStream>true</p1:EnableStream>
+          <p1:InputRange00>TenVolts</p1:InputRange00>
+          <p1:InputRange01>TenVolts</p1:InputRange01>
+          <p1:InputRange02>TenVolts</p1:InputRange02>
+          <p1:InputRange03>TenVolts</p1:InputRange03>
+          <p1:InputRange04>TenVolts</p1:InputRange04>
+          <p1:InputRange05>TenVolts</p1:InputRange05>
+          <p1:InputRange06>TenVolts</p1:InputRange06>
+          <p1:InputRange07>TenVolts</p1:InputRange07>
+          <p1:InputRange08>TenVolts</p1:InputRange08>
+          <p1:InputRange09>TenVolts</p1:InputRange09>
+          <p1:InputRange10>TenVolts</p1:InputRange10>
+          <p1:InputRange11>TenVolts</p1:InputRange11>
+          <p1:Direction00>Output</p1:Direction00>
+          <p1:Direction01>Output</p1:Direction01>
+          <p1:Direction02>Output</p1:Direction02>
+          <p1:Direction03>Output</p1:Direction03>
+          <p1:Direction04>Output</p1:Direction04>
+          <p1:Direction05>Output</p1:Direction05>
+          <p1:Direction06>Output</p1:Direction06>
+          <p1:Direction07>Output</p1:Direction07>
+          <p1:Direction08>Output</p1:Direction08>
+          <p1:Direction09>Output</p1:Direction09>
+          <p1:Direction10>Output</p1:Direction10>
+          <p1:Direction11>Output</p1:Direction11>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Data</Selector>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="1" To="2" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

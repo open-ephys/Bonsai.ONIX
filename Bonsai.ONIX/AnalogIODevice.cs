@@ -71,7 +71,8 @@ namespace Bonsai.ONIX
             }
             else
             {
-                throw new Bonsai.WorkflowRuntimeException("Source element depth must Depth.S16 when DataType is S16 and either Depth.F32 or Depth.F64 when Datatype is Volts.");
+                throw new Bonsai.WorkflowRuntimeException("Source element depth must Depth.S16 when " +
+                    "DataType is S16 and either Depth.F32 or Depth.F64 when Datatype is Volts.");
             }
         }
 

@@ -19,19 +19,19 @@ namespace Bonsai.ONIX
             BASE_CLOCK_HZ = 6
         }
 
-        Tuple<uint, uint> GetHL(double frequency, double duty)
+        private Tuple<uint, uint> GetHL(double frequency, double duty)
         {
             var l = BaseClockHz / frequency * (1 - duty / 100);
             var h = (BaseClockHz / frequency) - l;
             return new Tuple<uint, uint>((uint)h, (uint)l);
         }
 
-        double GetFreq(double h, double l)
+        private double GetFreq(double h, double l)
         {
             return BaseClockHz / (h + l);
         }
 
-        double GetDuty(double h, double l)
+        private static double GetDuty(double h, double l)
         {
             return 100.0 * h / (h + l);
         }
@@ -39,7 +39,7 @@ namespace Bonsai.ONIX
         public ClockOutputDevice() : base(ONIXDevices.ID.FMCClockOutput) { }
 
         [Category("Acquisition")]
-        [Description("Enable.")]
+        [Description("Enable or disable the clock output.")]
         public bool ClockEnabled
         {
             get

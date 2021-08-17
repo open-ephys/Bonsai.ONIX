@@ -1,5 +1,4 @@
 ﻿using OpenCV.Net;
-using System.Linq;
 
 namespace Bonsai.ONIX
 {
@@ -42,13 +41,13 @@ namespace Bonsai.ONIX
 
         public Mat Euler { get; private set; }
 
-        Mat GetEuler(ushort[] sample, int begin)
+        private static Mat GetEuler(ushort[] sample, int begin)
         {
             // 1 degree = 16 LSB
             const double scale = 0.0625;
             var vec = new double[3];
 
-            for (int i = 0; i < vec.Count(); i++)
+            for (int i = 0; i < vec.Length; i++)
             {
                 vec[i] = scale * (short)sample[i + begin];
             }
@@ -56,13 +55,13 @@ namespace Bonsai.ONIX
             return Mat.FromArray(vec, vec.Length, 1, Depth.F64, 1);
         }
 
-        Mat GetAcceleration(ushort[] sample, int begin)
+        private static Mat GetAcceleration(ushort[] sample, int begin)
         {
             // 1m/s^2 = 100 LSB
             const double scale = 0.01;
             var vec = new double[3];
 
-            for (int i = 0; i < vec.Count(); i++)
+            for (int i = 0; i < vec.Length; i++)
             {
                 vec[i] = scale * (short)sample[i + begin];
             }
@@ -70,13 +69,13 @@ namespace Bonsai.ONIX
             return Mat.FromArray(vec, vec.Length, 1, Depth.F64, 1);
         }
 
-        Mat GetQuat(ushort[] sample, int begin)
+        private static Mat GetQuat(ushort[] sample, int begin)
         {
             // 1 quaternion (unitless) = 2^14 LSB
             const double scale = (1.0 / (1 << 14));
             var vec = new double[4];
 
-            for (int i = 0; i < vec.Count(); i++)
+            for (int i = 0; i < vec.Length; i++)
             {
                 var tmp = (short)sample[i + begin];
                 vec[i] = scale * tmp;

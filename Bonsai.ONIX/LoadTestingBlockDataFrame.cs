@@ -37,7 +37,7 @@ namespace Bonsai.ONIX
 
         Mat GetDelta(double[] data)
         {
-            var output = new Mat(1,NumberOfFrames, Depth.F64, 1);
+            var output = new Mat(1, NumberOfFrames, Depth.F64, 1);
             using (var header = Mat.CreateMatHeader(data))
             {
                 CV.Convert(header, output);

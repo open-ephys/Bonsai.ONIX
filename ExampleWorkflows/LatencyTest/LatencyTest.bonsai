@@ -50,7 +50,7 @@
           <p1:EnableStream>true</p1:EnableStream>
           <p1:ReceivedWords>100</p1:ReceivedWords>
           <p1:TransmittedWords>0</p1:TransmittedWords>
-          <p1:FrameHz>10000</p1:FrameHz>
+          <p1:FrameHz>1000</p1:FrameHz>
         </Combinator>
       </Expression>
       <Expression xsi:type="MemberSelector">
@@ -103,7 +103,7 @@
           <p1:EnableStream>true</p1:EnableStream>
           <p1:ReceivedWords>100</p1:ReceivedWords>
           <p1:TransmittedWords>0</p1:TransmittedWords>
-          <p1:FrameHz>10000</p1:FrameHz>
+          <p1:FrameHz>1000</p1:FrameHz>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
