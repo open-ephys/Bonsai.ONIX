@@ -10,9 +10,6 @@ namespace Bonsai.ONIX
     {
         private oni.Context ctx;
 
-        private Task readFrames;
-        private Task distributeFrames;
-
         /// <summary>
         /// Maximum amount of frames the reading queue will hold.
         /// If the queue fills, frame reading will throttle, filling host memory instead of 
@@ -26,15 +23,12 @@ namespace Bonsai.ONIX
         /// </summary>
         private const int QueueTimeoutMilliseconds = 200;
 
+        // NB: Decouple graph update form read thread
+        private Task readFrames;
+        private Task distributeFrames;
         private BlockingCollection<oni.Frame> FrameQueue;
-
-        // TODO: Multi-writer, thread safe FIFO for oni_write()'s
-        // private Task WriteData;
-        // private BlockingCollection<oni.Frame> write_queue = new System.Collections.Concurrent.BlockingCollection<oni.Frame>();
-
         CancellationTokenSource TokenSource;
         CancellationToken CollectFramesToken;
-
         internal event EventHandler<FrameReceivedEventArgs> FrameReceived;
 
         public static readonly string DefaultDriver = "riffa";
@@ -73,12 +67,12 @@ namespace Bonsai.ONIX
             {
                 Stop();
                 lock (readLock)
-                    lock (writeLock)
-                        lock (regLock)
-                        {
-                            ctx?.Dispose();
-                            Initialize();
-                        }
+                lock (writeLock)
+                lock (regLock)
+                {
+                    ctx?.Dispose();
+                    Initialize();
+                }
             }
         }
 
@@ -94,14 +88,15 @@ namespace Bonsai.ONIX
             {
                 if (running) return;
 
-                //NOTE: Stuff related to sync mode is 100% ONIX, not pure ONI, so long term another place to do this separation might be needed
+                // NB: Stuff related to sync mode is 100% ONIX, not ONI, so long term another place
+                // to do this separation might be needed
                 int addr = ctx.HardwareAddress;
                 int mode = (addr & 0x00FF0000) >> 16;
-                if (mode == 0) //standalone mode
+                if (mode == 0) // Standalone mode
                 {
                     ctx.Start(true);
                 }
-                else //if synchronized mode, reset counter independently
+                else // If synchronized mode, reset counter independently
                 {
                     ctx.ResetFrameClock();
                     ctx.Start(false);
@@ -117,9 +112,9 @@ namespace Bonsai.ONIX
                     {
                         oni.Frame frame = ReadFrame();
 
-                        //This should not be needed since we are calling Dispose()
-                        //But somehow it seems to improve performance (coupled with GC.RemovePressure)
-                        //More investigation might be needed
+                        // This should not be needed since we are calling Dispose()
+                        // But somehow it seems to improve performance (coupled with GC.RemovePressure)
+                        // More investigation might be needed
                         GC.AddMemoryPressure(frame.DataSize);
 
                         try
@@ -194,7 +189,7 @@ namespace Bonsai.ONIX
         internal Func<int, int> GetCustomOption => ctx.GetCustomOption;
         internal Action ResetFrameClock => ctx.ResetFrameClock;
 
-        public bool Running
+        internal bool Running
         {
             get
             {
@@ -289,6 +284,7 @@ namespace Bonsai.ONIX
                 ctx.Write(dev_idx, data);
             }
         }
+
         public void Write(uint dev_idx, IntPtr data, int data_size)
         {
             lock (writeLock)
@@ -297,7 +293,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        public Func<uint, oni.Hub> GetHub => ctx.GetHub;
+        public oni.Hub GetHub(uint deviceIndex) { return ctx.GetHub(deviceIndex); }
         #endregion
 
         void OnFrameReceived(FrameReceivedEventArgs e)
@@ -319,11 +315,11 @@ namespace Bonsai.ONIX
             {
                 Stop();
                 lock (readLock)
-                    lock (writeLock)
-                        lock (regLock)
-                        {
-                            ctx?.Dispose();
-                        }
+                lock (writeLock)
+                lock (regLock)
+                {
+                    ctx?.Dispose();
+                }
             }
 
             GC.SuppressFinalize(this);

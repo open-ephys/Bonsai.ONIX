@@ -89,7 +89,9 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Range(1, 1e5)]
-        [Description("The format of the analog data consumed and produced by this node. S16: raw 16-bit signed integer conversion results or DAC values. Volts: 32-bit floating-point voltages.")]
+        [Description("The format of the analog data consumed and produced by this node.\n" +
+            " - S16: raw 16-bit signed integer conversion results or DAC values.\n" +
+            " - Volts: 32-bit floating-point voltages.")]
         public AnalogDataType DataType { get; set; } = AnalogDataType.S16;
 
         [Category("Configuration")]
