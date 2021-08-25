@@ -109,7 +109,7 @@ namespace Bonsai.ONIX
 
                                 device_addrs = device_addrs.Concat(dev_matches).ToList();
 
-                                foreach (var d in device_addrs)
+                                foreach (var d in dev_matches)
                                 {
                                     hubs.Add(d.ToString(),
                                         new Tuple<uint, oni.Hub>(c.Context.AcquisitionClockHz, c.Context.GetHub((uint)d.Address)));

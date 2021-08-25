@@ -1,6 +1,8 @@
-﻿namespace Bonsai.ONIX
+﻿using System;
+
+namespace Bonsai.ONIX
 {
-    public class ONIHardwareSlot
+    public class ONIHardwareSlot : IEquatable<ONIHardwareSlot>
     {
         public string Driver = "";
 
@@ -21,6 +23,16 @@
             {
                 return string.Format("({0},{1})", Driver, Index);
             }
+        }
+
+        public bool Equals(ONIHardwareSlot other)
+        {
+            return this.MakeKey().Equals(other.MakeKey());
+        }
+
+        public override int GetHashCode()
+        {
+            return this.MakeKey().GetHashCode();
         }
     }
 }
