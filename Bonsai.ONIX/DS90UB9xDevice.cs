@@ -14,7 +14,6 @@ namespace Bonsai.ONIX
             return source.Select(f => { return new RawDataFrame(f); });
         }
 
-
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
         public bool EnableStream
@@ -86,7 +85,7 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
-        [Description("Invlude synchronozation bits in samples.")]
+        [Description("Include synchronozation bits in samples.")]
         public bool SyncBits
         {
             get
@@ -96,6 +95,29 @@ namespace Bonsai.ONIX
             set
             {
                 WriteRegister((uint)DS90UB9xConfiguration.Register.SYNC_BITS, value ? (uint)1 : 0);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("Set deserializer mode")]
+        public DS90UB9xConfiguration.DeserializerModes DeserializerMode
+        {
+            get
+            {
+                if (!this.DeviceAddress.Valid) return DS90UB9xConfiguration.DeserializerModes.RAW12BITHF;
+                using (var i2c = new I2CConfiguration(this.DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                {
+                    return (DS90UB9xConfiguration.DeserializerModes)(i2c.ReadByte((uint)DS90UB9xConfiguration.DeserializerRegister.PORT_MODE) & 0x3);
+                }
+            }
+            set
+            {
+                if (!this.DeviceAddress.Valid) return;
+                using (var i2c = new I2CConfiguration(this.DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                {
+                    uint val = 0x4 + (uint)value; //0x4 maintains coax mode
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DeserializerRegister.PORT_MODE, val);
+                }
             }
         }
     }

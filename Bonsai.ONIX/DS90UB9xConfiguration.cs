@@ -37,5 +37,21 @@
             VSYNC_NEGATIVE = 0b111
         }
 
+        public const uint DeserializerDefaultAddress = 0x30;
+        public const uint SerializerDefaultAddress = 0x58;
+        
+        public enum DeserializerRegister
+        {
+            //i2c registers of the deserializer. Only one value used now, might be filled in the future with common-use values for ease of configuration
+            PORT_MODE = 0x6D
+        }
+
+        public enum DeserializerModes
+        {
+            RAW12BITLF = 1,
+            RAW12BITHF = 2,
+            RAW10BIT = 3
+        }
+
     }
 }
