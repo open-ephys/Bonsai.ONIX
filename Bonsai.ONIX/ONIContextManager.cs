@@ -31,6 +31,9 @@ namespace Bonsai.ONIX
         /// <returns>Returns a <see cref="ONIContextDisposable"/> asynchronously after it has already been opened.</returns>
         public static async Task<ONIContextDisposable> ReserveOpenContextAsync(ONIHardwareSlot slot)
         {
+#if DEBUG
+            Console.WriteLine("Open context async slot " + slot + " reserved by " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().DeclaringType);
+#endif
             lock (open_ctx_lock)
             {
                 if (!contex_wait_handles.TryGetValue(slot.MakeKey(), out EventWaitHandle wait_handle))
@@ -48,13 +51,16 @@ namespace Bonsai.ONIX
 
         public static async Task<ONIContextDisposable> ReserveContextAsync(ONIHardwareSlot slot, bool releaseWaiting = false, CancellationToken ct = default)
         {
+#if DEBUG
+            Console.WriteLine("Context async slot " + slot + " reserved by " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().DeclaringType);
+#endif
             return await Task.Run(() => ReserveContext(slot, releaseWaiting), ct);
         }
 
         public static ONIContextDisposable ReserveContext(ONIHardwareSlot slot, bool release_waiting = false, bool reset_running = false)
         {
 #if DEBUG
-            Console.WriteLine("Context reserved by " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().DeclaringType);
+            Console.WriteLine("Context slot " + slot + " reserved by " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().DeclaringType);
 #endif
             var ctx_counted = default(Tuple<ONIContextTask, RefCountDisposable>);
 
