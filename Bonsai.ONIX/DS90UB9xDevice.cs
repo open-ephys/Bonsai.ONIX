@@ -7,6 +7,7 @@ namespace Bonsai.ONIX
 {
     public class DS90UB9xDevice : ONIFrameReader<RawDataFrame, ushort>
     {
+        [Description("Provides access to raw data from the DS90UB9x deserializer")]
         public DS90UB9xDevice() : base(ONIXDevices.ID.DS90UB9X) { }
 
         protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)

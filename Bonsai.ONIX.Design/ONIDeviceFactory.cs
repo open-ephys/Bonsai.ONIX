@@ -42,7 +42,8 @@
                     return new AnalogIODevice();
                 case ONIXDevices.ID.FMCLinkController:
                     return new HeadstagePortControlDevice();
-                //case ONIXDevices.ID.DS90UB9X:
+                case ONIXDevices.ID.DS90UB9X:
+                    return new DS90UB9xDevice();
                 case ONIXDevices.ID.TS4231V1Array:
                     return new TS4231V1Device();
                 //case ONIXDevices.ID.MAX10ADCCORE:
