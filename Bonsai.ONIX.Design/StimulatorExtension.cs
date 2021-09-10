@@ -5,6 +5,8 @@ namespace Bonsai.ONIX.Design
 {
     static class StimulatorExtension
     {
+        #region ElectricalStimulationDevice
+
         public static string[] WaveformAxisLabels(this ElectricalStimulationDevice device)
         {
             return new[] { "Time (msec)", "Current (uA)" };
@@ -56,6 +58,9 @@ namespace Bonsai.ONIX.Design
 
             return waveform;
         }
+        #endregion
+
+        #region OpticalStimulationDevice
 
         public static string[] WaveformAxisLabels(this OpticalStimulationDevice device)
         {
@@ -103,5 +108,6 @@ namespace Bonsai.ONIX.Design
 
             return waveform;
         }
+        #endregion
     }
 }

@@ -7,7 +7,7 @@ namespace Bonsai.ONIX
 {
     public class DS90UB9xDevice : ONIFrameReader<RawDataFrame, ushort>
     {
-        [Description("Provides access to raw data from the DS90UB9x deserializer")]
+        [Description("Provides access to raw data from a DS90UB9x deserializer.")]
         public DS90UB9xDevice() : base(ONIXDevices.ID.DS90UB9X) { }
 
         protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
@@ -30,7 +30,7 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
-        [Description("Frame width in samples (pixels)")]
+        [Description("Frame width in samples (pixels).")]
         public uint DataSize
         {
             get
@@ -44,7 +44,7 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
-        [Description("Frame start trigger mode")]
+        [Description("Frame start trigger mode.")]
         public DS90UB9xConfiguration.TriggerMode TriggerMode
         {
             get
@@ -100,23 +100,23 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
-        [Description("Set deserializer mode")]
+        [Description("Set the deserializer mode.")]
         public DS90UB9xConfiguration.DeserializerModes DeserializerMode
         {
             get
             {
-                if (!this.DeviceAddress.Valid) return DS90UB9xConfiguration.DeserializerModes.RAW12BITHF;
-                using (var i2c = new I2CConfiguration(this.DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                if (!DeviceAddress.Valid) return DS90UB9xConfiguration.DeserializerModes.RAW12BITHF;
+                using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     return (DS90UB9xConfiguration.DeserializerModes)(i2c.ReadByte((uint)DS90UB9xConfiguration.DeserializerRegister.PORT_MODE) & 0x3);
                 }
             }
             set
             {
-                if (!this.DeviceAddress.Valid) return;
-                using (var i2c = new I2CConfiguration(this.DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                if (!DeviceAddress.Valid) return;
+                using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
-                    uint val = 0x4 + (uint)value; //0x4 maintains coax mode
+                    uint val = 0x4 + (uint)value; // 0x4 maintains coax mode
                     i2c.WriteByte((uint)DS90UB9xConfiguration.DeserializerRegister.PORT_MODE, val);
                 }
             }

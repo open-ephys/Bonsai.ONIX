@@ -1,16 +1,24 @@
 ﻿using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace Bonsai.ONIX
 {
+    [DefaultProperty("DeviceAddress")]
     public abstract class ONIDevice
     {
         [Description("The device type/ID.")]
         internal ONIXDevices.ID ID { get; set; } = ONIXDevices.ID.Null;
 
+        private ONIDeviceAddress deviceAddress;
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        public virtual ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+        [Editor("Bonsai.ONIX.Design.DocumentationLink, Bonsai.ONIX.Design", typeof(UITypeEditor))]
+        public virtual ONIDeviceAddress DeviceAddress
+        {
+            get { return deviceAddress; }
+            set { deviceAddress = value; OnDeviceAddressUpdate(); }
+        }
 
         [Category("ONI Configuration")]
         [Description("The hub that this device belongs to.")]
@@ -28,6 +36,7 @@ namespace Bonsai.ONIX
         public ONIDevice(ONIXDevices.ID deviceID)
         {
             ID = deviceID;
+            deviceAddress = new ONIDeviceAddress();
         }
 
         // NB: Write/ReadRegister are used extensively in node property settings.
@@ -78,5 +87,7 @@ namespace Bonsai.ONIX
                 return;
             }
         }
+
+        protected virtual void OnDeviceAddressUpdate() { }
     }
 }

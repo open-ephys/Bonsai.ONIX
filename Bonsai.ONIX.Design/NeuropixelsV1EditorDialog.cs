@@ -11,14 +11,14 @@ using TinyCsvParser;
 
 namespace Bonsai.ONIX.Design
 {
-    public partial class NeuropixelsEditorDialog : Form
+    public partial class NeuropixelsV1EditorDialog : Form
     {
         public NeuropixelsV1Configuration Config;
         private readonly NeuropixelsV1Drawing probeDrawing;
         List<int> selectedElectrodes = new List<int>();
         private bool closeContextMenu = true;
 
-        public NeuropixelsEditorDialog(Bonsai.ONIX.NeuropixelsV1Configuration config)
+        public NeuropixelsV1EditorDialog(Bonsai.ONIX.NeuropixelsV1Configuration config)
         {
             InitializeComponent();
 
@@ -558,6 +558,18 @@ namespace Bonsai.ONIX.Design
         {
             e.Cancel = !closeContextMenu;
             closeContextMenu = true;
+        }
+
+        private void linkLabelDocumentation_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai/NeuropixelsV1.html");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Unable to open documentation link.");
+            }
         }
     }
 }

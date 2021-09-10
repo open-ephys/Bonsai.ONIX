@@ -1,6 +1,6 @@
 ﻿namespace Bonsai.ONIX.Design
 {
-    partial class NeuropixelsEditorDialog
+    partial class NeuropixelsV1EditorDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NeuropixelsEditorDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NeuropixelsV1EditorDialog));
             this.contextMenuStrip_ChannelsGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applyToColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button_OK = new System.Windows.Forms.Button();
@@ -70,6 +70,7 @@
             this.toolStripStatusLabel_ProbeSN = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_ConfigSN = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
             this.contextMenuStrip_ChannelsGrid.SuspendLayout();
             this.menuStrip2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -265,13 +266,13 @@
             this.standbyToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenuStrip_Probe.Name = "contextMenuStrip_Probe";
-            this.contextMenuStrip_Probe.Size = new System.Drawing.Size(181, 180);
+            this.contextMenuStrip_Probe.Size = new System.Drawing.Size(127, 158);
             this.contextMenuStrip_Probe.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.contextMenuStrip_Probe_Closing);
             // 
             // electrodeEnableToolStripMenuItem
             // 
             this.electrodeEnableToolStripMenuItem.Name = "electrodeEnableToolStripMenuItem";
-            this.electrodeEnableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.electrodeEnableToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.electrodeEnableToolStripMenuItem.Text = "Enable";
             this.electrodeEnableToolStripMenuItem.Click += new System.EventHandler(this.electrodeEnableToolStripMenuItem_Click);
             // 
@@ -280,7 +281,7 @@
             this.referenceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.referenceToolStripComboBox});
             this.referenceToolStripMenuItem.Name = "referenceToolStripMenuItem";
-            this.referenceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.referenceToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.referenceToolStripMenuItem.Text = "Reference";
             // 
             // referenceToolStripComboBox
@@ -294,7 +295,7 @@
             this.aPGainToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.apGainToolStripComboBox});
             this.aPGainToolStripMenuItem.Name = "aPGainToolStripMenuItem";
-            this.aPGainToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aPGainToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.aPGainToolStripMenuItem.Text = "AP Gain";
             // 
             // apGainToolStripComboBox
@@ -308,7 +309,7 @@
             this.lFPGainToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lfpGainToolStripComboBox});
             this.lFPGainToolStripMenuItem.Name = "lFPGainToolStripMenuItem";
-            this.lFPGainToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.lFPGainToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.lFPGainToolStripMenuItem.Text = "LFP Gain";
             // 
             // lfpGainToolStripComboBox
@@ -321,7 +322,7 @@
             // 
             this.aPFilterToolStripMenuItem.CheckOnClick = true;
             this.aPFilterToolStripMenuItem.Name = "aPFilterToolStripMenuItem";
-            this.aPFilterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aPFilterToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.aPFilterToolStripMenuItem.Text = "AP Filter";
             this.aPFilterToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.aPFilterToolStripMenuItem_CheckStateChanged);
             // 
@@ -329,14 +330,14 @@
             // 
             this.standbyToolStripMenuItem.CheckOnClick = true;
             this.standbyToolStripMenuItem.Name = "standbyToolStripMenuItem";
-            this.standbyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.standbyToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.standbyToolStripMenuItem.Text = "Standby";
             this.standbyToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.standbyToolStripMenuItem_CheckStateChanged);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -448,18 +449,31 @@
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(16, 17);
             // 
-            // NeuropixelsEditorDialog
+            // linkLabelDocumentation
+            // 
+            this.linkLabelDocumentation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabelDocumentation.AutoSize = true;
+            this.linkLabelDocumentation.Location = new System.Drawing.Point(846, 6);
+            this.linkLabelDocumentation.Name = "linkLabelDocumentation";
+            this.linkLabelDocumentation.Size = new System.Drawing.Size(79, 13);
+            this.linkLabelDocumentation.TabIndex = 34;
+            this.linkLabelDocumentation.TabStop = true;
+            this.linkLabelDocumentation.Text = "Documentation";
+            this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDocumentation_LinkClicked);
+            // 
+            // NeuropixelsV1EditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(937, 507);
+            this.Controls.Add(this.linkLabelDocumentation);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip2;
-            this.Name = "NeuropixelsEditorDialog";
+            this.Name = "NeuropixelsV1EditorDialog";
             this.Text = " Neuropixels Configuration";
             this.contextMenuStrip_ChannelsGrid.ResumeLayout(false);
             this.menuStrip2.ResumeLayout(false);
@@ -523,5 +537,6 @@
         private System.Windows.Forms.ToolStripMenuItem electrodeEnableToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aPFilterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.LinkLabel linkLabelDocumentation;
     }
 }

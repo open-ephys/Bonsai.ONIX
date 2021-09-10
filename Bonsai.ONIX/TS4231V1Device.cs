@@ -34,7 +34,5 @@ namespace Bonsai.ONIX
                 WriteRegister((uint)Register.ENABLE, value ? (uint)1 : 0);
             }
         }
-
-
     }
 }

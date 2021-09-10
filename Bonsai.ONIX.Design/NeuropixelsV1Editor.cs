@@ -6,7 +6,7 @@ using System.Windows.Forms.Design;
 
 namespace Bonsai.ONIX.Design
 {
-    public class NeuropixelsEditor : UITypeEditor
+    public class NeuropixelsV1Editor : UITypeEditor
     {
 
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
@@ -19,7 +19,7 @@ namespace Bonsai.ONIX.Design
             var editorService = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
             if (editorService != null)
             {
-                var editorDialog = new NeuropixelsEditorDialog(value as NeuropixelsV1Configuration);
+                var editorDialog = new NeuropixelsV1EditorDialog(value as NeuropixelsV1Configuration);
 
                 if (editorService.ShowDialog(editorDialog) == DialogResult.OK)
                 {

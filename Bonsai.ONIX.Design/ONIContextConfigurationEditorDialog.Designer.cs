@@ -62,6 +62,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControlHubs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
@@ -156,7 +157,7 @@
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(1088, 21);
+            this.okButton.Location = new System.Drawing.Point(1050, 21);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 21);
             this.okButton.TabIndex = 13;
@@ -189,7 +190,7 @@
             this.settingsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1175, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1134, 24);
             this.menuStrip.TabIndex = 18;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -225,7 +226,7 @@
             this.propertyGridSelecteDevice.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridSelecteDevice.Location = new System.Drawing.Point(0, 0);
             this.propertyGridSelecteDevice.Name = "propertyGridSelecteDevice";
-            this.propertyGridSelecteDevice.Size = new System.Drawing.Size(277, 415);
+            this.propertyGridSelecteDevice.Size = new System.Drawing.Size(254, 408);
             this.propertyGridSelecteDevice.TabIndex = 19;
             // 
             // panel3
@@ -241,10 +242,10 @@
             this.panel3.Controls.Add(this.numericUpDownPCIeIndex);
             this.panel3.Controls.Add(this.label5);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(0, 440);
+            this.panel3.Location = new System.Drawing.Point(0, 433);
             this.panel3.MinimumSize = new System.Drawing.Size(0, 46);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1175, 46);
+            this.panel3.Size = new System.Drawing.Size(1134, 46);
             this.panel3.TabIndex = 23;
             // 
             // buttonBlockMin
@@ -279,7 +280,7 @@
             this.dataGridViewDeviceTable.ReadOnly = true;
             this.dataGridViewDeviceTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataGridViewDeviceTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewDeviceTable.Size = new System.Drawing.Size(880, 383);
+            this.dataGridViewDeviceTable.Size = new System.Drawing.Size(862, 376);
             this.dataGridViewDeviceTable.TabIndex = 20;
             this.dataGridViewDeviceTable.SelectionChanged += new System.EventHandler(this.dataGridViewDeviceTable_SelectionChanged);
             // 
@@ -336,9 +337,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSplitButton});
-            this.statusStrip.Location = new System.Drawing.Point(0, 486);
+            this.statusStrip.Location = new System.Drawing.Point(0, 479);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1175, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1134, 22);
             this.statusStrip.TabIndex = 20;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -367,8 +368,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.propertyGridSelecteDevice);
-            this.splitContainer1.Size = new System.Drawing.Size(1175, 415);
-            this.splitContainer1.SplitterDistance = 894;
+            this.splitContainer1.Size = new System.Drawing.Size(1134, 408);
+            this.splitContainer1.SplitterDistance = 876;
             this.splitContainer1.TabIndex = 25;
             // 
             // tabControlHubs
@@ -378,7 +379,7 @@
             this.tabControlHubs.Location = new System.Drawing.Point(0, 0);
             this.tabControlHubs.Name = "tabControlHubs";
             this.tabControlHubs.SelectedIndex = 0;
-            this.tabControlHubs.Size = new System.Drawing.Size(894, 415);
+            this.tabControlHubs.Size = new System.Drawing.Size(876, 408);
             this.tabControlHubs.TabIndex = 21;
             this.tabControlHubs.SelectedIndexChanged += new System.EventHandler(this.tabControlHubs_SelectedIndexChanged);
             // 
@@ -388,16 +389,29 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(886, 389);
+            this.tabPage1.Size = new System.Drawing.Size(868, 382);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // linkLabelDocumentation
+            // 
+            this.linkLabelDocumentation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabelDocumentation.AutoSize = true;
+            this.linkLabelDocumentation.Location = new System.Drawing.Point(1046, 4);
+            this.linkLabelDocumentation.Name = "linkLabelDocumentation";
+            this.linkLabelDocumentation.Size = new System.Drawing.Size(79, 13);
+            this.linkLabelDocumentation.TabIndex = 26;
+            this.linkLabelDocumentation.TabStop = true;
+            this.linkLabelDocumentation.Text = "Documentation";
+            this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDocumentation_LinkClicked);
             // 
             // ONIContextConfigurationEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
-            this.ClientSize = new System.Drawing.Size(1175, 508);
+            this.ClientSize = new System.Drawing.Size(1134, 501);
+            this.Controls.Add(this.linkLabelDocumentation);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.panel3);
@@ -460,5 +474,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ToolStripMenuItem boardSyncToolStripMenuItem;
         private System.Windows.Forms.Button buttonBlockMin;
+        private System.Windows.Forms.LinkLabel linkLabelDocumentation;
     }
 }

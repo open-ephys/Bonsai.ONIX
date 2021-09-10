@@ -41,18 +41,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="BreakoutDigitalOutputDevice.cs" />
-    <Compile Remove="DS90UB9XBuffer.cs" />
-    <Compile Remove="DS90UB9XBuffer2.cs" />
-    <Compile Remove="DS90UB9XBuffer3.cs" />
-    <Compile Remove="DS90UB9XBuffer4.cs" />
-    <Compile Remove="DS90UB9XDataFrame.cs" />
-    <Compile Remove="MiniscopeImage.cs" />
-    <Compile Remove="MiniscopeV3.cs" />
-    <Compile Remove="ONIHardwareSlotTypeConverter.cs" />
-    <Compile Remove="ONIRegisterOnlyDevice.cs" />
-  </ItemGroup>
 
 
   <ItemGroup>

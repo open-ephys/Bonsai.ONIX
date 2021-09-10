@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using ZedGraph;
 
@@ -134,6 +135,19 @@ namespace Bonsai.ONIX.Design
 
             zedGraphWaveform.MasterPane.PaneList.ForEach(p => p.XAxis.ResetAutoScale(zedGraphWaveform.GraphPane, CreateGraphics()));
             zedGraphWaveform.MasterPane.PaneList.ForEach(p => p.YAxis.ResetAutoScale(zedGraphWaveform.GraphPane, CreateGraphics()));
+        }
+
+        private void linkLabelDocumentation_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                var page = device.GetType().Name;
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai/" + page + ".html");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Unable to open documentation link.");
+            }
         }
     }
 }

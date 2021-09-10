@@ -38,9 +38,10 @@ namespace Bonsai.ONIX
         uint registerIndex;
         [Category("Acquisition")]
         [Description("Register index.")]
-        public uint RegisterIndex {
-
-            get {
+        public uint RegisterIndex
+        {
+            get
+            {
                 return registerIndex;
             }
             set

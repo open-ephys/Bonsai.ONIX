@@ -1,5 +1,4 @@
-﻿using Bonsai.ONIX.Design.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -169,6 +168,7 @@ namespace Bonsai.ONIX.Design
             Configuration.Slot.Index = (int)numericUpDownPCIeIndex.Value;
             AttemptToConnect();
         }
+
         private void dataGridViewDeviceTable_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridViewDeviceTable.SelectedRows.Count == 0)
@@ -232,7 +232,18 @@ namespace Bonsai.ONIX.Design
         {
             var f = new MultiBoardSyncDialog(Configuration);
             f.ShowDialog();
+        }
 
+        private void linkLabelDocumentation_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai/ONIContext.html");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Unable to open documentation link.");
+            }
         }
     }
 }

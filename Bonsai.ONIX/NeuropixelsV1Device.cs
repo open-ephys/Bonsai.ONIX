@@ -105,7 +105,7 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("Neuropixels probe hardware configuration.")]
-        [Editor("Bonsai.ONIX.Design.NeuropixelsEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
+        [Editor("Bonsai.ONIX.Design.NeuropixelsV1Editor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         [Externalizable(false)]
         public NeuropixelsV1Configuration Configuration { get; set; } = new NeuropixelsV1Configuration();
 

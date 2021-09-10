@@ -4,7 +4,7 @@
     {
         public enum Register
         {
-            //Managed register map
+            // Managed register map
             ENABLE = 0x00008000,
             READSZ = 0x00008001,
             TRIGGER = 0x00008002,
@@ -42,7 +42,8 @@
         
         public enum DeserializerRegister
         {
-            //i2c registers of the deserializer. Only one value used now, might be filled in the future with common-use values for ease of configuration
+            // I2C registers of the deserializer. Only one value used now, might be filled in the
+            // future with common-use values for ease of configuration.
             PORT_MODE = 0x6D
         }
 
@@ -52,6 +53,5 @@
             RAW12BITHF = 2,
             RAW10BIT = 3
         }
-
     }
 }

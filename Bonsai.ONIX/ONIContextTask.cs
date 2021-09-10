@@ -11,19 +11,19 @@ namespace Bonsai.ONIX
         private oni.Context ctx;
 
         /// <summary>
-        /// Maximum amount of frames the reading queue will hold.
-        /// If the queue fills, frame reading will throttle, filling host memory instead of 
-        /// userspace memory.
+        /// Maximum amount of frames the reading queue will hold. If the queue fills or the read
+        /// thread is not performant enough to fill it faster than data is produced, frame reading
+        /// will throttle, filling host memory instead of userspace memory.
         /// </summary>
         private const int MaxQueuedFrames = 2_000_000;
 
         /// <summary>
-        /// Timeout in ms for queue reads. This should not be critical as the 
-        /// read operation will cancel if the task is stopped
+        /// Timeout in ms for queue reads. This should not be critical as the read operation will
+        /// cancel if the task is stopped
         /// </summary>
         private const int QueueTimeoutMilliseconds = 200;
 
-        // NB: Decouple graph update form read thread
+        // NB: Decouple OnNext() form hadware reads
         private Task readFrames;
         private Task distributeFrames;
         private BlockingCollection<oni.Frame> FrameQueue;
@@ -40,9 +40,10 @@ namespace Bonsai.ONIX
         private readonly object regLock = new object();
 
         private bool running = false;
+        private readonly object runLock = new object();
+
         private readonly string contextDriver = DefaultDriver;
         private readonly int contextIndex = DefaultIndex;
-        private readonly object runLock = new object();
 
         public ONIContextTask(string driver, int index)
         {
@@ -67,12 +68,12 @@ namespace Bonsai.ONIX
             {
                 Stop();
                 lock (readLock)
-                lock (writeLock)
-                lock (regLock)
-                {
-                    ctx?.Dispose();
-                    Initialize();
-                }
+                    lock (writeLock)
+                        lock (regLock)
+                        {
+                            ctx?.Dispose();
+                            Initialize();
+                        }
             }
         }
 
@@ -315,11 +316,11 @@ namespace Bonsai.ONIX
             {
                 Stop();
                 lock (readLock)
-                lock (writeLock)
-                lock (regLock)
-                {
-                    ctx?.Dispose();
-                }
+                    lock (writeLock)
+                        lock (regLock)
+                        {
+                            ctx?.Dispose();
+                        }
             }
 
             GC.SuppressFinalize(this);
