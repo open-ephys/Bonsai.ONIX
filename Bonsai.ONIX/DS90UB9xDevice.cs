@@ -100,6 +100,32 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
+        [Description("Marks the first received frame accordinf to a sync line edge.\nUseful to mark first line in a picture.")]
+        public DS90UB9xConfiguration.MarkMode MarkMode
+        {
+            get
+            {
+                return (DS90UB9xConfiguration.MarkMode)ReadRegister((uint)DS90UB9xConfiguration.Register.MARK_MODE);
+            }
+            set
+            {
+                WriteRegister((uint)DS90UB9xConfiguration.Register.MARK_MODE, (uint)value);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("Link lock status")]
+        public bool LockState
+        {
+            get
+            {
+                uint state = ReadRegister((uint)DS90UB9xConfiguration.Register.LINK_STATUS);
+                return (state & 0x01) != 0;
+            }
+            private set { }
+        }
+
+        [Category("Configuration")]
         [Description("Set the deserializer mode.")]
         public DS90UB9xConfiguration.DeserializerModes DeserializerMode
         {

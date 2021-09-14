@@ -11,8 +11,10 @@
             TRIGGER_OFFSET = 0x00008003,
             PIXEL_GATE = 0x00008004,
             SYNC_BITS = 0x00008005,
-            GPIO_DIR = 0x00008006,
-            GPIO_VALUE = 0x00008007
+            MARK_MODE = 0x00008006,
+            GPIO_DIR = 0x00008007,
+            GPIO_VALUE = 0x00008008,
+            LINK_STATUS = 0x00008009
         }
 
         public enum TriggerMode
@@ -35,6 +37,22 @@
             HSYNC_NEGATIVE = 0b101,
             VSYNC_POSITIVE = 0b011,
             VSYNC_NEGATIVE = 0b111
+        }
+
+        public enum MarkMode
+        {
+            DISABLED = 0,
+            HSYNC_RISING = 0b001,
+            HSYNC_FALLING = 0b101,
+            VSYNC_RISING = 0b011,
+            VSYNC_FALLING = 0b111
+        }
+
+        public enum SpecialBits
+        {
+            BIT_MARK = 15,
+            BIT_VSYNC = 14,
+            BIT_HSYNC = 13
         }
 
         public const uint DeserializerDefaultAddress = 0x30;
