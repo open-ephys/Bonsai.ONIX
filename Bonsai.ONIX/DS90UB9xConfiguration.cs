@@ -57,7 +57,7 @@
 
         public const uint DeserializerDefaultAddress = 0x30;
         public const uint SerializerDefaultAddress = 0x58;
-        
+
         public enum DeserializerRegister
         {
             // I2C registers of the deserializer. Only one value used now, might be filled in the

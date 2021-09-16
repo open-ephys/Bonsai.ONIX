@@ -7,17 +7,17 @@ namespace Bonsai.ONIX.Design
     {
         #region ElectricalStimulationDevice
 
-        public static string[] WaveformAxisLabels(this ElectricalStimulationDevice device)
+        public static string[] WaveformAxisLabels(this ElectricalStimulationDevice _)
         {
             return new[] { "Time (msec)", "Current (uA)" };
         }
 
-        public static int NumberOfChannels(this ElectricalStimulationDevice device)
+        public static int NumberOfChannels(this ElectricalStimulationDevice _)
         {
             return 1;
         }
 
-        public static PointPairList Waveform(this ElectricalStimulationDevice device, int channel)
+        public static PointPairList Waveform(this ElectricalStimulationDevice device, int _)
         {
             var phaseOneCurrent = device.PhaseOneCurrent;
             var interPhaseCurrent = device.InterPhaseCurrent;
@@ -62,12 +62,12 @@ namespace Bonsai.ONIX.Design
 
         #region OpticalStimulationDevice
 
-        public static string[] WaveformAxisLabels(this OpticalStimulationDevice device)
+        public static string[] WaveformAxisLabels(this OpticalStimulationDevice _)
         {
             return new[] { "Time (msec)", "Current (mA)" };
         }
 
-        public static int NumberOfChannels(this OpticalStimulationDevice device)
+        public static int NumberOfChannels(this OpticalStimulationDevice _)
         {
             return 2;
         }

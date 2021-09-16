@@ -56,11 +56,10 @@ namespace Bonsai.ONIX.Design
 
                     if (dev.ID != (int)ONIXDevices.ID.Null && hub == selectedHub)
                     {
-
                         var ri = dataGridViewDeviceTable.Rows.Add(
                             idx,
                             $@" 0x{(byte)(idx >> 8):X2}.0x{(byte)(idx >> 0):X2}",
-                            ((ONIXDevices.ID)dev.ID).ToString(),
+                            (ONIXDevices.ID)dev.ID,
                             dev.Version,
                             dev.ReadSize,
                             dev.WriteSize,
@@ -243,6 +242,29 @@ namespace Bonsai.ONIX.Design
             catch (Exception)
             {
                 MessageBox.Show("Unable to open documentation link.");
+            }
+        }
+
+        private void dataGridViewDeviceTable_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridViewDeviceTable.Columns[e.ColumnIndex].Name == "DeviceID")
+            {
+                var uri = ONIDeviceDataSheetURIFactory.Make((ONIXDevices.ID)dataGridViewDeviceTable[e.ColumnIndex, e.RowIndex].Value);
+
+                if (uri == null)
+                {
+                    MessageBox.Show("Unable to open documentation link.");
+                    return;
+                }
+
+                try
+                {
+                    System.Diagnostics.Process.Start(uri.ToString());
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Unable to open documentation link.");
+                }
             }
         }
     }

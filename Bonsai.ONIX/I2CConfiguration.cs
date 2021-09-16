@@ -36,8 +36,9 @@ namespace Bonsai.ONIX
             {
                 return ctx.Context.ReadRegister((uint)deviceIndex, registerAddress);
             }
-            catch (oni.ONIException)
+            catch (oni.ONIException ex)
             {
+                Console.Error.WriteLine(ex.Message);
                 return null;
             }
         }

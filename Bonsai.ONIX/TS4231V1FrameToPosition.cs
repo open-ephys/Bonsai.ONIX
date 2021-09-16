@@ -66,7 +66,7 @@ namespace Bonsai.ONIX
         }
 
         // Template pattern
-        static readonly bool[] template = {
+        static readonly bool[] Template = {
         //  bad    skip   axis   sweep
             false, false, false, false,
             false, true,  false, false,
@@ -86,16 +86,19 @@ namespace Bonsai.ONIX
         // TODO: Figure out the correct value...
         //const double max_packet_duration = 0.03;
 
-        readonly Queue<double> pulse_times;
-        readonly Queue<double> pulse_widths;
-        readonly Queue<bool> pulse_parse;
+        readonly Queue<double> pulseTimes;
+        readonly Queue<double> pulseWidths;
+        readonly Queue<bool> pulseParse;
+        readonly Queue<ulong> pulseDataClock;
+        readonly Queue<ulong> pulseFrameClock;
 
         // Origins in Mat format
         Mat p, q;
 
         // Calculated position
         Mat position = new Mat(3, 1, Depth.F64, 1);
-        double position_time;
+        ulong positionDataClock;
+        ulong positionFrameClock;
 
         // Base station IR sweep frequency in Hz
         private const double SweepFrequency = 60;
@@ -108,11 +111,15 @@ namespace Bonsai.ONIX
             P = new Point3d(0, 0, 0);
             Q = new Point3d(1, 0, 0);
 
-            var fill0 = new double[template.Length / 4];
-            var fill1 = new bool[template.Length];
-            pulse_times = new Queue<double>(fill0);
-            pulse_widths = new Queue<double>(fill0);
-            pulse_parse = new Queue<bool>(fill1);
+            var fill0 = new double[Template.Length / 4];
+            var fill1 = new bool[Template.Length];
+            var fill2 = new ulong[Template.Length / 4];
+
+            pulseTimes = new Queue<double>(fill0);
+            pulseWidths = new Queue<double>(fill0);
+            pulseParse = new Queue<bool>(fill1);
+            pulseDataClock = new Queue<ulong>(fill2);
+            pulseFrameClock = new Queue<ulong>(fill2);
         }
 
         public override Expression Build(IEnumerable<Expression> arguments)
@@ -138,37 +145,44 @@ namespace Bonsai.ONIX
         bool Decode(TS4231V1DataFrame source)
         {
             // Push pulse time into buffer and pop oldest
-            pulse_times.Dequeue();
-            pulse_times.Enqueue(source.DataClock / DataClockHz ?? double.NaN);
+            pulseTimes.Dequeue();
+            pulseTimes.Enqueue(source.DataClock / DataClockHz ?? double.NaN);
+
+            pulseDataClock.Dequeue();
+            pulseDataClock.Enqueue(source.DataClock);
+
+            pulseFrameClock.Dequeue();
+            pulseFrameClock.Enqueue(source.FrameClock);
 
             // Push pulse width into buffer and pop oldest
-            pulse_widths.Dequeue();
-            pulse_widths.Enqueue(source.PulseWidth / DataClockHz ?? double.NaN);
+            pulseWidths.Dequeue();
+            pulseWidths.Enqueue(source.PulseWidth / DataClockHz ?? double.NaN);
 
             // Push pulse parse info into buffer and pop oldest 4x
-            pulse_parse.Dequeue();
-            pulse_parse.Dequeue();
-            pulse_parse.Dequeue();
-            pulse_parse.Dequeue();
+            pulseParse.Dequeue();
+            pulseParse.Dequeue();
+            pulseParse.Dequeue();
+            pulseParse.Dequeue();
 
             var type = source.PulseType;
-            pulse_parse.Enqueue(type == -1); // bad
-            pulse_parse.Enqueue(type >= 4 & type != 8); // skip
-            pulse_parse.Enqueue(type % 2 == 1 & type != 8); // axis
-            pulse_parse.Enqueue(type == 8); // sweep
+            pulseParse.Enqueue(type == -1); // bad
+            pulseParse.Enqueue(type >= 4 & type != 8); // skip
+            pulseParse.Enqueue(type % 2 == 1 & type != 8); // axis
+            pulseParse.Enqueue(type == 8); // sweep
 
             // Test template match and make sure time between pulses does 
             // not integrate to more than two periods
-            if (!pulse_parse.SequenceEqual(template) || pulse_times.Last() - pulse_times.First() > 2 / SweepFrequency)
+            if (!pulseParse.SequenceEqual(Template) || pulseTimes.Last() - pulseTimes.First() > 2 / SweepFrequency)
             {
                 return false;
             }
 
             // Time is the mean of the data used
-            position_time = 0.5 * (pulse_times.Last() + pulse_times.First());
+            positionDataClock = pulseDataClock.ElementAt(Template.Length / 8);
+            positionFrameClock = pulseFrameClock.ElementAt(Template.Length / 8);
 
-            var time = pulse_times.ToArray();
-            var width = pulse_widths.ToArray();
+            var time = pulseTimes.ToArray();
+            var width = pulseWidths.ToArray();
 
             var t11 = time[2] + width[2] / 2 - time[0];
             var t21 = time[5] + width[5] / 2 - time[3];
@@ -230,7 +244,7 @@ namespace Bonsai.ONIX
         {
             return source.Where(input => input.Index == Index)
                          .Where(input => Decode(input))
-                         .Select(input => new Position3D(position_time, position));
+                         .Select(input => new Position3D(positionFrameClock, positionDataClock, position));
         }
 
         [Description("Index of the photodiode 3D position is calculated for.")]

@@ -50,19 +50,19 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.buttonBlockMin = new System.Windows.Forms.Button();
             this.dataGridViewDeviceTable = new System.Windows.Forms.DataGridView();
-            this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DeviceID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FirmwareVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ReadSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.WriteSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControlHubs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
+            this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeviceID = new System.Windows.Forms.DataGridViewLinkColumn();
+            this.FirmwareVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ReadSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.WriteSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
@@ -206,14 +206,14 @@
             // hubsToolStripMenuItem
             // 
             this.hubsToolStripMenuItem.Name = "hubsToolStripMenuItem";
-            this.hubsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hubsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.hubsToolStripMenuItem.Text = "Hubs...";
             this.hubsToolStripMenuItem.Click += new System.EventHandler(this.hubsToolStripMenuItem_Click);
             // 
             // boardSyncToolStripMenuItem
             // 
             this.boardSyncToolStripMenuItem.Name = "boardSyncToolStripMenuItem";
-            this.boardSyncToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.boardSyncToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.boardSyncToolStripMenuItem.Text = "Host Sync...";
             this.boardSyncToolStripMenuItem.Click += new System.EventHandler(this.boardSyncToolStripMenuItem_Click);
             // 
@@ -282,56 +282,8 @@
             this.dataGridViewDeviceTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewDeviceTable.Size = new System.Drawing.Size(862, 376);
             this.dataGridViewDeviceTable.TabIndex = 20;
+            this.dataGridViewDeviceTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDeviceTable_CellContentClick);
             this.dataGridViewDeviceTable.SelectionChanged += new System.EventHandler(this.dataGridViewDeviceTable_SelectionChanged);
-            // 
-            // Index
-            // 
-            this.Index.HeaderText = "Address";
-            this.Index.Name = "Index";
-            this.Index.ReadOnly = true;
-            this.Index.Width = 70;
-            // 
-            // Address
-            // 
-            this.Address.HeaderText = "Address (Hub.Dev)";
-            this.Address.Name = "Address";
-            this.Address.ReadOnly = true;
-            this.Address.Width = 122;
-            // 
-            // DeviceID
-            // 
-            this.DeviceID.HeaderText = "Type";
-            this.DeviceID.Name = "DeviceID";
-            this.DeviceID.ReadOnly = true;
-            this.DeviceID.Width = 56;
-            // 
-            // FirmwareVersion
-            // 
-            this.FirmwareVersion.HeaderText = "Firmware Version";
-            this.FirmwareVersion.Name = "FirmwareVersion";
-            this.FirmwareVersion.ReadOnly = true;
-            this.FirmwareVersion.Width = 112;
-            // 
-            // ReadSize
-            // 
-            this.ReadSize.HeaderText = "Read Size (Bytes)";
-            this.ReadSize.Name = "ReadSize";
-            this.ReadSize.ReadOnly = true;
-            this.ReadSize.Width = 116;
-            // 
-            // WriteSize
-            // 
-            this.WriteSize.HeaderText = "Write Size (Bytes)";
-            this.WriteSize.Name = "WriteSize";
-            this.WriteSize.ReadOnly = true;
-            this.WriteSize.Width = 115;
-            // 
-            // Description
-            // 
-            this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Description.HeaderText = "Description";
-            this.Description.Name = "Description";
-            this.Description.ReadOnly = true;
             // 
             // statusStrip
             // 
@@ -405,6 +357,55 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDocumentation_LinkClicked);
             // 
+            // Index
+            // 
+            this.Index.HeaderText = "Address";
+            this.Index.Name = "Index";
+            this.Index.ReadOnly = true;
+            this.Index.Width = 70;
+            // 
+            // Address
+            // 
+            this.Address.HeaderText = "Address (Hub.Dev)";
+            this.Address.Name = "Address";
+            this.Address.ReadOnly = true;
+            this.Address.Width = 122;
+            // 
+            // DeviceID
+            // 
+            this.DeviceID.HeaderText = "Device";
+            this.DeviceID.Name = "DeviceID";
+            this.DeviceID.ReadOnly = true;
+            this.DeviceID.Width = 47;
+            // 
+            // FirmwareVersion
+            // 
+            this.FirmwareVersion.HeaderText = "Firmware Version";
+            this.FirmwareVersion.Name = "FirmwareVersion";
+            this.FirmwareVersion.ReadOnly = true;
+            this.FirmwareVersion.Width = 112;
+            // 
+            // ReadSize
+            // 
+            this.ReadSize.HeaderText = "Read Size (Bytes)";
+            this.ReadSize.Name = "ReadSize";
+            this.ReadSize.ReadOnly = true;
+            this.ReadSize.Width = 116;
+            // 
+            // WriteSize
+            // 
+            this.WriteSize.HeaderText = "Write Size (Bytes)";
+            this.WriteSize.Name = "WriteSize";
+            this.WriteSize.ReadOnly = true;
+            this.WriteSize.Width = 115;
+            // 
+            // Description
+            // 
+            this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Description.HeaderText = "Description";
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            // 
             // ONIContextConfigurationEditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -462,18 +463,18 @@
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton;
         private System.Windows.Forms.DataGridView dataGridViewDeviceTable;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Address;
-        private System.Windows.Forms.DataGridViewTextBoxColumn DeviceID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn FirmwareVersion;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ReadSize;
-        private System.Windows.Forms.DataGridViewTextBoxColumn WriteSize;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Description;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabControl tabControlHubs;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ToolStripMenuItem boardSyncToolStripMenuItem;
         private System.Windows.Forms.Button buttonBlockMin;
         private System.Windows.Forms.LinkLabel linkLabelDocumentation;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Address;
+        private System.Windows.Forms.DataGridViewLinkColumn DeviceID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FirmwareVersion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ReadSize;
+        private System.Windows.Forms.DataGridViewTextBoxColumn WriteSize;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Description;
     }
 }
