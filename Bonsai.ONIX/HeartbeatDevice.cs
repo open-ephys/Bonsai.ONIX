@@ -19,6 +19,9 @@ namespace Bonsai.ONIX
 
         public HeartbeatDevice() : base(ONIXDevices.ID.Heartbeat) { }
 
+        [ONIXDeviceID(ONIXDevices.ID.Heartbeat)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         protected override IObservable<HeartbeatDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new HeartbeatDataFrame(f); });

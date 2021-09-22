@@ -34,6 +34,10 @@ namespace Bonsai.ONIX
         // Setup context etc
         public ElectricalStimulationDevice() : base(ONIXDevices.ID.ElectricalStimulator) { }
 
+        [ONIXDeviceID(ONIXDevices.ID.ElectricalStimulator)]
+        [Editor("Bonsai.ONIX.Design.StimulatorEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         private uint CurrentK(double currentuA)
         {
             double k = 3000 / (Math.Pow(2, DACResolution) - 1);
@@ -309,13 +313,6 @@ namespace Bonsai.ONIX
             {
                 WriteRegister((int)Register.ENABLE, (uint)((bool)value ? 1 : 0));
             }
-        }
-
-        [Editor("Bonsai.ONIX.Design.StimulatorEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
-        new public ONIDeviceAddress DeviceAddress
-        {
-            get => base.DeviceAddress;
-            set => base.DeviceAddress = value;
         }
 
         protected override void OnNext(ONIContextTask ctx, bool triggered)

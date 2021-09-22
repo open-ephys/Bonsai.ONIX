@@ -21,6 +21,9 @@ namespace Bonsai.ONIX
             return source.Select(f => { return new BNO055DataFrame(f); });
         }
 
+        [ONIXDeviceID(ONIXDevices.ID.BNO055)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         [Category("Configuration")]
         [Description("Enable the input data stream.")]
         public bool EnableStream

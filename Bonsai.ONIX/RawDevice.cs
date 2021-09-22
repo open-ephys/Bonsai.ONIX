@@ -14,26 +14,41 @@ namespace Bonsai.ONIX
             return source.Select(f => { return new RawDataFrame(f); });
         }
 
-        [Category("Configuration")]
-        [Description("Device type to acquire raw data frames from.")]
-        public ONIXDevices.ID DeviceType
+        private ONIDeviceAddress deviceAddress = new ONIDeviceAddress();
+
+        [ONIXDeviceID(ONIXDevices.ID.Null)]
+        public override ONIDeviceAddress DeviceAddress
         {
             get
             {
-                return ID;
+                return deviceAddress;
             }
             set
             {
-                if (ID != value)
+                deviceAddress = value;
+                RegisterIndex = 0;
+                if (deviceAddress.Valid)
                 {
-                    ID = value;
-                    DeviceAddress = null;
-                    FrameClockHz = null;
-                    Hub = null;
-                    RegisterIndex = 0;
+                    using (var c = ONIContextManager.ReserveContext(deviceAddress.HardwareSlot))
+                    {
+
+                        ID = (ONIXDevices.ID)c.Context.DeviceTable[(uint)deviceAddress.Address].ID;
+                    }
                 }
             }
-        }
+        } 
+
+        [Category("Configuration")]
+        [Description("Device type to acquire raw data frames from.")]
+        [Externalizable(false)]
+        [ReadOnly(true)]
+            public ONIXDevices.ID DeviceType
+            {
+                get
+                {
+                    return ID;
+                }
+            }
 
         uint registerIndex;
         [Category("Acquisition")]

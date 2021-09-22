@@ -31,6 +31,7 @@ namespace Bonsai.ONIX
         // Setup context etc
         public OpticalStimulationDevice() : base(ONIXDevices.ID.OpticalStimulator) { }
 
+        
         // Fit from Fig. 10 of CAT4016 datasheet
         // x = (y/a)^(1/b)
         // a = 3.833e+05
@@ -302,12 +303,8 @@ namespace Bonsai.ONIX
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [Editor("Bonsai.ONIX.Design.StimulatorEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        public new ONIDeviceAddress DeviceAddress
-        {
-            get => base.DeviceAddress;
-            set => base.DeviceAddress = value;
-        }
-
+        [ONIXDeviceID(ONIXDevices.ID.OpticalStimulator)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
         protected override void OnNext(ONIContextTask ctx, bool triggered)
         {
             WriteRegister((int)Register.TRIGGER, (uint)(triggered ? 1 : 0));

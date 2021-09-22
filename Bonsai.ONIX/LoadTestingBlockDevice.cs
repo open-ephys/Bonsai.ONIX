@@ -33,6 +33,9 @@ namespace Bonsai.ONIX
                 .Select(block => { return new LoadTestingBlockDataFrame(block, (int)FrameWords); });
         }
 
+        [ONIXDeviceID(ONIXDevices.ID.LoadTest)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         [Category("Configuration")]
         [Range(1, 10000)]
         [Description("The number of frames making up a single data block that is propagated in the observable sequence.")]

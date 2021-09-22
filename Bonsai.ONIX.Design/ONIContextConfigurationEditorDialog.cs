@@ -191,8 +191,6 @@ namespace Bonsai.ONIX.Design
                         // Hacky "back door" into ONIDeviceIndexTypeConverter's functionality
                         device.DeviceAddress = new ONIDeviceAddress { HardwareSlot = Configuration.Slot, Address = deviceIndex };
                         propertyGridSelecteDevice.SelectedObject = device;
-                        device.FrameClockHz = c.Context.AcquisitionClockHz;
-                        device.Hub = c.Context.GetHub((uint)device.DeviceAddress.Address);
                     }
                     else
                     {

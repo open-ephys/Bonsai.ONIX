@@ -24,6 +24,9 @@ namespace Bonsai.ONIX
             return source.Select(f => { return new MemoryUsageDataFrame(f, total_words); });
         }
 
+        [ONIXDeviceID(ONIXDevices.ID.MemoryUsage)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
         public bool EnableStream

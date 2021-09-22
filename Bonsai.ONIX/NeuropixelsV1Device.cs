@@ -63,6 +63,7 @@ namespace Bonsai.ONIX
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
+        [ONIXDeviceID(ONIXDevices.ID.NeuropixelsV1)]
         public override ONIDeviceAddress DeviceAddress
         {
             get { return Configuration.DeviceAddress; }

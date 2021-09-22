@@ -11,8 +11,6 @@ namespace Bonsai.ONIX
     // TODO: This thing is a true nightmare, but its OK for now
     class ONIDeviceAddressTypeConverter : TypeConverter
     {
-        Dictionary<string, Tuple<uint, oni.Hub>> hubs;
-
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
@@ -24,15 +22,11 @@ namespace Bonsai.ONIX
             object result = null;
 
             var string_value = value as string;
-            var device = (ONIDevice)context.Instance;
-            var clks_good = hubs.TryGetValue(string_value, out var clks);
 
-            if (!string.IsNullOrEmpty(string_value) && device != null && clks_good)
+
+            if (!string.IsNullOrEmpty(string_value)) 
             {
                 var matches = ReverseStringFormat("({0},{1}): {2}", string_value);
-
-                device.FrameClockHz = clks.Item1;
-                device.Hub = clks.Item2;
 
                 result = new ONIDeviceAddress
                 {
@@ -78,15 +72,12 @@ namespace Bonsai.ONIX
                                      .ToList();
 
                     // This device
-                    var device = (ONIDevice)context.Instance;
-                    if (device == null)
-                    {
-                        return base.GetStandardValues(context);
-                    }
+                    var deviceattribute = ((ONIXDeviceIDAttribute)context.PropertyDescriptor.Attributes[typeof(ONIXDeviceIDAttribute)]);
+                    ONIXDevices.ID deviceID = deviceattribute == null ? ONIXDevices.ID.Null : deviceattribute.deviceID;
+
 
                     // To fill after inspecting hardware
                     var device_addrs = new List<ONIDeviceAddress>();
-                    hubs = new Dictionary<string, Tuple<uint, oni.Hub>>();
 
                     foreach (var hw in hw_slots)
                     {
@@ -96,7 +87,11 @@ namespace Bonsai.ONIX
                             {
                                 // Find valid device indices
                                 var dev_matches = c.Context.DeviceTable
-                                    .Where(dev => dev.Value.ID == (uint)device.ID)
+                                    //.Where(dev => dev.Value.ID == (uint)device.ID)
+                                    .Where(dev => {
+                                        if (deviceID == ONIXDevices.ID.Null) return (dev.Value.ID != (uint)ONIXDevices.ID.Null);
+                                        else return (dev.Value.ID == (uint)deviceID);
+                                    })
                                     .Select(x =>
                                     {
                                         var d = new ONIDeviceAddress
@@ -109,11 +104,7 @@ namespace Bonsai.ONIX
 
                                 device_addrs = device_addrs.Concat(dev_matches).ToList();
 
-                                foreach (var d in dev_matches)
-                                {
-                                    hubs.Add(d.ToString(),
-                                        new Tuple<uint, oni.Hub>(c.Context.AcquisitionClockHz, c.Context.GetHub((uint)d.Address)));
-                                }
+                                
                             }
                         }
                         catch (InvalidProgramException) // Bad context initialization

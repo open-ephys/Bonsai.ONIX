@@ -44,6 +44,9 @@ namespace Bonsai.ONIX
                 .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, s, DataType); });
         }
 
+        [ONIXDeviceID(ONIXDevices.ID.BreakoutAnalogIO)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         // TODO: The order of data in the matrix is reverse of the channel index.
         // m[11] => channel 0, etc.
         protected override void Write(ONIContextTask ctx, Arr input)

@@ -38,6 +38,9 @@ namespace Bonsai.ONIX
 
         public ClockOutputDevice() : base(ONIXDevices.ID.FMCClockOutput) { }
 
+        [ONIXDeviceID(ONIXDevices.ID.FMCClockInput)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         [Category("Acquisition")]
         [Description("Enable or disable the clock output.")]
         public bool ClockEnabled

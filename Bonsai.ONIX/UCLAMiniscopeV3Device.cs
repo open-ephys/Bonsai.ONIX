@@ -20,6 +20,14 @@ namespace Bonsai.ONIX
                 .Select(block => { return new UCLAMiniscopeV3DataFrame(block); });
         }
 
+        private ONIDeviceAddress deviceAddress;
+        [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+        public override ONIDeviceAddress DeviceAddress
+        {
+            get { return deviceAddress; }
+            set { deviceAddress = value; OnDeviceAddressUpdate(); }
+        }
+
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
         public bool EnableStream

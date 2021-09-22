@@ -51,6 +51,9 @@ namespace Bonsai.ONIX
                 .Select(block => { return new RHD2164DataFrame(block, ephysDataFormat, auxDataFormat); });
         }
 
+        [ONIXDeviceID(ONIXDevices.ID.RHD2164)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
         public bool EnableStream

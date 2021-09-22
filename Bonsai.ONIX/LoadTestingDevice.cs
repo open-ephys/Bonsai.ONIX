@@ -33,6 +33,9 @@ namespace Bonsai.ONIX
             return source.Select(f => { return new LoadTestingDataFrame(f); });
         }
 
+        [ONIXDeviceID(ONIXDevices.ID.LoadTest)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         protected override void Write(ONIContextTask ctx, ulong input)
         {
             writeArray[0] = (uint)(input & uint.MaxValue);

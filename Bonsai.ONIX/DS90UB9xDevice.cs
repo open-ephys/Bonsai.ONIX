@@ -15,6 +15,9 @@ namespace Bonsai.ONIX
             return source.Select(f => { return new RawDataFrame(f); });
         }
 
+        [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
         public bool EnableStream

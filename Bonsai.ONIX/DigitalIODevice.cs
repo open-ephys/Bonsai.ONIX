@@ -25,6 +25,9 @@ namespace Bonsai.ONIX
             return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
         }
 
+        [ONIXDeviceID(ONIXDevices.ID.BreakoutDigitalIO)]
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
+
         protected override void Write(ONIContextTask ctx, int input)
         {
             ctx.Write((uint)DeviceAddress.Address, (uint)input);
