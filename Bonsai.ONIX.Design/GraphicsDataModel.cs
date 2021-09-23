@@ -5,7 +5,7 @@ namespace Bonsai.ONIX.Design
 {
     public class GraphicsDataModel
     {
-        readonly List<GraphicsDataModelPart> modelParts;
+        private readonly List<GraphicsDataModelPart> modelParts;
 
         public GraphicsDataModel(IEnumerable<GraphicsDataModelPart> parts)
         {

@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     [Description("ONI Test device.")]
     public class TestDevice : ONIFrameReader<TestDataFrame, ushort>
     {
-        enum Register
+        private enum Register
         {
             ENABLE = 0,
             MESSAGE,

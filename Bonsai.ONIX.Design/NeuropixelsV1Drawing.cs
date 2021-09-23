@@ -239,7 +239,7 @@ namespace Bonsai.ONIX.Design
             selectedElectrodes.Clear();
         }
 
-        bool RectangleOverlap(Rectangle rect0, Rectangle rect1)
+        private bool RectangleOverlap(Rectangle rect0, Rectangle rect1)
         {
             var p00 = rect0.Location;
             var p01 = new Point(rect0.Location.X + rect0.Width, rect0.Location.Y + rect0.Height);

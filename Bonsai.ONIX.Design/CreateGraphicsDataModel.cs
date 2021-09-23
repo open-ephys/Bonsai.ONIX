@@ -21,7 +21,7 @@ namespace Bonsai.ONIX.Design
 
         public PixelInternalFormat InternalFormat { get; set; }
 
-        static Mesh CreateTexturedQuad(Vector2 scale, Vector2 shift)
+        private static Mesh CreateTexturedQuad(Vector2 scale, Vector2 shift)
         {
             var mesh = new Mesh();
             var vao = mesh.VertexArray;

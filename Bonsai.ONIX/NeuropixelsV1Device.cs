@@ -54,7 +54,7 @@ namespace Bonsai.ONIX
             );
         }
 
-        enum Register
+        private enum Register
         {
             // Managed
             ENABLE = 0x00008000

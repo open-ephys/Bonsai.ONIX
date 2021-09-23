@@ -5,8 +5,8 @@ namespace Bonsai.ONIX.Design
 {
     public partial class HubConfigurationEditor : Form
     {
-        readonly ONIContextConfiguration Configuration;
-        int hub_state;
+        private readonly ONIContextConfiguration Configuration;
+        private int hub_state;
 
         public HubConfigurationEditor(Bonsai.ONIX.ONIContextConfiguration configuraiton)
         {

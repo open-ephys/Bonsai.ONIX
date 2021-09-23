@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     [Description("Triad TS4231 optical to digital converter array for V1 SteamVR base stations.")]
     public class TS4231V1Device : ONIFrameReader<TS4231V1DataFrame, ushort>
     {
-        enum Register
+        private enum Register
         {
             ENABLE = 0,
             ENVMARGIN,

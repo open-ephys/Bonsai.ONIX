@@ -15,7 +15,7 @@ namespace Bonsai.ONIX.Design
     {
         public NeuropixelsV1Configuration Config;
         private readonly NeuropixelsV1Drawing probeDrawing;
-        List<int> selectedElectrodes = new List<int>();
+        private List<int> selectedElectrodes = new List<int>();
         private bool closeContextMenu = true;
 
         public NeuropixelsV1EditorDialog(Bonsai.ONIX.NeuropixelsV1Configuration config)
@@ -33,9 +33,10 @@ namespace Bonsai.ONIX.Design
             performSRReadCheckToolStripMenuItem.Checked = Config.PerformReadCheck;
 
             // Need to manually add the SelectedIndexChange event handler or assigning the data source will trigger it
-            comboBox_CalibrationMode.DataSource = Enum.GetValues(typeof(NeuropixelsV1Configuration.OperationMode));
-            comboBox_CalibrationMode.SelectedItem = Config.Mode;
-            comboBox_CalibrationMode.SelectedIndexChanged += new EventHandler(comboBox_CalibrationMode_SelectedIndexChanged);
+            toolStripComboBoxOperationMode.ComboBox.BindingContext = this.BindingContext;
+            toolStripComboBoxOperationMode.ComboBox.DataSource = Enum.GetValues(typeof(NeuropixelsV1Configuration.OperationMode));
+            toolStripComboBoxOperationMode.ComboBox.SelectedItem = Config.Mode;
+            toolStripComboBoxOperationMode.ComboBox.SelectedIndexChanged += new EventHandler(toolStripComboBoxOperationMode_SelectedIndexChanged);
 
             var combo_col = new DataGridViewComboBoxColumn
             {
@@ -108,7 +109,7 @@ namespace Bonsai.ONIX.Design
             base.OnLoad(e);
         }
 
-        void dataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void dataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             DataGridView gridView = sender as DataGridView;
 
@@ -327,7 +328,7 @@ namespace Bonsai.ONIX.Design
             }
         }
 
-        void CheckStatus()
+        private void CheckStatus()
         {
             toolStripStatusLabel.Text = "";
             toolStripStatusLabel_ProbeSN.Text = "Probe SN: " + Config.FlexProbeSN.ToString();
@@ -350,7 +351,7 @@ namespace Bonsai.ONIX.Design
             }
         }
 
-        void ShowError(string title, string msg)
+        private void ShowError(string title, string msg)
         {
             MessageBox.Show(msg,
                 title,
@@ -380,7 +381,7 @@ namespace Bonsai.ONIX.Design
             }
         }
 
-        private void comboBox_CalibrationMode_SelectedIndexChanged(object sender, EventArgs e)
+        private void toolStripComboBoxOperationMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             var box = sender as ComboBox;
             Enum.TryParse(box.SelectedValue.ToString(), out NeuropixelsV1Configuration.OperationMode mode);
@@ -407,7 +408,7 @@ namespace Bonsai.ONIX.Design
             }
         }
 
-        void ReportProgress(int value)
+        private void ReportProgress(int value)
         {
             toolStripProgressBar_UploadPogress.Value = value;
         }

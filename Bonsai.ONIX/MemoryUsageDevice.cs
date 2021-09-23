@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     [Description("Memory usage monitoring device")]
     public class MemoryUsageDevice : ONIFrameReader<MemoryUsageDataFrame, ushort>
     {
-        enum Register
+        private enum Register
         {
             ENABLE = 0,
             CLK_DIV = 1,  // Update clock divider ratio.Default results in 10 Hz heartbeat. Values less than CLK_HZ / 10e6 Hz will result in 1kHz.
@@ -38,7 +38,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        uint update_hz = 1;
+        private uint update_hz = 1;
         [Category("Configuration")]
         [Description("Rate of memory usage measurements.")]
         [Range(1, 10e6)]

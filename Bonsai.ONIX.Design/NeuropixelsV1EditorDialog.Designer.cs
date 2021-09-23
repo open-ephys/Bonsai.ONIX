@@ -40,10 +40,6 @@
             this.loadCalibrationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.performSRReadCheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.comboBox_CalibrationMode = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tabControl_Electrodes = new System.Windows.Forms.TabControl();
             this.tabPage_ProbeDrawing = new System.Windows.Forms.TabPage();
@@ -71,6 +67,10 @@
             this.toolStripStatusLabel_ConfigSN = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
+            this.operationModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripComboBoxOperationMode = new System.Windows.Forms.ToolStripComboBox();
+            this.performSRReadCheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip_ChannelsGrid.SuspendLayout();
             this.menuStrip2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -151,58 +151,23 @@
             // loadCalibrationToolStripMenuItem
             // 
             this.loadCalibrationToolStripMenuItem.Name = "loadCalibrationToolStripMenuItem";
-            this.loadCalibrationToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.loadCalibrationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadCalibrationToolStripMenuItem.Text = "Load Calibration...";
             this.loadCalibrationToolStripMenuItem.Click += new System.EventHandler(this.loadCalibrationToolStripMenuItem_Click);
             // 
             // importToolStripMenuItem
             // 
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importToolStripMenuItem.Text = "Import...";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportToolStripMenuItem.Text = "Export...";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.performSRReadCheckToolStripMenuItem});
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            // 
-            // performSRReadCheckToolStripMenuItem
-            // 
-            this.performSRReadCheckToolStripMenuItem.CheckOnClick = true;
-            this.performSRReadCheckToolStripMenuItem.Name = "performSRReadCheckToolStripMenuItem";
-            this.performSRReadCheckToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.performSRReadCheckToolStripMenuItem.Text = "Read Check After Upload";
-            this.performSRReadCheckToolStripMenuItem.CheckedChanged += new System.EventHandler(this.performSRReadCheckToolStripMenuItem_CheckChanged);
-            // 
-            // comboBox_CalibrationMode
-            // 
-            this.comboBox_CalibrationMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox_CalibrationMode.FormattingEnabled = true;
-            this.comboBox_CalibrationMode.Location = new System.Drawing.Point(622, 7);
-            this.comboBox_CalibrationMode.Name = "comboBox_CalibrationMode";
-            this.comboBox_CalibrationMode.Size = new System.Drawing.Size(121, 21);
-            this.comboBox_CalibrationMode.TabIndex = 29;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(527, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 13);
-            this.label1.TabIndex = 30;
-            this.label1.Text = "Calibration Mode:";
             // 
             // panel1
             // 
@@ -337,8 +302,8 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Text = "Cancel";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // tabPage_Channels
@@ -393,10 +358,8 @@
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.Controls.Add(this.button_Cancel);
             this.panel2.Controls.Add(this.button_OK);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.comboBox_CalibrationMode);
+            this.panel2.Controls.Add(this.button_Cancel);
             this.panel2.Location = new System.Drawing.Point(0, 450);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(937, 32);
@@ -461,6 +424,38 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDocumentation_LinkClicked);
             // 
+            // operationModeToolStripMenuItem
+            // 
+            this.operationModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripComboBoxOperationMode});
+            this.operationModeToolStripMenuItem.Name = "operationModeToolStripMenuItem";
+            this.operationModeToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.operationModeToolStripMenuItem.Text = "Operation Mode";
+            // 
+            // toolStripComboBoxOperationMode
+            // 
+            this.toolStripComboBoxOperationMode.Name = "toolStripComboBoxOperationMode";
+            this.toolStripComboBoxOperationMode.Size = new System.Drawing.Size(121, 23);
+            // 
+            // performSRReadCheckToolStripMenuItem
+            // 
+            this.performSRReadCheckToolStripMenuItem.Checked = true;
+            this.performSRReadCheckToolStripMenuItem.CheckOnClick = true;
+            this.performSRReadCheckToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.performSRReadCheckToolStripMenuItem.Name = "performSRReadCheckToolStripMenuItem";
+            this.performSRReadCheckToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.performSRReadCheckToolStripMenuItem.Text = "Verify Upload";
+            this.performSRReadCheckToolStripMenuItem.CheckedChanged += new System.EventHandler(this.performSRReadCheckToolStripMenuItem_CheckChanged);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.operationModeToolStripMenuItem,
+            this.performSRReadCheckToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
             // NeuropixelsV1EditorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -488,7 +483,6 @@
             this.tabPage_ADCs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_ADCs)).EndInit();
             this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -507,16 +501,12 @@
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip_ChannelsGrid;
         private System.Windows.Forms.ToolStripMenuItem applyToColumnToolStripMenuItem;
-        private System.Windows.Forms.ComboBox comboBox_CalibrationMode;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar_UploadPogress;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem performSRReadCheckToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_ProbeSN;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_ConfigSN;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip_Probe;
@@ -538,5 +528,9 @@
         private System.Windows.Forms.ToolStripMenuItem aPFilterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.LinkLabel linkLabelDocumentation;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem operationModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripComboBox toolStripComboBoxOperationMode;
+        private System.Windows.Forms.ToolStripMenuItem performSRReadCheckToolStripMenuItem;
     }
 }

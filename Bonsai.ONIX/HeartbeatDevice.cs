@@ -10,7 +10,7 @@ namespace Bonsai.ONIX
     [Description("Heartbeat device")]
     public class HeartbeatDevice : ONIFrameReader<HeartbeatDataFrame, ushort>
     {
-        enum Register
+        private enum Register
         {
             ENABLE = 0,  // Enable the heartbeat
             CLK_DIV = 1,  // Heartbeat clock divider ratio. Default results in 10 Hz heartbeat. Values less than CLK_HZ / 10e6 Hz will result in 1kHz.
@@ -38,7 +38,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        uint beat_hz = 1;
+        private uint beat_hz = 1;
         [Category("Configuration")]
         [Description("Rate at which beats are produced.")]
         [Range(1, 10e6)]

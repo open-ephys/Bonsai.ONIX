@@ -9,9 +9,9 @@ using System.Text.RegularExpressions;
 namespace Bonsai.ONIX
 {
     // TODO: This thing is a true nightmare, but its OK for now
-    class ONIDeviceAddressTypeConverter : TypeConverter
+    internal class ONIDeviceAddressTypeConverter : TypeConverter
     {
-        Dictionary<string, Tuple<uint, oni.Hub>> hubs;
+        private Dictionary<string, Tuple<uint, oni.Hub>> hubs;
 
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {

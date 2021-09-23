@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
     public class RHD2164Device : ONIFrameReader<RHD2164DataFrame, ushort>
     {
         // see http://intantech.com/files/Intan_RHD2164_datasheet.pdf
-        enum Register
+        private enum Register
         {
             // Unmnanaged
             ADCCONF = 0,
@@ -203,11 +203,12 @@ namespace Bonsai.ONIX
             }
         }
 
-        void SetRawRegister(uint address, int value)
+        private void SetRawRegister(uint address, int value)
         {
             WriteRegister(address, (uint)value);
         }
-        int GetRawRegister(uint address)
+
+        private int GetRawRegister(uint address)
         {
             return (int)ReadRegister(address);
         }

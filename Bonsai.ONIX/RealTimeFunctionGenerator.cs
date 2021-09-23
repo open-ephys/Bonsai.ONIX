@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Bonsai.ONIX
 {
-    class DepthConverter : NullableConverter
+    internal class DepthConverter : NullableConverter
     {
         public DepthConverter()
             : base(typeof(Depth?))
@@ -25,7 +25,7 @@ namespace Bonsai.ONIX
     [Description("Produces waveforms from various periodic functions of wall-clock time as fast as possible. Due to the nature of computer operating systems, these waveforms will be jumpy. Without a data rate limiting downstream operation, this node will use 100% of your CPU.")]
     public class RealTimeFunctionGenerator : Source<Mat>
     {
-        const double TwoPI = 2 * Math.PI;
+        private const double TwoPI = 2 * Math.PI;
         public enum FunctionWaveform
         {
             Sine,
@@ -66,11 +66,12 @@ namespace Bonsai.ONIX
         [Description("The optional phase offset, in radians, of the signal waveform.")]
         public double Phase { get; set; }
 
-        static double NormalizedPhase(double phase)
+        private static double NormalizedPhase(double phase)
         {
             return phase + Math.Ceiling(-phase / TwoPI) * TwoPI;
         }
-        static void FrequencyPhaseShift(
+
+        private static void FrequencyPhaseShift(
             Stopwatch stopWatch,
             double newFrequency,
             ref double frequency,
@@ -84,7 +85,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        Mat CreateBuffer(int bufferLength, Stopwatch stopWatch, double frequency, double phase)
+        private Mat CreateBuffer(int bufferLength, Stopwatch stopWatch, double frequency, double phase)
         {
             var buffer = new double[bufferLength];
             if (frequency > 0)
@@ -95,7 +96,7 @@ namespace Bonsai.ONIX
                 {
                     default:
                     case FunctionWaveform.Sine:
-                        frequency = frequency * TwoPI;
+                        frequency *= TwoPI;
                         for (int i = 0; i < buffer.Length; i++)
                         {
                             buffer[i] = Math.Sin(frequency * (i + stopWatch.Elapsed.TotalSeconds) + phase);

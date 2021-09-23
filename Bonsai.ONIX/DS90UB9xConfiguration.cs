@@ -5,71 +5,85 @@
         public enum Register
         {
             // Managed register map
-            ENABLE = 0x00008000,
-            READSZ = 0x00008001,
-            TRIGGER = 0x00008002,
-            TRIGGER_OFFSET = 0x00008003,
-            PIXEL_GATE = 0x00008004,
-            SYNC_BITS = 0x00008005,
-            MARK_MODE = 0x00008006,
-            GPIO_DIR = 0x00008007,
-            GPIO_VALUE = 0x00008008,
-            LINK_STATUS = 0x00008009
+            Enable = 0x00008000,
+            ReadSize = 0x00008001,
+            Trigger = 0x00008002,
+            TriggerOffset = 0x00008003,
+            PixelGate = 0x00008004,
+            IncludeSyncBits = 0x00008005,
+            MarkMode = 0x00008006,
+            GPIODirection = 0x00008007,
+            GPIOValue = 0x00008008,
+            LinkStatus = 0x00008009,
         }
 
         public enum TriggerMode
         {
-            CONTINUOUS = 0,
-            HSYNC_EDGE_POSITIVE = 0b0001,
-            HSYNC_EDGE_NEGATIVE = 0b1001,
-            HSYNC_LEVEL_POSITIVE = 0b0101,
-            HSYNC_LEVEL_NEGATIVE = 0b1101,
-            VSYNC_EDGE_POSITIVE = 0b0011,
-            VSYNC_EDGE_NEGATIVE = 0b1011,
-            VSYNC_LEVEL_POSITIVE = 0b0111,
-            VSYNC_LEVEL_NEGATIVE = 0b1111,
+            Continuous = 0,
+            HsyncEdgePositive = 0b0001,
+            HsyncEgeNegative = 0b1001,
+            HsyncLevelPositive = 0b0101,
+            HsyncLevelNegative = 0b1101,
+            VsyncEdgePositive = 0b0011,
+            VsyncEdgeNegative = 0b1011,
+            VsyncLevelPositive = 0b0111,
+            VsyncLevelNegative = 0b1111,
         }
 
         public enum PixelGate
         {
-            DISABLED = 0,
-            HSYNC_POSITIVE = 0b001,
-            HSYNC_NEGATIVE = 0b101,
-            VSYNC_POSITIVE = 0b011,
-            VSYNC_NEGATIVE = 0b111
+            Disabled = 0,
+            HsyncPositive = 0b001,
+            HsyncNegative = 0b101,
+            VsyncPositive = 0b011,
+            VsyncNegative = 0b111,
         }
 
         public enum MarkMode
         {
-            DISABLED = 0,
-            HSYNC_RISING = 0b001,
-            HSYNC_FALLING = 0b101,
-            VSYNC_RISING = 0b011,
-            VSYNC_FALLING = 0b111
+            Disabled = 0,
+            HsyncRising = 0b001,
+            HsyncFalling = 0b101,
+            VsyncRising = 0b011,
+            VsyncFalling = 0b111,
         }
 
         public enum SpecialBits
         {
-            BIT_MARK = 15,
-            BIT_VSYNC = 14,
-            BIT_HSYNC = 13
+            BitMark = 15,
+            BitVsync = 14,
+            BitHsync = 13,
         }
 
         public const uint DeserializerDefaultAddress = 0x30;
         public const uint SerializerDefaultAddress = 0x58;
 
-        public enum DeserializerRegister
+        public enum I2CRegister
         {
-            // I2C registers of the deserializer. Only one value used now, might be filled in the
-            // future with common-use values for ease of configuration.
-            PORT_MODE = 0x6D
+            PortMode = 0x6D,
+
+            SlaveID1 = 0x5E,
+            SlaveID2 = 0x5F,
+            SlaveID3 = 0x60,
+            SlaveID4 = 0x61,
+            SlaveID5 = 0x62,
+            SlaveID6 = 0x63,
+            SlaveID7 = 0x64,
+
+            SlaveAlias1 = 0x66,
+            SlaveAlias2 = 0x67,
+            SlaveAlias3 = 0x68,
+            SlaveAlias4 = 0x69,
+            SlaveAlias5 = 0x6A,
+            SlaveAlias6 = 0x6B,
+            SlaveAlias7 = 0x6C,
         }
 
-        public enum DeserializerModes
+        public enum Mode
         {
-            RAW12BITLF = 1,
-            RAW12BITHF = 2,
-            RAW10BIT = 3
+            Raw12BitLowFrequency = 1,
+            Raw12BitHighFrequency = 2,
+            Raw10Bit = 3,
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
     [DefaultProperty("DeviceAddress")]
     public sealed class OpticalStimulationDevice : ONISink<bool>
     {
-        enum Register
+        private enum Register
         {
             NULLPARM = 0,   // No command
             MAXCURRENT,     // Max LED/LD current, (0 to 255 = 800mA to 0 mA.See fig XX of CAT4016 datasheet)

@@ -27,8 +27,8 @@ namespace Bonsai.ONIX
         private Task readFrames;
         private Task distributeFrames;
         private BlockingCollection<oni.Frame> FrameQueue;
-        CancellationTokenSource TokenSource;
-        CancellationToken CollectFramesToken;
+        private CancellationTokenSource TokenSource;
+        private CancellationToken CollectFramesToken;
         internal event EventHandler<FrameReceivedEventArgs> FrameReceived;
 
         public static readonly string DefaultDriver = "riffa";
@@ -113,7 +113,7 @@ namespace Bonsai.ONIX
                     {
                         oni.Frame frame = ReadFrame();
 
-                        // This should not be needed since we are calling Dispose()
+                        // TODO: This should not be needed since we are calling Dispose()
                         // But somehow it seems to improve performance (coupled with GC.RemovePressure)
                         // More investigation might be needed
                         GC.AddMemoryPressure(frame.DataSize);
@@ -297,7 +297,7 @@ namespace Bonsai.ONIX
         public oni.Hub GetHub(uint deviceIndex) { return ctx.GetHub(deviceIndex); }
         #endregion
 
-        void OnFrameReceived(FrameReceivedEventArgs e)
+        private void OnFrameReceived(FrameReceivedEventArgs e)
         {
             FrameReceived?.Invoke(this, e);
             DisposeFrame(e.Frame);

@@ -6,7 +6,7 @@ namespace Bonsai.ONIX.Design
 {
     public partial class MultiBoardSyncDialog : Form
     {
-        readonly ONIContextConfiguration Configuration;
+        private readonly ONIContextConfiguration Configuration;
         public MultiBoardSyncDialog(Bonsai.ONIX.ONIContextConfiguration configuration)
         {
             InitializeComponent();
@@ -26,14 +26,7 @@ namespace Bonsai.ONIX.Design
             RadioButton pressed = (RadioButton)sender;
             if (pressed.Checked)
             {
-                if (pressed == radioButonStandalone)
-                {
-                    groupChannel.Enabled = false;
-                }
-                else
-                {
-                    groupChannel.Enabled = true;
-                }
+                groupChannel.Enabled = !(pressed == radioButonStandalone);
             }
         }
 

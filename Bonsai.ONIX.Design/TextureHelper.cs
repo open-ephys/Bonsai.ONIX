@@ -5,7 +5,7 @@ using System;
 // Copied, with minimal modifications, from https://github.com/kampff-lab/bonsai.neuroseeker
 namespace Bonsai.ONIX.Design
 {
-    static class TextureHelper
+    internal static class TextureHelper
     {
         public static void UpdateTexture(int texture, PixelInternalFormat internalFormat, Mat image)
         {

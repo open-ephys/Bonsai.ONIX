@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     [Description("Variable load testing device, block version")]
     public class LoadTestingBlockDevice : ONIFrameReader<LoadTestingBlockDataFrame, ushort>
     {
-        enum Register
+        private enum Register
         {
             ENABLE = 0,
             CLK_DIV = 1,  // Heartbeat clock divider ratio. Default results in 10 Hz heartbeat. Values less than CLK_HZ / 10e6 Hz will result in 1kHz.
@@ -90,7 +90,7 @@ namespace Bonsai.ONIX
         }
 
         // Assumes 8-byte timer
-        uint ValidSize()
+        private uint ValidSize()
         {
             var clk_div = ReadRegister((int)Register.CLK_DIV);
             return clk_div - 4 - 10; // -10 is overhead hack

@@ -11,7 +11,7 @@ namespace Bonsai.ONIX
         "the integer input are used to determine the output port state.")]
     public class DigitalIODevice : ONIFrameReaderAndWriter<int, BreakoutDigitalInputDataFrame, ushort>
     {
-        enum Register
+        private enum Register
         {
             ENABLE = 0, // No command
             LEDMODE = 1, // 0 = All off, 1 = Power only, 2 = Power and running, 3 = normal

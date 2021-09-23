@@ -35,7 +35,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        uint registerIndex;
+        private uint registerIndex;
         [Category("Acquisition")]
         [Description("Register index.")]
         public uint RegisterIndex

@@ -35,7 +35,7 @@ namespace Bonsai.ONIX
             //Payload = GetPayload(payload);
         }
 
-        Mat GetDelta(double[] data)
+        private Mat GetDelta(double[] data)
         {
             var output = new Mat(1, NumberOfFrames, Depth.F64, 1);
             using (var header = Mat.CreateMatHeader(data))

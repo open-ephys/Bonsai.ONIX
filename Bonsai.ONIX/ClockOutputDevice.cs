@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
         "register.")]
     public class ClockOutputDevice : ONISink<bool>
     {
-        enum Register
+        private enum Register
         {
             NULLPARAM = 0,
             ENABLE = 1,
@@ -52,7 +52,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        uint BaseClockHz
+        private uint BaseClockHz
         {
             get
             {
@@ -60,7 +60,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        double frequency_hz = 1e6;
+        private double frequency_hz = 1e6;
         [Category("Acquisition")]
         [Description("Output Clock frequency (Hz).")]
         [Range(0, 100e6)]
@@ -82,7 +82,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        double duty = 50.0;
+        private double duty = 50.0;
         [Category("Acquisition")]
         [Description("Duty Cycle (%).")]
         [Range(1, 99)]
@@ -106,7 +106,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        double delay = 0;
+        private double delay = 0;
         [Category("Configuration")]
         [Description("Delay from start of acquisition to start the clock (sec)")]
         [Range(0, int.MaxValue)]

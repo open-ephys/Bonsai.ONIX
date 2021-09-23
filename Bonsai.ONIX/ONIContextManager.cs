@@ -13,15 +13,13 @@ namespace Bonsai.ONIX
     public static class ONIContextManager
     {
         public const string DefaultConfigurationFile = "ONIX.config";
-
-        static readonly Dictionary<string, Tuple<ONIContextTask, RefCountDisposable>> open_contexts
+        private static readonly Dictionary<string, Tuple<ONIContextTask, RefCountDisposable>> open_contexts
             = new Dictionary<string, Tuple<ONIContextTask, RefCountDisposable>>();
 
         // Mirrors open_contexts but can be created by non-opening reservation calls (ReserveOpenContextAsync)
-        static readonly Dictionary<string, EventWaitHandle> contex_wait_handles
+        private static readonly Dictionary<string, EventWaitHandle> contex_wait_handles
             = new Dictionary<string, EventWaitHandle>();
-
-        static readonly object open_ctx_lock = new object();
+        private static readonly object open_ctx_lock = new object();
 
         /// <summary>
         /// Reserve an ONI Context after it has already been opened by the appropriate call to

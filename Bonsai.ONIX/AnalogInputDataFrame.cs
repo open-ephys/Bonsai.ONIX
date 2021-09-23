@@ -58,7 +58,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        Mat GetData(short[,] data)
+        private Mat GetData(short[,] data)
         {
             var output = new Mat(NumberOfChannels, NumberOfSamples, Depth.S16, 1);
             using (var header = Mat.CreateMatHeader(data))
@@ -69,7 +69,7 @@ namespace Bonsai.ONIX
             return output;
         }
 
-        Mat GetData(float[,] data)
+        private Mat GetData(float[,] data)
         {
             var output = new Mat(NumberOfChannels, NumberOfSamples, Depth.F32, 1);
             using (var header = Mat.CreateMatHeader(data))

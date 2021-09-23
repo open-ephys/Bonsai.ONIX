@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
     [DefaultProperty("DeviceAddress")]
     public sealed class ElectricalStimulationDevice : ONISink<bool>
     {
-        enum Register
+        private enum Register
         {
             NULLPARM = 0,  // No command
             BIPHASIC = 1,  // Biphasic pulse (0 = monophasic, 1 = biphasic; NB: currently ignored)

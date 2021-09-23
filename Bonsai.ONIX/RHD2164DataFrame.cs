@@ -74,7 +74,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        Mat GetEphysDataU16(ushort[,] data)
+        private Mat GetEphysDataU16(ushort[,] data)
         {
             var output = new Mat(NumberOfEphysChannels, NumberOfSamples, Depth.U16, 1);
             using (var header = Mat.CreateMatHeader(data))
@@ -85,7 +85,7 @@ namespace Bonsai.ONIX
             return output;
         }
 
-        Mat GetEphysDataS16(short[,] data)
+        private Mat GetEphysDataS16(short[,] data)
         {
             var output = new Mat(NumberOfEphysChannels, NumberOfSamples, Depth.S16, 1);
             using (var header = Mat.CreateMatHeader(data))
@@ -96,7 +96,7 @@ namespace Bonsai.ONIX
             return output;
         }
 
-        Mat GetEphysDataF32(short[,] data)
+        private Mat GetEphysDataF32(short[,] data)
         {
             var output = new Mat(NumberOfEphysChannels, NumberOfSamples, Depth.F32, 1);
             using (var header = Mat.CreateMatHeader(data))
@@ -107,7 +107,7 @@ namespace Bonsai.ONIX
             return output;
         }
 
-        Mat GetAuxiliaryData(ushort[,] data)
+        private Mat GetAuxiliaryData(ushort[,] data)
         {
             using (var header = Mat.CreateMatHeader(data))
             {

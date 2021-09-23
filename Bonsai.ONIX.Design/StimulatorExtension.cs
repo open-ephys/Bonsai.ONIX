@@ -3,7 +3,7 @@ using ZedGraph;
 
 namespace Bonsai.ONIX.Design
 {
-    static class StimulatorExtension
+    internal static class StimulatorExtension
     {
         #region ElectricalStimulationDevice
 

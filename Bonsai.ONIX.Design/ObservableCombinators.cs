@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX.Design
 {
-    static class ObservableCombinators
+    internal static class ObservableCombinators
     {
         public static IObservable<TResult> CombineEither<TSource1, TSource2, TResult>(
             this IObservable<TSource1> first,

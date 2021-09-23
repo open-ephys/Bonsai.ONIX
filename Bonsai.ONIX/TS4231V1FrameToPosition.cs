@@ -66,7 +66,7 @@ namespace Bonsai.ONIX
         }
 
         // Template pattern
-        static readonly bool[] Template = {
+        private static readonly bool[] Template = {
         //  bad    skip   axis   sweep
             false, false, false, false,
             false, true,  false, false,
@@ -86,19 +86,19 @@ namespace Bonsai.ONIX
         // TODO: Figure out the correct value...
         //const double max_packet_duration = 0.03;
 
-        readonly Queue<double> pulseTimes;
-        readonly Queue<double> pulseWidths;
-        readonly Queue<bool> pulseParse;
-        readonly Queue<ulong> pulseDataClock;
-        readonly Queue<ulong> pulseFrameClock;
+        private readonly Queue<double> pulseTimes;
+        private readonly Queue<double> pulseWidths;
+        private readonly Queue<bool> pulseParse;
+        private readonly Queue<ulong> pulseDataClock;
+        private readonly Queue<ulong> pulseFrameClock;
 
         // Origins in Mat format
-        Mat p, q;
+        private Mat p, q;
 
         // Calculated position
-        Mat position = new Mat(3, 1, Depth.F64, 1);
-        ulong positionDataClock;
-        ulong positionFrameClock;
+        private Mat position = new Mat(3, 1, Depth.F64, 1);
+        private ulong positionDataClock;
+        private ulong positionFrameClock;
 
         // Base station IR sweep frequency in Hz
         private const double SweepFrequency = 60;
@@ -142,7 +142,7 @@ namespace Bonsai.ONIX
             return Expression.Call(instance, method, new[] { source });
         }
 
-        bool Decode(TS4231V1DataFrame source)
+        private bool Decode(TS4231V1DataFrame source)
         {
             // Push pulse time into buffer and pop oldest
             pulseTimes.Dequeue();

@@ -106,7 +106,7 @@ namespace Bonsai.ONIX.Design
             zedGraphWaveform.Refresh();
         }
 
-        void SetupDisplay()
+        private void SetupDisplay()
         {
 
             zedGraphWaveform.MasterPane.PaneList.Clear();
@@ -122,7 +122,7 @@ namespace Bonsai.ONIX.Design
             }
         }
 
-        void FitWaveform()
+        private void FitWaveform()
         {
             // Refigure the axis ranges for the GraphPanes
             zedGraphWaveform.AxisChange();

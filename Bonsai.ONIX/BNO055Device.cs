@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
     [Description("BNO055 inertial measurement unit.")]
     public class BNO055Device : ONIFrameReader<BNO055DataFrame, ushort>
     {
-        enum Register
+        private enum Register
         {
             ENABLE = 0,
             MESSAGE,

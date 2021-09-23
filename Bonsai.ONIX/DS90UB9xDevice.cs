@@ -21,11 +21,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister((uint)DS90UB9xConfiguration.Register.ENABLE) > 0;
+                return ReadRegister((uint)DS90UB9xConfiguration.Register.Enable) > 0;
             }
             set
             {
-                WriteRegister((uint)DS90UB9xConfiguration.Register.ENABLE, value ? (uint)1 : 0);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.Enable, value ? (uint)1 : 0);
             }
         }
 
@@ -35,11 +35,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister((uint)DS90UB9xConfiguration.Register.READSZ);
+                return ReadRegister((uint)DS90UB9xConfiguration.Register.ReadSize);
             }
             set
             {
-                WriteRegister((uint)DS90UB9xConfiguration.Register.READSZ, value);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.ReadSize, value);
             }
         }
 
@@ -49,11 +49,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return (DS90UB9xConfiguration.TriggerMode)ReadRegister((uint)DS90UB9xConfiguration.Register.TRIGGER);
+                return (DS90UB9xConfiguration.TriggerMode)ReadRegister((uint)DS90UB9xConfiguration.Register.Trigger);
             }
             set
             {
-                WriteRegister((uint)DS90UB9xConfiguration.Register.TRIGGER, (uint)value);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.Trigger, (uint)value);
             }
         }
 
@@ -63,11 +63,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister((uint)DS90UB9xConfiguration.Register.TRIGGER_OFFSET);
+                return ReadRegister((uint)DS90UB9xConfiguration.Register.TriggerOffset);
             }
             set
             {
-                WriteRegister((uint)DS90UB9xConfiguration.Register.TRIGGER_OFFSET, value);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.TriggerOffset, value);
             }
         }
 
@@ -77,11 +77,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return (DS90UB9xConfiguration.PixelGate)ReadRegister((uint)DS90UB9xConfiguration.Register.PIXEL_GATE);
+                return (DS90UB9xConfiguration.PixelGate)ReadRegister((uint)DS90UB9xConfiguration.Register.PixelGate);
             }
             set
             {
-                WriteRegister((uint)DS90UB9xConfiguration.Register.PIXEL_GATE, (uint)value);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.PixelGate, (uint)value);
             }
         }
 
@@ -91,11 +91,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister((uint)DS90UB9xConfiguration.Register.SYNC_BITS) > 0;
+                return ReadRegister((uint)DS90UB9xConfiguration.Register.IncludeSyncBits) > 0;
             }
             set
             {
-                WriteRegister((uint)DS90UB9xConfiguration.Register.SYNC_BITS, value ? (uint)1 : 0);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.IncludeSyncBits, value ? (uint)1 : 0);
             }
         }
 
@@ -105,11 +105,11 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return (DS90UB9xConfiguration.MarkMode)ReadRegister((uint)DS90UB9xConfiguration.Register.MARK_MODE);
+                return (DS90UB9xConfiguration.MarkMode)ReadRegister((uint)DS90UB9xConfiguration.Register.MarkMode);
             }
             set
             {
-                WriteRegister((uint)DS90UB9xConfiguration.Register.MARK_MODE, (uint)value);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.MarkMode, (uint)value);
             }
         }
 
@@ -119,7 +119,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                uint state = ReadRegister((uint)DS90UB9xConfiguration.Register.LINK_STATUS);
+                uint state = ReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus);
                 return (state & 0x01) != 0;
             }
             private set { }
@@ -127,14 +127,14 @@ namespace Bonsai.ONIX
 
         [Category("Configuration")]
         [Description("Set the deserializer mode.")]
-        public DS90UB9xConfiguration.DeserializerModes DeserializerMode
+        public DS90UB9xConfiguration.Mode DeserializerMode
         {
             get
             {
-                if (!DeviceAddress.Valid) return DS90UB9xConfiguration.DeserializerModes.RAW12BITHF;
+                if (!DeviceAddress.Valid) return DS90UB9xConfiguration.Mode.Raw12BitHighFrequency;
                 using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
-                    return (DS90UB9xConfiguration.DeserializerModes)(i2c.ReadByte((uint)DS90UB9xConfiguration.DeserializerRegister.PORT_MODE) & 0x3);
+                    return (DS90UB9xConfiguration.Mode)(i2c.ReadByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode) & 0x3);
                 }
             }
             set
@@ -143,7 +143,7 @@ namespace Bonsai.ONIX
                 using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = 0x4 + (uint)value; // 0x4 maintains coax mode
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.DeserializerRegister.PORT_MODE, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode, val);
                 }
             }
         }

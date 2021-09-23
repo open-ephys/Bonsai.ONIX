@@ -9,9 +9,9 @@ namespace Bonsai.ONIX
     [Description("Controls a digital communication link to a remote headstage on the Open Ephys FMC Host.")]
     public class HeadstagePortControlDevice : ONIFrameReader<HeadstagePortControlFrame, ushort>
     {
-        const double VLIM = 8.0;
+        private const double VoltageLimit = 8.0;
 
-        enum Register
+        private enum Register
         {
             ENABLE = 0,
             GPOSTATE = 1,
@@ -78,12 +78,12 @@ namespace Bonsai.ONIX
             }
             set
             {
-                var link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VLIM ? VLIM : value;
+                var link_v = EnableExtendedVoltageRange != "BE CAREFUL" & value > VoltageLimit ? VoltageLimit : value;
                 WriteRegister((int)Register.LINKVOLTAGE, (uint)(link_v * 10));
             }
         }
 
-        uint gpoRegister;
+        private uint gpoRegister;
         [Category("Acquisition")]
         [Description("GPO1 state. Used to trigger certain functionality on the headstage. Check headstage documentation.")]
         public bool? GPO1

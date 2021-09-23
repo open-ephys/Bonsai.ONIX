@@ -12,7 +12,7 @@ namespace Bonsai.ONIX
         "are accessed via the ONIX breakout board.")]
     public class AnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, short>
     {
-        enum Register
+        private enum Register
         {
             ENABLE = 0,
             CHDIR = 1,
@@ -461,8 +461,7 @@ namespace Bonsai.ONIX
             FiveVolts,
         }
 
-
-        void SetVoltageRange(Register channel, VoltageRange range)
+        private void SetVoltageRange(Register channel, VoltageRange range)
         {
             WriteRegister((uint)channel, (uint)range);
 
@@ -480,7 +479,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        VoltageRange GetVoltageRange(Register channel)
+        private VoltageRange GetVoltageRange(Register channel)
         {
             var range = (VoltageRange)ReadRegister((uint)channel);
 
@@ -500,15 +499,15 @@ namespace Bonsai.ONIX
             return range;
         }
 
-        uint io_reg = 0;
+        private uint io_reg = 0;
 
-        void SetIO(int channel, InputOutput io)
+        private void SetIO(int channel, InputOutput io)
         {
             io_reg = (io_reg & ~((uint)1 << channel)) | ((uint)(io) << channel);
             WriteRegister((uint)Register.CHDIR, io_reg);
         }
 
-        InputOutput GetIO(int channel)
+        private InputOutput GetIO(int channel)
         {
             var io_reg = ReadRegister((int)Register.CHDIR);
             return (InputOutput)((io_reg >> channel) & 1);
