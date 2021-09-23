@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("Memory usage monitoring device")]
+    [ONIXDeviceID(ONIXDevices.ID.MemoryUsage)]
     public class MemoryUsageDevice : ONIFrameReader<MemoryUsageDataFrame, ushort>
     {
         enum Register
@@ -16,7 +17,7 @@ namespace Bonsai.ONIX
             TOTAL_MEM = 3, //Total memory in 32bit words
         }
 
-        public MemoryUsageDevice() : base(ONIXDevices.ID.MemoryUsage) { }
+        public MemoryUsageDevice() { }
 
         protected override IObservable<MemoryUsageDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
@@ -24,7 +25,6 @@ namespace Bonsai.ONIX
             return source.Select(f => { return new MemoryUsageDataFrame(f, total_words); });
         }
 
-        [ONIXDeviceID(ONIXDevices.ID.MemoryUsage)]
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]

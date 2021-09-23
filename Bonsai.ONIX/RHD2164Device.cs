@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("Acquires data from a single RHD2164 bioamplifier chip. Ephys data is acquired at 30 kHz/channel.")]
+    [ONIXDeviceID(ONIXDevices.ID.RHD2164)]
     public class RHD2164Device : ONIFrameReader<RHD2164DataFrame, ushort>
     {
         // see http://intantech.com/files/Intan_RHD2164_datasheet.pdf
@@ -39,7 +40,7 @@ namespace Bonsai.ONIX
             ENABLE = 0x00008000
         }
 
-        public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
+        public RHD2164Device() { }
 
         protected override IObservable<RHD2164DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
@@ -51,7 +52,6 @@ namespace Bonsai.ONIX
                 .Select(block => { return new RHD2164DataFrame(block, ephysDataFormat, auxDataFormat); });
         }
 
-        [ONIXDeviceID(ONIXDevices.ID.RHD2164)]
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]

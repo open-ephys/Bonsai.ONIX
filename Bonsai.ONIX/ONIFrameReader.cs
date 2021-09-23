@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
     [WorkflowElementCategory(ElementCategory.Source)]
     public abstract class ONIFrameReader<TResult, TData> : ONIDevice where TData : unmanaged
     {
-        public ONIFrameReader(ONIXDevices.ID deviceId) : base(deviceId) { }
+        public ONIFrameReader() : base() { }
 
         public IObservable<TResult> Generate()
         {

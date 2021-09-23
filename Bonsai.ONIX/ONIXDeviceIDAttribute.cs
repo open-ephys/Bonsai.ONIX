@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bonsai.ONIX
 {
-    [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     class ONIXDeviceIDAttribute : System.Attribute
     {
         public ONIXDevices.ID deviceID;

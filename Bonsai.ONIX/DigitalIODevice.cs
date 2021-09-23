@@ -9,6 +9,7 @@ namespace Bonsai.ONIX
     [Description("Acquires digital data from, and sends digital data to, an ONIX " +
         "Breakout Board and controls the indication LED state. The least significant bits of " +
         "the integer input are used to determine the output port state.")]
+    [ONIXDeviceID(ONIXDevices.ID.BreakoutDigitalIO)]
     public class DigitalIODevice : ONIFrameReaderAndWriter<int, BreakoutDigitalInputDataFrame, ushort>
     {
         enum Register
@@ -18,14 +19,13 @@ namespace Bonsai.ONIX
             LEDLVL = 2, // 0-255 overall LED brightness value.
         }
 
-        public DigitalIODevice() : base(ONIXDevices.ID.BreakoutDigitalIO) { }
+        public DigitalIODevice()  { }
 
         protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
         }
 
-        [ONIXDeviceID(ONIXDevices.ID.BreakoutDigitalIO)]
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         protected override void Write(ONIContextTask ctx, int input)

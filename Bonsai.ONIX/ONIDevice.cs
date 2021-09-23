@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing.Design;
+using System.Linq;
 
 namespace Bonsai.ONIX
 {
@@ -71,9 +72,10 @@ namespace Bonsai.ONIX
             }
         }
 
-        public ONIDevice(ONIXDevices.ID deviceID)
+        public ONIDevice()
         {
-            ID = deviceID;
+            var devID = this.GetType().GetCustomAttributes(typeof(ONIXDeviceIDAttribute), true).FirstOrDefault() as ONIXDeviceIDAttribute;
+            ID = devID == null ? ONIXDevices.ID.Null : devID.deviceID;
             deviceAddress = new ONIDeviceAddress();
         }
 

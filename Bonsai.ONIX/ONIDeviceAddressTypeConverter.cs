@@ -72,7 +72,7 @@ namespace Bonsai.ONIX
                                      .ToList();
 
                     // This device
-                    var deviceattribute = ((ONIXDeviceIDAttribute)context.PropertyDescriptor.Attributes[typeof(ONIXDeviceIDAttribute)]);
+                    var deviceattribute = context.PropertyDescriptor.ComponentType.GetCustomAttributes(typeof(ONIXDeviceIDAttribute), true).FirstOrDefault() as ONIXDeviceIDAttribute;
                     ONIXDevices.ID deviceID = deviceattribute == null ? ONIXDevices.ID.Null : deviceattribute.deviceID;
 
 

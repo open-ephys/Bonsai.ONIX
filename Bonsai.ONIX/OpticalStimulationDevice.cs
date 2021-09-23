@@ -7,6 +7,7 @@ namespace Bonsai.ONIX
     [Description("Controls a dual channel optical (LED or Laser Diode) stimulator. A boolean input can be" +
         "used to trigger stimulation: True = Stimulation triggered, False = Stimulation untriggered.")]
     [DefaultProperty("DeviceAddress")]
+    [ONIXDeviceID(ONIXDevices.ID.OpticalStimulator)]
     public sealed class OpticalStimulationDevice : ONISink<bool>
     {
         enum Register
@@ -29,7 +30,7 @@ namespace Bonsai.ONIX
         }
 
         // Setup context etc
-        public OpticalStimulationDevice() : base(ONIXDevices.ID.OpticalStimulator) { }
+        public OpticalStimulationDevice() { }
 
         
         // Fit from Fig. 10 of CAT4016 datasheet
@@ -303,7 +304,6 @@ namespace Bonsai.ONIX
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [Editor("Bonsai.ONIX.Design.StimulatorEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        [ONIXDeviceID(ONIXDevices.ID.OpticalStimulator)]
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
         protected override void OnNext(ONIContextTask ctx, bool triggered)
         {

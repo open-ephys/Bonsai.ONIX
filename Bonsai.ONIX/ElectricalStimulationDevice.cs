@@ -7,6 +7,7 @@ namespace Bonsai.ONIX
     [Description("Controls a single microstimulator circuit. A boolean input can be" +
         "used to trigger stimulation: True = Stimulation triggered, False = Stimulation untriggered.")]
     [DefaultProperty("DeviceAddress")]
+    [ONIXDeviceID(ONIXDevices.ID.ElectricalStimulator)]
     public sealed class ElectricalStimulationDevice : ONISink<bool>
     {
         enum Register
@@ -32,9 +33,9 @@ namespace Bonsai.ONIX
         }
 
         // Setup context etc
-        public ElectricalStimulationDevice() : base(ONIXDevices.ID.ElectricalStimulator) { }
+        public ElectricalStimulationDevice() { }
 
-        [ONIXDeviceID(ONIXDevices.ID.ElectricalStimulator)]
+        
         [Editor("Bonsai.ONIX.Design.StimulatorEditor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 

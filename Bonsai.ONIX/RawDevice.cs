@@ -5,9 +5,10 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.Null)]
     public class RawDevice : ONIFrameReader<RawDataFrame, ushort>
     {
-        public RawDevice() : base(ONIXDevices.ID.Null) { }
+        public RawDevice() { }
 
         protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
@@ -16,7 +17,6 @@ namespace Bonsai.ONIX
 
         private ONIDeviceAddress deviceAddress = new ONIDeviceAddress();
 
-        [ONIXDeviceID(ONIXDevices.ID.Null)]
         public override ONIDeviceAddress DeviceAddress
         {
             get

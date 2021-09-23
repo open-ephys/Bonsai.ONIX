@@ -6,11 +6,12 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
     public class UCLAMiniscopeV3Device : ONIFrameReader<UCLAMiniscopeV3DataFrame, ushort>
     {
 
         [Description("Acquire data from UCLA Miniscope V3.")]
-        public UCLAMiniscopeV3Device() : base(ONIXDevices.ID.DS90UB9X) { }
+        public UCLAMiniscopeV3Device()  { }
 
         protected override IObservable<UCLAMiniscopeV3DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
@@ -21,7 +22,6 @@ namespace Bonsai.ONIX
         }
 
         private ONIDeviceAddress deviceAddress;
-        [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
         public override ONIDeviceAddress DeviceAddress
         {
             get { return deviceAddress; }

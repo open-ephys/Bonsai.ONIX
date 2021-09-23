@@ -9,9 +9,10 @@ namespace Bonsai.ONIX
 {
     [Description("Acquires a stream of \"ultra-frames\" from a single Neuropixels v1.0 probe.")]
     [DefaultProperty("Configuration")]
+    [ONIXDeviceID(ONIXDevices.ID.NeuropixelsV1)]
     public class NeuropixelsV1Device : ONIFrameReader<NeuropixelsV1DataFrame, ushort>
     {
-        public NeuropixelsV1Device() : base(ONIXDevices.ID.NeuropixelsV1) { }
+        public NeuropixelsV1Device() { }
 
         protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
@@ -63,7 +64,6 @@ namespace Bonsai.ONIX
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        [ONIXDeviceID(ONIXDevices.ID.NeuropixelsV1)]
         public override ONIDeviceAddress DeviceAddress
         {
             get { return Configuration.DeviceAddress; }

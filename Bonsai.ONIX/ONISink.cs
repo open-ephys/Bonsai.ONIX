@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
     [WorkflowElementCategory(ElementCategory.Sink)]
     public abstract class ONISink<TSource> : ONIDevice
     {
-        public ONISink(ONIXDevices.ID deviceID) : base(deviceID) { }
+        public ONISink() : base() { }
 
         public IObservable<TSource> Process(IObservable<TSource> source)
         {

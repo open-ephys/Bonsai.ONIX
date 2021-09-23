@@ -6,6 +6,7 @@ namespace Bonsai.ONIX
     [Description("Controls the high performance output clock that is synchronized to the system " +
         "clock on the Open Ephys FMC Host. A boolean input can be used to toggle the Enable " +
         "register.")]
+    [ONIXDeviceID(ONIXDevices.ID.FMCClockInput)]
     public class ClockOutputDevice : ONISink<bool>
     {
         enum Register
@@ -36,9 +37,9 @@ namespace Bonsai.ONIX
             return 100.0 * h / (h + l);
         }
 
-        public ClockOutputDevice() : base(ONIXDevices.ID.FMCClockOutput) { }
+        public ClockOutputDevice() { }
 
-        [ONIXDeviceID(ONIXDevices.ID.FMCClockInput)]
+        
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Acquisition")]

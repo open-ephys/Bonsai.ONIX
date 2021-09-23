@@ -8,6 +8,7 @@ namespace Bonsai.ONIX
     using HeartbeatDataFrame = U16DataFrame;
 
     [Description("Heartbeat device")]
+    [ONIXDeviceID(ONIXDevices.ID.Heartbeat)]
     public class HeartbeatDevice : ONIFrameReader<HeartbeatDataFrame, ushort>
     {
         enum Register
@@ -17,9 +18,8 @@ namespace Bonsai.ONIX
             CLK_HZ = 2, // The frequency parameter, CLK_HZ, used in the calculation of CLK_DIV
         }
 
-        public HeartbeatDevice() : base(ONIXDevices.ID.Heartbeat) { }
+        public HeartbeatDevice() { }
 
-        [ONIXDeviceID(ONIXDevices.ID.Heartbeat)]
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         protected override IObservable<HeartbeatDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)

@@ -10,6 +10,7 @@ namespace Bonsai.ONIX
         "Optionally, sends data to the 16-bit analog outputs on the Open Ephys Host bpard, if those " +
         "channels are selected to be outputs. The output range is fixed to +/-10V. Usually these signals" +
         "are accessed via the ONIX breakout board.")]
+    [ONIXDeviceID(ONIXDevices.ID.BreakoutAnalogIO)]
     public class AnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, short>
     {
         enum Register
@@ -32,7 +33,7 @@ namespace Bonsai.ONIX
 
         private readonly float[] scale;
 
-        public AnalogIODevice() : base(ONIXDevices.ID.BreakoutAnalogIO)
+        public AnalogIODevice() 
         {
             scale = Enumerable.Repeat((float)0.000305, AnalogInputDataFrame.NumberOfChannels).ToArray();
         }
@@ -44,7 +45,6 @@ namespace Bonsai.ONIX
                 .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, s, DataType); });
         }
 
-        [ONIXDeviceID(ONIXDevices.ID.BreakoutAnalogIO)]
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         // TODO: The order of data in the matrix is reverse of the channel index.

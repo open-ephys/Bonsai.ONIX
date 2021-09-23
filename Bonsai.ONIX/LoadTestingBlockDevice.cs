@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("Variable load testing device, block version")]
+    [ONIXDeviceID(ONIXDevices.ID.LoadTest)]
     public class LoadTestingBlockDevice : ONIFrameReader<LoadTestingBlockDataFrame, ushort>
     {
         enum Register
@@ -24,7 +25,7 @@ namespace Bonsai.ONIX
 
 
         }
-        public LoadTestingBlockDevice() : base(ONIXDevices.ID.LoadTest) { }
+        public LoadTestingBlockDevice() { }
 
         protected override IObservable<LoadTestingBlockDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
@@ -33,7 +34,6 @@ namespace Bonsai.ONIX
                 .Select(block => { return new LoadTestingBlockDataFrame(block, (int)FrameWords); });
         }
 
-        [ONIXDeviceID(ONIXDevices.ID.LoadTest)]
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]

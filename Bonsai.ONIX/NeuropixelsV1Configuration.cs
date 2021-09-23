@@ -35,7 +35,6 @@ namespace Bonsai.ONIX
 
         private ONIDeviceAddress dev_address = new ONIDeviceAddress();
         
-        [ONIXDeviceID(ONIXDevices.ID.NeuropixelsV1)]
         public ONIDeviceAddress DeviceAddress
         {
             get
