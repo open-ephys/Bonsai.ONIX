@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace Bonsai.ONIX
 {
-    public class UCLAMiniscopeV3DataFrame : U16DataSplitFrame
+    public class MiniscopeV3DataFrame : U16DataSplitFrame
     {
         public const int NumRows = 480;
         public const int NumCols = 752;
 
-        public UCLAMiniscopeV3DataFrame(IList<ONIManagedFrame<ushort>> frameBlock)
+        public MiniscopeV3DataFrame(IList<ONIManagedFrame<ushort>> frameBlock)
             : base(frameBlock)
         {
 
@@ -20,9 +20,10 @@ namespace Bonsai.ONIX
                 Array.Copy(frameBlock[i].Sample, 4, data, NumCols * i, NumCols);
             }
 
-            var mat = Mat.FromArray(data, 480, 752, Depth.U16, 1).GetImage();
-            CV.ScaleAdd(mat, new Scalar(64), Mat.Zeros(NumRows, NumCols, Depth.U16, 1), mat);
-            Image = mat;
+            var image = Mat.FromArray(data, NumRows, NumCols, Depth.U16, 1).GetImage();
+            CV.ScaleAdd(image, new Scalar(64), Mat.Zeros(NumRows, NumCols, Depth.U16, 1), image); // Move 10 LSBs to positions 15 downto 6
+
+            Image = image;
         }
 
         public IplImage Image { get; private set; }

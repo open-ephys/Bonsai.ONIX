@@ -12,13 +12,13 @@
               <p1:Driver>riffa</p1:Driver>
               <p1:Index>0</p1:Index>
             </p1:Slot>
-            <p1:ReadSize>721944</p1:ReadSize>
+            <p1:ReadSize>2048</p1:ReadSize>
             <p1:WriteSize>2048</p1:WriteSize>
           </p1:ContextConfiguration>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:MiniscopeV3Device">
+        <Combinator xsi:type="p1:MiniscopeV4Device">
           <p1:DeviceAddress>
             <p1:HardwareSlot>
               <p1:Driver>riffa</p1:Driver>
@@ -36,12 +36,11 @@
           <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:EnableStream>true</p1:EnableStream>
           <p1:LEDBrightness>20</p1:LEDBrightness>
-          <p1:Gain>8</p1:Gain>
           <p1:FrameRate>FPS30Hz</p1:FrameRate>
+          <p1:Gain>Medium</p1:Gain>
+          <p1:LensVoltage>24.4</p1:LensVoltage>
+          <p1:InterleaveLED>false</p1:InterleaveLED>
         </Combinator>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>DataClock</Selector>
       </Expression>
       <Expression xsi:type="MemberSelector">
         <Selector>FrameClock</Selector>
@@ -49,11 +48,41 @@
       <Expression xsi:type="MemberSelector">
         <Selector>Image</Selector>
       </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:MiniscopeV4BNO055Device">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>8</p1:Address>
+          </p1:DeviceAddress>
+          <p1:Hub>
+            <p1:Address>0</p1:Address>
+            <p1:HardwareID>1</p1:HardwareID>
+            <p1:FirmwareVersion>2</p1:FirmwareVersion>
+            <p1:ClockHz>250000000</p1:ClockHz>
+            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
+          </p1:Hub>
+          <p1:FrameClockHz>250000000</p1:FrameClockHz>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Temperature</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Euler</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Quaternion</Selector>
+      </Expression>
     </Nodes>
     <Edges>
       <Edge From="1" To="2" Label="Source1" />
       <Edge From="1" To="3" Label="Source1" />
-      <Edge From="1" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="4" To="6" Label="Source1" />
+      <Edge From="4" To="7" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
