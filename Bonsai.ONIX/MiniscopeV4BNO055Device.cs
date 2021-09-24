@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
@@ -6,11 +7,11 @@ namespace Bonsai.ONIX
     [Source]
     [Combinator(MethodName = "Generate")]
     [WorkflowElementCategory(ElementCategory.Source)]
+    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+    [Description("Acquire image data from UCLA Miniscope V4's integrated BNO055 inertial measurement unit.")]
     public class MiniscopeV4BNO055Device : ONIDevice
     {
         private const int BNO055Address = 0x28;
-
-        public MiniscopeV4BNO055Device() : base(ONIXDevices.ID.DS90UB9X) { }
 
         private ONIDeviceAddress deviceAddress;
         public override ONIDeviceAddress DeviceAddress

@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.FMCLinkController)]
     [Description("Controls a digital communication link to a remote headstage on the Open Ephys FMC Host.")]
     public class HeadstagePortControlDevice : ONIFrameReader<HeadstagePortControlFrame, ushort>
     {
@@ -20,12 +21,12 @@ namespace Bonsai.ONIX
             SAVELINKVOLTAGE = 4,
         }
 
-        public HeadstagePortControlDevice() : base(ONIXDevices.ID.FMCLinkController) { }
-
         protected override IObservable<HeadstagePortControlFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new HeadstagePortControlFrame(f); });
         }
+
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]

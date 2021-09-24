@@ -6,8 +6,14 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+    [Description("Acquire data from UCLA Miniscope V3.")]
     public class MiniscopeV3Device : ONIFrameReader<MiniscopeV3DataFrame, ushort>
     {
+
+        private const int LEDDriverAddress = 0x4C;
+        private const int CameraSensorAddress = 0x5C;
+
         public enum FPS
         {
             FPS5Hz,
@@ -18,9 +24,6 @@ namespace Bonsai.ONIX
             FPS60Hz
         }
 
-        [Description("Acquire image data from UCLA Miniscope V3.")]
-        public MiniscopeV3Device() : base(ONIXDevices.ID.DS90UB9X) { }
-
         protected override IObservable<MiniscopeV3DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source
@@ -28,9 +31,6 @@ namespace Bonsai.ONIX
                 .Buffer(MiniscopeV3DataFrame.NumRows)
                 .Select(block => { return new MiniscopeV3DataFrame(block); });
         }
-
-        private const int LEDDriverAddress = 0x4C;
-        private const int CameraSensorAddress = 0x5C;
 
         private ONIDeviceAddress deviceAddress;
         public override ONIDeviceAddress DeviceAddress

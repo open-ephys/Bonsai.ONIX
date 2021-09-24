@@ -28,10 +28,6 @@ namespace Bonsai.ONIX.Design
 
                         // Bind to properties pane
                         propertyGridStimulator.SelectedObject = device;
-
-                        // Copy Device metadata
-                        device.FrameClockHz = c.Context.AcquisitionClockHz;
-                        device.Hub = c.Context.GetHub((uint)device.DeviceAddress.Address);
                     }
                     else
                     {

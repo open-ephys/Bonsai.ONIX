@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.TS4231V1Array)]
     [Description("Triad TS4231 optical to digital converter array for V1 SteamVR base stations.")]
     public class TS4231V1Device : ONIFrameReader<TS4231V1DataFrame, ushort>
     {
@@ -14,12 +15,12 @@ namespace Bonsai.ONIX
             ENVMARGIN,
         }
 
-        public TS4231V1Device() : base(ONIXDevices.ID.TS4231V1Array) { }
-
         protected override IObservable<TS4231V1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new TS4231V1DataFrame(f); });
         }
+
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]

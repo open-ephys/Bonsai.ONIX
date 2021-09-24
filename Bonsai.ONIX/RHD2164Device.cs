@@ -5,13 +5,15 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.RHD2164)]
     [Description("Acquires data from a single RHD2164 bioamplifier chip. Ephys data is acquired at 30 kHz/channel.")]
     public class RHD2164Device : ONIFrameReader<RHD2164DataFrame, ushort>
     {
-        // see http://intantech.com/files/Intan_RHD2164_datasheet.pdf
+
         private enum Register
         {
             // Unmnanaged
+            // See http://intantech.com/files/Intan_RHD2164_datasheet.pdf
             ADCCONF = 0,
             ADCBUFF,
             MUXBIAS,
@@ -39,8 +41,6 @@ namespace Bonsai.ONIX
             ENABLE = 0x00008000
         }
 
-        public RHD2164Device() : base(ONIXDevices.ID.RHD2164) { }
-
         protected override IObservable<RHD2164DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             var ephysDataFormat = EphysDataFormat;
@@ -50,6 +50,8 @@ namespace Bonsai.ONIX
                 .Buffer(BlockSize)
                 .Select(block => { return new RHD2164DataFrame(block, ephysDataFormat, auxDataFormat); });
         }
+
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
@@ -72,7 +74,7 @@ namespace Bonsai.ONIX
 
         private RHD2164Configuration.EphysDataFormat ephysDataFormat = default;
         [Category("Configuration")]
-        [Description("Ephys data format. See http://intantech.com/files/Intan_RHD2164_datasheet.pdf.")]
+        [Description("Ephys data format.")]
         public RHD2164Configuration.EphysDataFormat EphysDataFormat
         {
             get
@@ -96,25 +98,18 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
-        [Description("Auxiliary data format. See http://intantech.com/files/Intan_RHD2164_datasheet.pdf.")]
+        [Description("Auxiliary channel data format")]
         public RHD2164Configuration.AuxDataFormat AuxDataFormat { get; set; }
 
         [Category("Configuration")]
-        [Description("High-pass digital filter. See http://intantech.com/files/Intan_RHD2164_datasheet.pdf.")]
+        [Description("High-pass digital filter (post-ADC offset removal).")]
         public RHD2164Configuration.DSPCutoff DSPCutoff
         {
             get
             {
                 var reg = GetRawRegister((uint)Register.FORMAT);
-
-                if (((reg >> 4) & 0x1) == 0)
-                {
-                    return RHD2164Configuration.DSPCutoff.Off;
-                }
-                else
-                {
-                    return (RHD2164Configuration.DSPCutoff)(reg & 0xF);
-                }
+                return ((reg >> 4) & 0x1) == 0 ?
+                    RHD2164Configuration.DSPCutoff.Off : (RHD2164Configuration.DSPCutoff)(reg & 0xF);
             }
             set
             {
@@ -137,7 +132,7 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
-        [Description("High-pass analog (pre-ADC) cutoff frequency. See http://intantech.com/files/Intan_RHD2164_datasheet.pdf.")]
+        [Description("High-pass analog (pre-ADC) cutoff frequency.")]
         public RHD2164Configuration.AnalogLowCutoff AnalogLowCutoff
         {
             get
@@ -165,7 +160,7 @@ namespace Bonsai.ONIX
         }
 
         [Category("Configuration")]
-        [Description("Low-pass analog (pre-ADC) cutoff frequency. See http://intantech.com/files/Intan_RHD2164_datasheet.pdf.")]
+        [Description("Low-pass analog (pre-ADC) cutoff frequency.")]
         public RHD2164Configuration.AnalogHighCutoff AnalogHighCutoff
         {
             get

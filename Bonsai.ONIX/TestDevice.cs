@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("ONI Test device.")]
+    [ONIXDeviceID(ONIXDevices.ID.Test)]
     public class TestDevice : ONIFrameReader<TestDataFrame, ushort>
     {
         private enum Register
@@ -14,12 +15,14 @@ namespace Bonsai.ONIX
             MESSAGE,
         }
 
-        public TestDevice() : base(ONIXDevices.ID.Test) { }
+        public TestDevice() { }
 
         protected override IObservable<TestDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new TestDataFrame(f); });
         }
+
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]

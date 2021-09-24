@@ -6,6 +6,8 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+    [Description("Acquire image data from UCLA Miniscope V4.")]
     public class MiniscopeV4Device : ONIFrameReader<MiniscopeV4DataFrame, ushort>
     {
         private const int ATMegaAddress = 0x10;
@@ -29,9 +31,6 @@ namespace Bonsai.ONIX
             Medium = 0x00E4,
             High = 0x0024,
         }
-
-        [Description("Acquire image data from UCLA Miniscope V4.")]
-        public MiniscopeV4Device() : base(ONIXDevices.ID.DS90UB9X) { }
 
         protected override IObservable<MiniscopeV4DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
@@ -146,8 +145,6 @@ namespace Bonsai.ONIX
                 // Turn on LED and Setup Python480
                 using (var i2c = new I2CConfiguration(DeviceAddress, ATMegaAddress))
                 {
-                    //i2c.WriteByte(1, 0x08); // Turn on LED
-
                     WriteCameraRegister(i2c, 16, 3); // Turn on PLL
                     WriteCameraRegister(i2c, 32, 0x7007); // Turn on clock managment
                     WriteCameraRegister(i2c, 199, 666); // Defines granularity (unit = 1/PLL clock) of exposure and reset_length
@@ -265,20 +262,21 @@ namespace Bonsai.ONIX
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
         [Description("Liquid lens voltage (Volts RMS).")]
         [Category("Acquisition")]
-        public double LensVoltage
+        public double LiquidLensVoltage
         {
             set
             {
                 using (var i2c = new I2CConfiguration(DeviceAddress, MAX14574Address))
                 {
-                    i2c.WriteByte(8, (uint)((value - 24.4) / 44.5));
+                    i2c.WriteByte(0x08, (uint)((value - 24.4) / 0.0445) >> 2);
+                    i2c.WriteByte(0x09, 0x02); // Update output
                 }
             }
             get
             {
                 using (var i2c = new I2CConfiguration(DeviceAddress, MAX14574Address))
                 {
-                    return 44.5 * (i2c.ReadByte(8) ?? 0) + 24.4;
+                    return 0.0445 * (i2c.ReadByte(0x08) << 2 ?? 0) + 24.4;
                 }
             }
         }

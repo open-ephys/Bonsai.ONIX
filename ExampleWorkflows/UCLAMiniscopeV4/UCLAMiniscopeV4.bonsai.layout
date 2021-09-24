@@ -81,8 +81,8 @@
     <VisualizerSettings>
       <TimeSeriesVisualizer>
         <Capacity>640</Capacity>
-        <Min>39</Min>
-        <Max>45</Max>
+        <Min>52</Min>
+        <Max>53.100000000000009</Max>
         <AutoScale>true</AutoScale>
       </TimeSeriesVisualizer>
     </VisualizerSettings>
@@ -103,7 +103,7 @@
       <MatVisualizer>
         <XMin>0</XMin>
         <XMax>100</XMax>
-        <YMin>-200</YMin>
+        <YMin>-100</YMin>
         <YMax>400</YMax>
         <AutoScaleX>true</AutoScaleX>
         <AutoScaleY>true</AutoScaleY>
@@ -132,7 +132,7 @@
       <MatVisualizer>
         <XMin>0</XMin>
         <XMax>100</XMax>
-        <YMin>-0.2</YMin>
+        <YMin>-0.1</YMin>
         <YMax>0.8</YMax>
         <AutoScaleX>true</AutoScaleX>
         <AutoScaleY>true</AutoScaleY>

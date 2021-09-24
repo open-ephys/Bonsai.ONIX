@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.BNO055)]
     [Description("BNO055 inertial measurement unit.")]
     public class BNO055Device : ONIFrameReader<BNO055DataFrame, ushort>
     {
@@ -14,12 +15,12 @@ namespace Bonsai.ONIX
             MESSAGE,
         }
 
-        public BNO055Device() : base(ONIXDevices.ID.BNO055) { }
-
         protected override IObservable<BNO055DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new BNO055DataFrame(f); });
         }
+
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
         [Description("Enable the input data stream.")]
