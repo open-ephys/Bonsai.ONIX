@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.LoadTest)]
     [Description("Variable load testing device, block version")]
     public class LoadTestingBlockDevice : ONIFrameReader<LoadTestingBlockDataFrame, ushort>
     {
@@ -21,10 +22,7 @@ namespace Bonsai.ONIX
             RX32_WORDS = 4  // Number of 32-bit words in a write-frame. All write frame data is ignored except
                             // the first 64-bits, which are looped back into the device to host data frame for   
                             // testing loop latency. This value must be at least 2.
-
-
         }
-        public LoadTestingBlockDevice() : base(ONIXDevices.ID.LoadTest) { }
 
         protected override IObservable<LoadTestingBlockDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
@@ -32,6 +30,8 @@ namespace Bonsai.ONIX
                 .Buffer(BlockSize)
                 .Select(block => { return new LoadTestingBlockDataFrame(block, (int)FrameWords); });
         }
+
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
         [Range(1, 10000)]

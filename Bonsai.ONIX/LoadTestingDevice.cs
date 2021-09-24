@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.LoadTest)]
     [Description("Variable load testing device and latency tester.")]
     public class LoadTestingDevice : ONIFrameReaderAndWriter<ulong, LoadTestingDataFrame, ushort>
     {
@@ -26,12 +27,12 @@ namespace Bonsai.ONIX
                               // testing loop latency. This value must be at least 2.
         }
 
-        public LoadTestingDevice() : base(ONIXDevices.ID.LoadTest) { }
-
         protected override IObservable<LoadTestingDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new LoadTestingDataFrame(f); });
         }
+
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         protected override void Write(ONIContextTask ctx, ulong input)
         {

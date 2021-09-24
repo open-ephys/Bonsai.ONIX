@@ -5,7 +5,8 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Description("Memory usage monitoring device")]
+    [ONIXDeviceID(ONIXDevices.ID.MemoryUsage)]
+    [Description("Memory usage monitoring device.")]
     public class MemoryUsageDevice : ONIFrameReader<MemoryUsageDataFrame, ushort>
     {
         private enum Register
@@ -16,13 +17,13 @@ namespace Bonsai.ONIX
             TOTAL_MEM = 3, //Total memory in 32bit words
         }
 
-        public MemoryUsageDevice() : base(ONIXDevices.ID.MemoryUsage) { }
-
         protected override IObservable<MemoryUsageDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             var total_words = MemorySize;
             return source.Select(f => { return new MemoryUsageDataFrame(f, total_words); });
         }
+
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
@@ -38,7 +39,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        private uint update_hz = 1;
+        private uint updateHz = 1;
         [Category("Configuration")]
         [Description("Rate of memory usage measurements.")]
         [Range(1, 10e6)]
@@ -49,14 +50,14 @@ namespace Bonsai.ONIX
                 var val = ReadRegister((int)Register.CLK_DIV);
                 if (val != 0)
                 {
-                    update_hz = ReadRegister((int)Register.CLK_HZ) / val;
+                    updateHz = ReadRegister((int)Register.CLK_HZ) / val;
                 }
-                return update_hz;
+                return updateHz;
             }
             set
             {
-                update_hz = value;
-                WriteRegister((int)Register.CLK_DIV, ReadRegister((int)Register.CLK_HZ) / update_hz);
+                updateHz = value;
+                WriteRegister((int)Register.CLK_DIV, ReadRegister((int)Register.CLK_HZ) / updateHz);
             }
         }
 

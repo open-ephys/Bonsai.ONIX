@@ -5,15 +5,16 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
+    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+    [Description("Provides access to raw data from a DS90UB9x deserializer.")]
     public class DS90UB9xDevice : ONIFrameReader<RawDataFrame, ushort>
     {
-        [Description("Provides access to raw data from a DS90UB9x deserializer.")]
-        public DS90UB9xDevice() : base(ONIXDevices.ID.DS90UB9X) { }
 
         protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source.Select(f => { return new RawDataFrame(f); });
         }
+        public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
         [Description("Enable the device data stream.")]
