@@ -51,6 +51,8 @@
                     return new LoadTestingDevice();
                 case ONIXDevices.ID.MemoryUsage:
                     return new MemoryUsageDevice();
+                case ONIXDevices.ID.HARPSyncInput:
+                    return new HARPSyncInputDevice();
                 default:
                     return null;
             }
