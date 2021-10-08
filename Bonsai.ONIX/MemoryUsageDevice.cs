@@ -17,10 +17,10 @@ namespace Bonsai.ONIX
             TOTAL_MEM = 3, //Total memory in 32bit words
         }
 
-        protected override IObservable<MemoryUsageDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<MemoryUsageDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
             var total_words = MemorySize;
-            return source.Select(f => { return new MemoryUsageDataFrame(f, total_words); });
+            return source.Select(f => { return new MemoryUsageDataFrame(f, frameOffset, total_words); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();

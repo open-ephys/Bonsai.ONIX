@@ -24,12 +24,12 @@ namespace Bonsai.ONIX
             FPS60Hz
         }
 
-        protected override IObservable<MiniscopeV3DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<MiniscopeV3DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
             return source
                 .SkipWhile(f => (f.Sample[5] & 0x8000) == 0)
                 .Buffer(MiniscopeV3DataFrame.NumRows)
-                .Select(block => { return new MiniscopeV3DataFrame(block); });
+                .Select(block => { return new MiniscopeV3DataFrame(block, frameOffset); });
         }
 
         private ONIDeviceAddress deviceAddress;

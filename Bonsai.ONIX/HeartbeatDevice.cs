@@ -20,9 +20,9 @@ namespace Bonsai.ONIX
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
-        protected override IObservable<HeartbeatDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<HeartbeatDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new HeartbeatDataFrame(f); });
+            return source.Select(f => { return new HeartbeatDataFrame(f, frameOffset); });
         }
 
         [Category("Configuration")]

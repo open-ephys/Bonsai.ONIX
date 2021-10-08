@@ -4,8 +4,8 @@ namespace Bonsai.ONIX
 {
     public class BNO055DataFrame : U16DataFrame
     {
-        public BNO055DataFrame(ONIManagedFrame<ushort> frame)
-            : base(frame)
+        public BNO055DataFrame(ONIManagedFrame<ushort> frame, ulong frameOffset)
+            : base(frame, frameOffset)
         {
             ushort[] sample = frame.Sample;
             // Convert data packet (output format is hard coded right now)

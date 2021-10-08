@@ -8,9 +8,9 @@ namespace Bonsai.ONIX
     /// </summary>
     public class U16DataSplitFrame
     {
-        public U16DataSplitFrame(IList<ONIManagedFrame<ushort>> frameBlock)
+        public U16DataSplitFrame(IList<ONIManagedFrame<ushort>> frameBlock, ulong offset)
         {
-            FrameClock = frameBlock[0].FrameClock;
+            FrameClock = frameBlock[0].FrameClock - offset;
             DataClock = ((ulong)frameBlock[0].Sample[0] << 48) |
                         ((ulong)frameBlock[0].Sample[1] << 32) |
                         ((ulong)frameBlock[0].Sample[2] << 16) |

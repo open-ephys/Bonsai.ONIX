@@ -4,8 +4,8 @@ namespace Bonsai.ONIX
 {
     public class HeadstagePortControlFrame : U16DataFrame
     {
-        public HeadstagePortControlFrame(ONIManagedFrame<ushort> frame)
-            : base(frame)
+        public HeadstagePortControlFrame(ONIManagedFrame<ushort> frame, ulong frameOffset)
+            : base(frame, frameOffset)
         {
             Lock = (frame.Sample[4] & 0x0001) == 1;
             Pass = (frame.Sample[4] & 0x0002) == 2;

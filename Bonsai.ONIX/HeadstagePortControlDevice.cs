@@ -21,9 +21,9 @@ namespace Bonsai.ONIX
             SAVELINKVOLTAGE = 4,
         }
 
-        protected override IObservable<HeadstagePortControlFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<HeadstagePortControlFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new HeadstagePortControlFrame(f); });
+            return source.Select(f => { return new HeadstagePortControlFrame(f, frameOffset); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();

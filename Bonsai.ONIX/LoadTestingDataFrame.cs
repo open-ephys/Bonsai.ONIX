@@ -5,8 +5,8 @@ namespace Bonsai.ONIX
 {
     public class LoadTestingDataFrame : U16DataFrame
     {
-        public LoadTestingDataFrame(ONIManagedFrame<ushort> frame)
-            : base(frame)
+        public LoadTestingDataFrame(ONIManagedFrame<ushort> frame, ulong frameOffset)
+            : base(frame, frameOffset)
         {
 
             Delta = ((ulong)frame.Sample[4] << 48) |

@@ -40,7 +40,8 @@ namespace Bonsai.ONIX
                     });
                 });
 
-            return Process(source);
+            ulong frameOffset = FrameClockOffset;
+            return Process(source, frameOffset);
         }
 
         public IObservable<TResult> Generate(IObservable<TSource> source)
@@ -81,7 +82,7 @@ namespace Bonsai.ONIX
             });
         }
 
-        protected abstract IObservable<TResult> Process(IObservable<ONIManagedFrame<TData>> source);
+        protected abstract IObservable<TResult> Process(IObservable<ONIManagedFrame<TData>> source, ulong frameOffset);
 
         protected abstract void Write(ONIContextTask ctx, TSource input);
     }

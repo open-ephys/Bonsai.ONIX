@@ -9,8 +9,8 @@ namespace Bonsai.ONIX
         public const int NumRows = 480;
         public const int NumCols = 752;
 
-        public MiniscopeV3DataFrame(IList<ONIManagedFrame<ushort>> frameBlock)
-            : base(frameBlock)
+        public MiniscopeV3DataFrame(IList<ONIManagedFrame<ushort>> frameBlock, ulong frameOffset)
+            : base(frameBlock, frameOffset)
         {
 
             var data = new ushort[NumRows * NumCols];

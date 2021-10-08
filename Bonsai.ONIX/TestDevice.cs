@@ -17,9 +17,9 @@ namespace Bonsai.ONIX
 
         public TestDevice() { }
 
-        protected override IObservable<TestDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<TestDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new TestDataFrame(f); });
+            return source.Select(f => { return new TestDataFrame(f, frameOffset); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();

@@ -41,14 +41,14 @@ namespace Bonsai.ONIX
             ENABLE = 0x00008000
         }
 
-        protected override IObservable<RHD2164DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<RHD2164DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
             var ephysDataFormat = EphysDataFormat;
             var auxDataFormat = AuxDataFormat;
 
             return source
                 .Buffer(BlockSize)
-                .Select(block => { return new RHD2164DataFrame(block, ephysDataFormat, auxDataFormat); });
+                .Select(block => { return new RHD2164DataFrame(block, frameOffset, ephysDataFormat, auxDataFormat); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();

@@ -8,8 +8,8 @@ namespace Bonsai.ONIX
         public readonly int NumberOfFrames;
         public readonly int FrameWords;
 
-        public LoadTestingBlockDataFrame(IList<ONIManagedFrame<ushort>> frameBlock, int frameWords)
-            : base(frameBlock)
+        public LoadTestingBlockDataFrame(IList<ONIManagedFrame<ushort>> frameBlock, ulong frameOffset, int frameWords)
+            : base(frameBlock, frameOffset)
         {
             if (frameBlock.Count == 0)
             {

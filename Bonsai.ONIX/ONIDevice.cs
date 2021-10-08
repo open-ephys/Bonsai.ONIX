@@ -71,6 +71,11 @@ namespace Bonsai.ONIX
             }
         }
 
+        protected ulong FrameClockOffset
+        {
+            get { return (ulong)System.Math.Round(((double)(deviceHub == null ? 0 : deviceHub.DelayNanoSeconds) * 1E-9 * (contextHz ?? 0))); }
+        }
+
         public ONIDevice()
         {
             ID = !(GetType().GetCustomAttributes(typeof(ONIXDeviceIDAttribute), true).FirstOrDefault() is ONIXDeviceIDAttribute devID) ?

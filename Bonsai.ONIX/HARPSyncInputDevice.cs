@@ -17,9 +17,9 @@ namespace Bonsai.ONIX
             ENABLE = 0
         }
 
-        protected override IObservable<HARPSyncInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<HARPSyncInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new HARPSyncInputDataFrame(f); });
+            return source.Select(f => { return new HARPSyncInputDataFrame(f, frameOffset); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();

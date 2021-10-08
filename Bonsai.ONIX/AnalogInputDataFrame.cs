@@ -9,10 +9,10 @@ namespace Bonsai.ONIX
         public readonly int NumberOfSamples;
         public readonly AnalogIODevice.AnalogDataType Format;
 
-        public AnalogInputDataFrame(IList<ONIManagedFrame<short>> frameBlock,
+        public AnalogInputDataFrame(IList<ONIManagedFrame<short>> frameBlock, ulong frameOffset, 
                                     float[] scale,
                                     AnalogIODevice.AnalogDataType format = AnalogIODevice.AnalogDataType.S16)
-            : base(frameBlock)
+            : base(frameBlock, frameOffset)
         {
             if (frameBlock.Count == 0)
             {

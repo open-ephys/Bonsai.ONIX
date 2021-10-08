@@ -2,8 +2,8 @@
 {
     public class BreakoutDigitalInputDataFrame : U16DataFrame
     {
-        public BreakoutDigitalInputDataFrame(ONIManagedFrame<ushort> frame)
-            : base(frame)
+        public BreakoutDigitalInputDataFrame(ONIManagedFrame<ushort> frame, ulong frameOffset)
+            : base(frame, frameOffset)
         {
             Port = (byte)(0x00FF & frame.Sample[4]);
             Buttons = (byte)(0x00FF & frame.Sample[5]);

@@ -15,9 +15,9 @@ namespace Bonsai.ONIX
             ENVMARGIN,
         }
 
-        protected override IObservable<TS4231V1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<TS4231V1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new TS4231V1DataFrame(f); });
+            return source.Select(f => { return new TS4231V1DataFrame(f, frameOffset); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();

@@ -6,13 +6,13 @@
     /// </summary>
     public class U16DataFrame
     {
-        public U16DataFrame(ONIManagedFrame<ushort> frame)
+        public U16DataFrame(ONIManagedFrame<ushort> frame, ulong offset)
         {
             DataClock = ((ulong)frame.Sample[0] << 48) |
                         ((ulong)frame.Sample[1] << 32) |
                         ((ulong)frame.Sample[2] << 16) |
                         ((ulong)frame.Sample[3] << 0);
-            FrameClock = frame.FrameClock;
+            FrameClock = frame.FrameClock - offset;
         }
 
         /// <summary>

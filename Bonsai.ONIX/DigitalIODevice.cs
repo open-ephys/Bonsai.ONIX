@@ -19,9 +19,9 @@ namespace Bonsai.ONIX
             LEDLVL = 2, // 0-255 overall LED brightness value.
         }
 
-        protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<BreakoutDigitalInputDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new BreakoutDigitalInputDataFrame(f); });
+            return source.Select(f => { return new BreakoutDigitalInputDataFrame(f, frameOffset); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();

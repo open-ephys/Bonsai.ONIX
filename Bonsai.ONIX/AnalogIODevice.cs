@@ -38,11 +38,11 @@ namespace Bonsai.ONIX
             scale = Enumerable.Repeat((float)0.000305, AnalogInputDataFrame.NumberOfChannels).ToArray();
         }
 
-        protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<short>> source)
+        protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<short>> source, ulong frameOffset)
         {
-            return Observable
+             return Observable
                 .Return(scale.Copy())
-                .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, s, DataType); });
+                .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, frameOffset, s, DataType); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
