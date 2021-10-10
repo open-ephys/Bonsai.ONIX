@@ -13,13 +13,13 @@ namespace Bonsai.ONIX
     public static class ONIContextManager
     {
         public const string DefaultConfigurationFile = "ONIX.config";
-        private static readonly Dictionary<string, Tuple<ONIContextTask, RefCountDisposable>> open_contexts
+        private static readonly Dictionary<string, Tuple<ONIContextTask, RefCountDisposable>> openContexts
             = new Dictionary<string, Tuple<ONIContextTask, RefCountDisposable>>();
 
         // Mirrors open_contexts but can be created by non-opening reservation calls (ReserveOpenContextAsync)
-        private static readonly Dictionary<string, EventWaitHandle> contex_wait_handles
+        private static readonly Dictionary<string, EventWaitHandle> contextWaitHandles
             = new Dictionary<string, EventWaitHandle>();
-        private static readonly object open_ctx_lock = new object();
+        private static readonly object openContextLock = new object();
 
         /// <summary>
         /// Reserve an ONI Context after it has already been opened by the appropriate call to
@@ -32,17 +32,17 @@ namespace Bonsai.ONIX
 #if DEBUG
             Console.WriteLine("Open context async slot " + slot + " reserved by " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().DeclaringType);
 #endif
-            lock (open_ctx_lock)
+            lock (openContextLock)
             {
-                if (!contex_wait_handles.TryGetValue(slot.MakeKey(), out EventWaitHandle wait_handle))
+                if (!contextWaitHandles.TryGetValue(slot.MakeKey(), out EventWaitHandle waitHandle))
                 {
-                    contex_wait_handles.Add(slot.MakeKey(), new EventWaitHandle(false, EventResetMode.ManualReset));
+                    contextWaitHandles.Add(slot.MakeKey(), new EventWaitHandle(false, EventResetMode.ManualReset));
                 }
             }
 
             return await Task.Run(() =>
             {
-                contex_wait_handles[slot.MakeKey()].WaitOne();
+                contextWaitHandles[slot.MakeKey()].WaitOne();
                 return ReserveContext(slot);
             });
         }
@@ -55,22 +55,22 @@ namespace Bonsai.ONIX
             return await Task.Run(() => ReserveContext(slot, releaseWaiting), ct);
         }
 
-        public static ONIContextDisposable ReserveContext(ONIHardwareSlot slot, bool release_waiting = false, bool reset_running = false)
+        public static ONIContextDisposable ReserveContext(ONIHardwareSlot slot, bool releaseWaiting = false, bool resetRunning = false)
         {
 #if DEBUG
             Console.WriteLine("Context slot " + slot + " reserved by " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().DeclaringType);
 #endif
-            var ctx_counted = default(Tuple<ONIContextTask, RefCountDisposable>);
+            var contextCounted = default(Tuple<ONIContextTask, RefCountDisposable>);
 
-            lock (open_ctx_lock)
+            lock (openContextLock)
             {
                 if (string.IsNullOrEmpty(slot.Driver))
                 {
-                    if (open_contexts.Count == 1) ctx_counted = open_contexts.Values.Single();
+                    if (openContexts.Count == 1) contextCounted = openContexts.Values.Single();
                     else throw new ArgumentException("An ONI hardware slot must be specified.", nameof(slot));
                 }
 
-                if (!open_contexts.TryGetValue(slot.MakeKey(), out ctx_counted))
+                if (!openContexts.TryGetValue(slot.MakeKey(), out contextCounted))
                 {
 
                     var configuration = LoadConfiguration();
@@ -84,41 +84,41 @@ namespace Bonsai.ONIX
                     var dispose = Disposable.Create(() =>
                         {
                             ctx.Dispose();
-                            contex_wait_handles[slot.MakeKey()].Reset();
+                            contextWaitHandles[slot.MakeKey()].Reset();
 
                             // Context and wait handles are removed from dictionaries together
-                            open_contexts.Remove(slot.MakeKey());
-                            contex_wait_handles.Remove(slot.MakeKey());
+                            openContexts.Remove(slot.MakeKey());
+                            contextWaitHandles.Remove(slot.MakeKey());
                         });
 
-                    if (!contex_wait_handles.TryGetValue(slot.MakeKey(), out EventWaitHandle wait_handle))
+                    if (!contextWaitHandles.TryGetValue(slot.MakeKey(), out EventWaitHandle waitHandle))
                     {
-                        contex_wait_handles.Add(slot.MakeKey(), new EventWaitHandle(false, EventResetMode.ManualReset));
+                        contextWaitHandles.Add(slot.MakeKey(), new EventWaitHandle(false, EventResetMode.ManualReset));
                     }
 
-                    if (release_waiting)
+                    if (releaseWaiting)
                     {
-                        contex_wait_handles[slot.MakeKey()].Set();
+                        contextWaitHandles[slot.MakeKey()].Set();
                     }
 
-                    var ref_count = new RefCountDisposable(dispose);
-                    ctx_counted = Tuple.Create(ctx, ref_count);
-                    open_contexts.Add(slot.MakeKey(), ctx_counted);
-                    return new ONIContextDisposable(ctx, ref_count, open_ctx_lock);
+                    var referenenceCount = new RefCountDisposable(dispose);
+                    contextCounted = Tuple.Create(ctx, referenenceCount);
+                    openContexts.Add(slot.MakeKey(), contextCounted);
+                    return new ONIContextDisposable(ctx, referenenceCount, openContextLock);
 
                 }
 
-                if (reset_running)
+                if (resetRunning)
                 {
-                    ctx_counted.Item1.Reset();
+                    contextCounted.Item1.Reset();
                 }
-                if (release_waiting)
+                if (releaseWaiting)
                 {
                     // Will already be created if we in this portion of code.
-                    contex_wait_handles[slot.MakeKey()].Set();
+                    contextWaitHandles[slot.MakeKey()].Set();
                 }
 
-                return new ONIContextDisposable(ctx_counted.Item1, ctx_counted.Item2.GetDisposable(), open_ctx_lock);
+                return new ONIContextDisposable(contextCounted.Item1, contextCounted.Item2.GetDisposable(), openContextLock);
             }
 
         }

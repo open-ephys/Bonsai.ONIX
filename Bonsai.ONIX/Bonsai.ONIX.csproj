@@ -42,10 +42,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="UCLAMiniscopeV3Device_bak.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Bonsai.ONIX.svg" />
     <None Include="..\resources\onix_open_ephys_logo.png">
       <Pack>True</Pack>

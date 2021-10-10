@@ -3,16 +3,19 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 using System.Reactive.Linq;
+// using System.Threading.Tasks;
 
 namespace Bonsai.ONIX
 {
     [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
-    [Description("Acquire data from UCLA Miniscope V3.")]
-    public class MiniscopeV3Device : ONIFrameReader<MiniscopeV3DataFrame, ushort>
+    [Description("Acquire image data from UCLA Miniscope V3.")]
+    public class MiniscopeV3Device : ONIFrameReader<MiniscopeDataFrame, ushort>
     {
 
         private const int LEDDriverAddress = 0x4C;
         private const int CameraSensorAddress = 0x5C;
+        private const int Rows = 480;
+        private const int Columns = 752;
 
         public enum FPS
         {
@@ -24,12 +27,12 @@ namespace Bonsai.ONIX
             FPS60Hz
         }
 
-        protected override IObservable<MiniscopeV3DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<MiniscopeDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             return source
                 .SkipWhile(f => (f.Sample[5] & 0x8000) == 0)
-                .Buffer(MiniscopeV3DataFrame.NumRows)
-                .Select(block => { return new MiniscopeV3DataFrame(block); });
+                .Buffer(Rows)
+                .Select(block => { return new MiniscopeDataFrame(block, Rows, Columns); });
         }
 
         private ONIDeviceAddress deviceAddress;
@@ -43,7 +46,7 @@ namespace Bonsai.ONIX
 
                 // Deserializer triggering mode
                 WriteRegister((uint)DS90UB9xConfiguration.Register.TriggerOffset, 0);
-                WriteRegister((uint)DS90UB9xConfiguration.Register.ReadSize, MiniscopeV3DataFrame.NumCols);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.ReadSize, Columns);
                 WriteRegister((uint)DS90UB9xConfiguration.Register.Trigger, (uint)DS90UB9xConfiguration.TriggerMode.HsyncEdgePositive);
                 WriteRegister((uint)DS90UB9xConfiguration.Register.IncludeSyncBits, 0);
                 WriteRegister((uint)DS90UB9xConfiguration.Register.PixelGate, (uint)DS90UB9xConfiguration.PixelGate.VsyncPositive);
@@ -57,8 +60,13 @@ namespace Bonsai.ONIX
 
                     // TODO: This is a nasty hack, to give the serializer time to lock
                     // Ideally, we should use the lock status register in the latest firmware
-                    // And some asynchronous task to avoid locking the UI
+                    // And some asynchronous task to avoid locking the UI. This is difficult because
+                    // Properties cannot be asychronous in C#. See CheckLinkAsync() below.
                     System.Threading.Thread.Sleep(100);
+                    if (ReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus) == 0)
+                    {
+                        throw new WorkflowBuildException("Unable to to connect to Miniscope.");
+                    }
 
                     val = CameraSensorAddress << 1;
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveID1, val);
@@ -223,7 +231,6 @@ namespace Bonsai.ONIX
             AECAndAGC = 0xAF,
         }
 
-
         private static int ReadCameraRegister(I2CConfiguration i2c, uint reg)
         {
             return (int)(i2c.ReadByte(reg) << 8 | i2c.ReadByte(0xF0));
@@ -243,5 +250,19 @@ namespace Bonsai.ONIX
             uint byte1 = (0x0F & value) << 4;
             i2c.WriteByte(byte0, byte1);
         }
+
+        // See TODO above.
+        //private async Task<bool> CheckLinkAsync()
+        //{
+        //    var check = Task.Run(() =>
+        //    {
+        //        while (ReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus) != 0x1)
+        //        {
+        //            System.Threading.Thread.Sleep(100);
+        //        }
+        //    });
+
+        //    return await Task.WhenAny(check, Task.Delay(1000)) == check;
+        //}
     }
 }

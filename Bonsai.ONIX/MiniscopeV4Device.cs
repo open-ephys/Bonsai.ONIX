@@ -8,11 +8,13 @@ namespace Bonsai.ONIX
 {
     [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
     [Description("Acquire image data from UCLA Miniscope V4.")]
-    public class MiniscopeV4Device : ONIFrameReader<MiniscopeV4DataFrame, ushort>
+    public class MiniscopeV4Device : ONIFrameReader<MiniscopeDataFrame, ushort>
     {
         private const int ATMegaAddress = 0x10;
         private const int TPL0102Address = 0x50;
         private const int MAX14574Address = 0x77;
+        private const int Rows = 608;
+        private const int Columns = 608;
 
         private bool running = false;
 
@@ -32,7 +34,7 @@ namespace Bonsai.ONIX
             High = 0x0024,
         }
 
-        protected override IObservable<MiniscopeV4DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<MiniscopeDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
         {
             // The LED brightnes and binary on/off state are linked in their firmware and so require
             // some hackuiness to get the behavior I want.
@@ -52,8 +54,8 @@ namespace Bonsai.ONIX
 
             return source
             .SkipWhile(f => (f.Sample[5] & 0x8000) == 0)
-            .Buffer(MiniscopeV4DataFrame.NumRows)
-            .Select(block => { return new MiniscopeV4DataFrame(block); })
+            .Buffer(Rows)
+            .Select(block => { return new MiniscopeDataFrame(block, Rows, Columns); })
             .Finally(() =>
                 {
                     // Turn off EWL
@@ -97,7 +99,7 @@ namespace Bonsai.ONIX
 
                 // Deserializer triggering mode
                 WriteRegister((uint)DS90UB9xConfiguration.Register.TriggerOffset, 0);
-                WriteRegister((uint)DS90UB9xConfiguration.Register.ReadSize, MiniscopeV4DataFrame.NumCols);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.ReadSize, Columns);
                 WriteRegister((uint)DS90UB9xConfiguration.Register.Trigger, (uint)DS90UB9xConfiguration.TriggerMode.HsyncEdgePositive);
                 WriteRegister((uint)DS90UB9xConfiguration.Register.IncludeSyncBits, 0);
                 WriteRegister((uint)DS90UB9xConfiguration.Register.PixelGate, (uint)DS90UB9xConfiguration.PixelGate.VsyncPositive);
@@ -108,11 +110,6 @@ namespace Bonsai.ONIX
                 {
                     uint val = 0x4 + (uint)DS90UB9xConfiguration.Mode.Raw12BitLowFrequency; // 0x4 maintains coax mode
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode, val);
-
-                    //This is a very nasty hack, to give the serializer time to lock
-                    //Ideally we should use the lock status register in the latest firmware
-                    //And some asynchronous task to avoid locking the UI
-                    System.Threading.Thread.Sleep(100);
 
                     val = ATMegaAddress << 1;
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveID1, val);
@@ -151,6 +148,16 @@ namespace Bonsai.ONIX
                     WriteCameraRegister(i2c, 200, 3300); // Set frame rate to 30 Hz
                     WriteCameraRegister(i2c, 201, 3000); // Set Exposure
                 }
+
+                // TODO: This is a nasty hack, to give the serializer time to lock
+                // Ideally, we should use the lock status register in the latest firmware
+                // And some asynchronous task to avoid locking the UI. This is difficult because
+                // Properties cannot be asychronous in C#.
+                System.Threading.Thread.Sleep(100);
+                if (ReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus) == 0)
+                {
+                    throw new WorkflowBuildException("Unable to to connect to Miniscope.");
+                }
             }
         }
 
@@ -173,7 +180,6 @@ namespace Bonsai.ONIX
                     i2c.WriteByte(0x01, (uint)(255 * ((100 - value) / 100.0)));
                 }
             }
-
             get
             {
                 using (var i2c = new I2CConfiguration(DeviceAddress, TPL0102Address))

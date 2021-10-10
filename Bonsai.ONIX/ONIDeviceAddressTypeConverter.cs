@@ -88,8 +88,8 @@ namespace Bonsai.ONIX
                                     //.Where(dev => dev.Value.ID == (uint)device.ID)
                                     .Where(dev =>
                                     {
-                                        return deviceID == ONIXDevices.ID.Null ? 
-                                            dev.Value.ID != (uint)ONIXDevices.ID.Null : 
+                                        return deviceID == ONIXDevices.ID.Null ?
+                                            dev.Value.ID != (uint)ONIXDevices.ID.Null :
                                             dev.Value.ID == (uint)deviceID;
                                     })
                                     .Select(x =>
@@ -115,12 +115,9 @@ namespace Bonsai.ONIX
                         }
                     }
 
-                    if (deviceAddresses.Count == 0)
-                    {
-                        return base.GetStandardValues(context);
-                    }
-
-                    return new StandardValuesCollection(deviceAddresses);
+                    return deviceAddresses.Count == 0 ?
+                        base.GetStandardValues(context) :
+                        new StandardValuesCollection(deviceAddresses);
                 }
             }
 
