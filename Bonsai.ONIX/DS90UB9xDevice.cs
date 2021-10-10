@@ -10,9 +10,9 @@ namespace Bonsai.ONIX
     public class DS90UB9xDevice : ONIFrameReader<RawDataFrame, ushort>
     {
 
-        protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new RawDataFrame(f); });
+            return source.Select(f => { return new RawDataFrame(f, frameOffset); });
         }
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 

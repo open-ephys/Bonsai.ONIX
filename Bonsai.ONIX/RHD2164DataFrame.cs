@@ -11,10 +11,10 @@ namespace Bonsai.ONIX
         public readonly RHD2164Configuration.EphysDataFormat EphysFormat;
         public readonly RHD2164Configuration.AuxDataFormat AuxFormat;
 
-        public RHD2164DataFrame(IList<ONIManagedFrame<ushort>> frameBlock,
+        public RHD2164DataFrame(IList<ONIManagedFrame<ushort>> frameBlock, ulong frameOffset,
                                 RHD2164Configuration.EphysDataFormat ephysFormat,
                                 RHD2164Configuration.AuxDataFormat auxFormat)
-            : base(frameBlock)
+            : base(frameBlock, frameOffset)
         {
             if (frameBlock.Count == 0)
             {

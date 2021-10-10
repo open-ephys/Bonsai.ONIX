@@ -16,7 +16,7 @@ namespace Bonsai.ONIX
         [Editor("Bonsai.ONIX.Design.DocumentationLink, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         public abstract ONIDeviceAddress DeviceAddress { get; set; }
 
-        //Keep a local copy until address changes to avoid accessing the register interface a million times for already-known information
+        // Keep a local copy until address changes to avoid accessing the register interface a million times for already-known information
         private oni.Hub deviceHub = null;
         private ONIDeviceAddress oldAddressHub = null;
         private ONIDeviceAddress oldAddressHz = null;
@@ -69,6 +69,11 @@ namespace Bonsai.ONIX
                 }
                 else return null;
             }
+        }
+
+        protected ulong FrameClockOffset
+        {
+            get { return (ulong)System.Math.Round(((double)(deviceHub == null ? 0 : deviceHub.DelayNanoSeconds) * 1E-9 * (contextHz ?? 0))); }
         }
 
         public ONIDevice()

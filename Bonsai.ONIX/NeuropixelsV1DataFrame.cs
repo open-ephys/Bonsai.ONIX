@@ -28,8 +28,8 @@ namespace Bonsai.ONIX
                                                          5, 12, 19, 26, 33,
                                                          6, 13 };
 
-        public NeuropixelsV1DataFrame(IList<ONIManagedFrame<ushort>> frameBlock)
-            : base(frameBlock)
+        public NeuropixelsV1DataFrame(IList<ONIManagedFrame<ushort>> frameBlock, ulong frameOffset)
+            : base(frameBlock, frameOffset)
         {
             if (frameBlock.Count == 0)
             {

@@ -33,7 +33,8 @@
             MAX10ADCCore = 26,
             LoadTest = 27,
 
-            MemoryUsage = 28
+            MemoryUsage = 28,
+            HARPSyncInput = 30
         }
     }
 }

@@ -27,9 +27,9 @@ namespace Bonsai.ONIX
                               // testing loop latency. This value must be at least 2.
         }
 
-        protected override IObservable<LoadTestingDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<LoadTestingDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new LoadTestingDataFrame(f); });
+            return source.Select(f => { return new LoadTestingDataFrame(f, frameOffset); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();

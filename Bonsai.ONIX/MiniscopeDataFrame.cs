@@ -6,8 +6,8 @@ namespace Bonsai.ONIX
 {
     public class MiniscopeDataFrame : U16DataSplitFrame
     {
-        public MiniscopeDataFrame(IList<ONIManagedFrame<ushort>> frameBlock, int rows, int columns)
-            : base(frameBlock)
+        public MiniscopeDataFrame(IList<ONIManagedFrame<ushort>> frameBlock, ulong frameOffset, int rows, int columns)
+            : base(frameBlock, frameOffset)
         {
 
             var data = new ushort[rows * columns];

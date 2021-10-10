@@ -2,8 +2,8 @@
 {
     public class TS4231V1DataFrame : U16DataFrame
     {
-        public TS4231V1DataFrame(ONIManagedFrame<ushort> frame)
-            : base(frame)
+        public TS4231V1DataFrame(ONIManagedFrame<ushort> frame, ulong frameOffset)
+            : base(frame, frameOffset)
         {
             // Data
             Index = frame.Sample[4];

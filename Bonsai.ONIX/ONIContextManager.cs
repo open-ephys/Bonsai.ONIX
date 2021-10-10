@@ -66,8 +66,9 @@ namespace Bonsai.ONIX
             {
                 if (string.IsNullOrEmpty(slot.Driver))
                 {
-                    if (openContexts.Count == 1) contextCounted = openContexts.Values.Single();
-                    else throw new ArgumentException("An ONI hardware slot must be specified.", nameof(slot));
+                    contextCounted = openContexts.Count == 1
+                        ? openContexts.Values.Single()
+                        : throw new ArgumentException("An ONI hardware slot must be specified.", nameof(slot));
                 }
 
                 if (!openContexts.TryGetValue(slot.MakeKey(), out contextCounted))

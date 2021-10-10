@@ -41,9 +41,10 @@ namespace Bonsai.ONIX
                     });
                 });
 
-            return Process(source);
+            ulong frameOffset = FrameClockOffset;
+            return Process(source, frameOffset);
         }
 
-        protected abstract IObservable<TResult> Process(IObservable<ONIManagedFrame<TData>> source);
+        protected abstract IObservable<TResult> Process(IObservable<ONIManagedFrame<TData>> source, ulong frameOffset);
     }
 }

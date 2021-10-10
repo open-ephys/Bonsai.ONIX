@@ -146,13 +146,13 @@ namespace Bonsai.ONIX
         {
             // Push pulse time into buffer and pop oldest
             pulseTimes.Dequeue();
-            pulseTimes.Enqueue(source.DataClock / DataClockHz ?? double.NaN);
+            pulseTimes.Enqueue(source.HubSyncCounter / DataClockHz ?? double.NaN);
 
             pulseDataClock.Dequeue();
-            pulseDataClock.Enqueue(source.DataClock);
+            pulseDataClock.Enqueue(source.HubSyncCounter);
 
             pulseFrameClock.Dequeue();
-            pulseFrameClock.Enqueue(source.FrameClock);
+            pulseFrameClock.Enqueue(source.Clock);
 
             // Push pulse width into buffer and pop oldest
             pulseWidths.Dequeue();

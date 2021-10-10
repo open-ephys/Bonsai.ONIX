@@ -6,24 +6,23 @@
     /// </summary>
     public class U16DataFrame
     {
-        public U16DataFrame(ONIManagedFrame<ushort> frame)
+        public U16DataFrame(ONIManagedFrame<ushort> frame, ulong offset)
         {
-            DataClock = ((ulong)frame.Sample[0] << 48) |
+            Clock = frame.FrameClock - offset;
+            HubSyncCounter = ((ulong)frame.Sample[0] << 48) |
                         ((ulong)frame.Sample[1] << 32) |
                         ((ulong)frame.Sample[2] << 16) |
                         ((ulong)frame.Sample[3] << 0);
-            FrameClock = frame.FrameClock;
         }
-
-        /// <summary>
-        /// The sample clock, create locally alongside the source device.
-        /// </summary>
-        public ulong DataClock { get; private set; }
 
         /// <summary>
         /// The frame clock. Created by the host when receiving the sample from the device.
         /// </summary>
-        public ulong FrameClock { get; private set; }
+        public ulong Clock { get; private set; }
 
+        /// <summary>
+        /// The sample clock, create locally alongside the source device.
+        /// </summary>
+        public ulong HubSyncCounter { get; private set; }
     }
 }

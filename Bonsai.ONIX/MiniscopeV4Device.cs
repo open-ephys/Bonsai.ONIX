@@ -34,7 +34,7 @@ namespace Bonsai.ONIX
             High = 0x0024,
         }
 
-        protected override IObservable<MiniscopeDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<MiniscopeDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
             // The LED brightnes and binary on/off state are linked in their firmware and so require
             // some hackuiness to get the behavior I want.
@@ -55,7 +55,7 @@ namespace Bonsai.ONIX
             return source
             .SkipWhile(f => (f.Sample[5] & 0x8000) == 0)
             .Buffer(Rows)
-            .Select(block => { return new MiniscopeDataFrame(block, Rows, Columns); })
+            .Select(block => { return new MiniscopeDataFrame(block, frameOffset, Rows, Columns); })
             .Finally(() =>
                 {
                     // Turn off EWL

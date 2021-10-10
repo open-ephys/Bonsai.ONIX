@@ -9,42 +9,41 @@ namespace Bonsai.ONIX
     /// </summary>
     public class U16DataBlockFrame
     {
-        public U16DataBlockFrame(IList<ONIManagedFrame<ushort>> frameBlock)
+        public U16DataBlockFrame(IList<ONIManagedFrame<ushort>> frameBlock, ulong offset)
         {
             var frameClock = new ulong[frameBlock.Count];
             var dataClock = new ulong[frameBlock.Count];
 
             for (int i = 0; i < frameBlock.Count; i++)
             {
-                frameClock[i] = frameBlock[i].FrameClock;
+                frameClock[i] = frameBlock[i].FrameClock - offset;
                 dataClock[i] = ((ulong)frameBlock[i].Sample[0] << 48) |
                                ((ulong)frameBlock[i].Sample[1] << 32) |
                                ((ulong)frameBlock[i].Sample[2] << 16) |
                                ((ulong)frameBlock[i].Sample[3] << 0);
             }
 
-
-            FrameClock = GetClock(frameClock);
-            DataClock = GetClock(dataClock);
+            Clock = GetClock(frameClock);
+            HubSyncCounter = GetClock(dataClock);
         }
 
-        public U16DataBlockFrame(IList<ONIManagedFrame<short>> frameBlock)
+        // TODO: this seems out of place considering this class is called U16DataBlockFrame
+        public U16DataBlockFrame(IList<ONIManagedFrame<short>> frameBlock, ulong offset)
         {
             var frameClock = new ulong[frameBlock.Count];
             var dataClock = new ulong[frameBlock.Count];
 
             for (int i = 0; i < frameBlock.Count; i++)
             {
-                frameClock[i] = frameBlock[i].FrameClock;
+                frameClock[i] = frameBlock[i].FrameClock - offset;
                 dataClock[i] = ((ulong)frameBlock[i].Sample[0] << 48) |
                                ((ulong)frameBlock[i].Sample[1] << 32) |
                                ((ulong)frameBlock[i].Sample[2] << 16) |
                                ((ulong)frameBlock[i].Sample[3] << 0);
             }
 
-
-            FrameClock = GetClock(frameClock);
-            DataClock = GetClock(dataClock);
+            Clock = GetClock(frameClock);
+            HubSyncCounter = GetClock(dataClock);
         }
 
         // TODO: This copies!
@@ -56,13 +55,13 @@ namespace Bonsai.ONIX
         }
 
         /// <summary>
-        /// The sample clock, create locally alongside the source device.
-        /// </summary>
-        public Mat DataClock { get; private set; }
-
-        /// <summary>
         /// The frame clock. Created by the host when receiving the sample from the device.
         /// </summary>
-        public Mat FrameClock { get; private set; }
+        public Mat Clock { get; private set; }
+
+        /// <summary>
+        /// The sample clock, create locally alongside the source device.
+        /// </summary>
+        public Mat HubSyncCounter { get; private set; }
     }
 }

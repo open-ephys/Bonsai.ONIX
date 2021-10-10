@@ -14,7 +14,7 @@ namespace Bonsai.ONIX
     {
         public NeuropixelsV1Device() { }
 
-        protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<NeuropixelsV1DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
 
             return Observable.Concat(
@@ -51,7 +51,7 @@ namespace Bonsai.ONIX
                 // Process frame stream
                 source
                     .Buffer(BlockSize * NeuropixelsV1DataFrame.SuperframesPerUltraFrame)
-                    .Select(block => { return new NeuropixelsV1DataFrame(block); })
+                    .Select(block => { return new NeuropixelsV1DataFrame(block, frameOffset); })
             );
         }
 

@@ -15,9 +15,9 @@ namespace Bonsai.ONIX
             MESSAGE,
         }
 
-        protected override IObservable<BNO055DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source)
+        protected override IObservable<BNO055DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            return source.Select(f => { return new BNO055DataFrame(f); });
+            return source.Select(f => { return new BNO055DataFrame(f, frameOffset); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
