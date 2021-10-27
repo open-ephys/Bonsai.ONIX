@@ -6,8 +6,8 @@ namespace Bonsai.ONIX
     public class AnalogInputDataFrame : U16DataBlockFrame
     {
         public const int NumberOfChannels = 12;
-        public readonly int NumberOfSamples;
-        public readonly AnalogIODevice.AnalogDataType Format;
+        internal readonly int NumberOfSamples;
+        internal readonly AnalogIODevice.AnalogDataType Format;
 
         public AnalogInputDataFrame(IList<ONIManagedFrame<short>> frameBlock, ulong frameOffset, 
                                     float[] scale,
