@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.6.0"
+<WorkflowBuilder Version="2.6.2"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
@@ -28,14 +28,6 @@
             </p1:HardwareSlot>
             <p1:Address>1</p1:Address>
           </p1:DeviceAddress>
-          <p1:Hub>
-            <p1:Address>0</p1:Address>
-            <p1:HardwareID>1</p1:HardwareID>
-            <p1:FirmwareVersion>1</p1:FirmwareVersion>
-            <p1:ClockHz>250000000</p1:ClockHz>
-            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
-          </p1:Hub>
-          <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:EnableStream>true</p1:EnableStream>
           <p1:LinkVoltage>5</p1:LinkVoltage>
           <p1:GPO1>false</p1:GPO1>
@@ -50,7 +42,7 @@
         <io:Overwrite>false</io:Overwrite>
         <io:Suffix>Timestamp</io:Suffix>
         <io:IncludeHeader>false</io:IncludeHeader>
-        <io:Selector>Timestamp,Value.FrameClock,Value.DataClock,Value.Lock,Value.Pass,Value.Code,Value.Message</io:Selector>
+        <io:Selector>Timestamp,Value.Clock,Value.Lock,Value.Pass,Value.Code,Value.Message</io:Selector>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:HeadstagePortControlDevice">
@@ -61,14 +53,6 @@
             </p1:HardwareSlot>
             <p1:Address>2</p1:Address>
           </p1:DeviceAddress>
-          <p1:Hub>
-            <p1:Address>0</p1:Address>
-            <p1:HardwareID>1</p1:HardwareID>
-            <p1:FirmwareVersion>1</p1:FirmwareVersion>
-            <p1:ClockHz>250000000</p1:ClockHz>
-            <p1:DelayNanoSeconds>0</p1:DelayNanoSeconds>
-          </p1:Hub>
-          <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:EnableStream>true</p1:EnableStream>
           <p1:LinkVoltage>5</p1:LinkVoltage>
           <p1:GPO1>false</p1:GPO1>
@@ -83,7 +67,7 @@
         <io:Overwrite>false</io:Overwrite>
         <io:Suffix>Timestamp</io:Suffix>
         <io:IncludeHeader>false</io:IncludeHeader>
-        <io:Selector>Timestamp,Value.FrameClock,Value.DataClock,Value.Lock,Value.Pass,Value.Code,Value.Message</io:Selector>
+        <io:Selector>Timestamp,Value.Clock,Value.Lock,Value.Pass,Value.Code,Value.Message</io:Selector>
       </Expression>
     </Nodes>
     <Edges>

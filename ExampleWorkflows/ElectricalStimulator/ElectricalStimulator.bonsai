@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.6.0"
+<WorkflowBuilder Version="2.6.2"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
                  xmlns:wie="clr-namespace:Bonsai.Windows.Input;assembly=Bonsai.Windows.Input"
@@ -51,54 +51,36 @@
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:ElectricalStimulationDevice">
           <p1:DeviceAddress>
-            <p1:Valid>true</p1:Valid>
             <p1:HardwareSlot>
               <p1:Driver>riffa</p1:Driver>
               <p1:Index>0</p1:Index>
             </p1:HardwareSlot>
             <p1:Address>259</p1:Address>
           </p1:DeviceAddress>
-          <p1:Hub>
-            <p1:Address>1</p1:Address>
-            <p1:HardwareID>1</p1:HardwareID>
-            <p1:FirmwareVersion>256</p1:FirmwareVersion>
-            <p1:ClockHz>42000000</p1:ClockHz>
-            <p1:DelayNanoSeconds>2547</p1:DelayNanoSeconds>
-          </p1:Hub>
-          <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:PhaseOneCurrent>1500</p1:PhaseOneCurrent>
           <p1:PhaseTwoCurrent>-1500</p1:PhaseTwoCurrent>
           <p1:InterPhaseCurrent>-0.02</p1:InterPhaseCurrent>
-          <p1:PhaseOneDuration>0.10400000000000001</p1:PhaseOneDuration>
-          <p1:InterPhaseDuration>0.003</p1:InterPhaseDuration>
-          <p1:PhaseTwoDuration>0.10400000000000001</p1:PhaseTwoDuration>
+          <p1:PhaseOneDuration>0.105</p1:PhaseOneDuration>
+          <p1:InterPhaseDuration>0.004</p1:InterPhaseDuration>
+          <p1:PhaseTwoDuration>0.105</p1:PhaseTwoDuration>
           <p1:PulsePeriod>10</p1:PulsePeriod>
           <p1:BurstPulseCount>10</p1:BurstPulseCount>
           <p1:InterBurstInterval>30</p1:InterBurstInterval>
           <p1:TrainBurstCount>2</p1:TrainBurstCount>
           <p1:TrainDelay>0</p1:TrainDelay>
-          <p1:PowerOn>false</p1:PowerOn>
+          <p1:PowerOn>true</p1:PowerOn>
           <p1:Enable>false</p1:Enable>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:RHD2164Device">
           <p1:DeviceAddress>
-            <p1:Valid>true</p1:Valid>
             <p1:HardwareSlot>
               <p1:Driver>riffa</p1:Driver>
               <p1:Index>0</p1:Index>
             </p1:HardwareSlot>
             <p1:Address>256</p1:Address>
           </p1:DeviceAddress>
-          <p1:Hub>
-            <p1:Address>1</p1:Address>
-            <p1:HardwareID>1</p1:HardwareID>
-            <p1:FirmwareVersion>256</p1:FirmwareVersion>
-            <p1:ClockHz>42000000</p1:ClockHz>
-            <p1:DelayNanoSeconds>2547</p1:DelayNanoSeconds>
-          </p1:Hub>
-          <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:EnableStream>true</p1:EnableStream>
           <p1:BlockSize>30</p1:BlockSize>
           <p1:EphysDataFormat>TwosCompliment</p1:EphysDataFormat>

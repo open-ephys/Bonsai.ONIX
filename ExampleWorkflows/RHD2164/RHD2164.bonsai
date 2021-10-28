@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.6.0"
+<WorkflowBuilder Version="2.6.2"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
                  xmlns="https://bonsai-rx.org/2018/workflow">
@@ -20,21 +20,12 @@
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:RHD2164Device">
           <p1:DeviceAddress>
-            <p1:Valid>true</p1:Valid>
             <p1:HardwareSlot>
               <p1:Driver>riffa</p1:Driver>
               <p1:Index>0</p1:Index>
             </p1:HardwareSlot>
             <p1:Address>256</p1:Address>
           </p1:DeviceAddress>
-          <p1:Hub>
-            <p1:Address>1</p1:Address>
-            <p1:HardwareID>1</p1:HardwareID>
-            <p1:FirmwareVersion>256</p1:FirmwareVersion>
-            <p1:ClockHz>42000000</p1:ClockHz>
-            <p1:DelayNanoSeconds>2547</p1:DelayNanoSeconds>
-          </p1:Hub>
-          <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:EnableStream>true</p1:EnableStream>
           <p1:BlockSize>30</p1:BlockSize>
           <p1:EphysDataFormat>MicroVolts</p1:EphysDataFormat>
@@ -51,17 +42,13 @@
         <Selector>AuxiliaryData</Selector>
       </Expression>
       <Expression xsi:type="MemberSelector">
-        <Selector>DataClock</Selector>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>FrameClock</Selector>
+        <Selector>Clock</Selector>
       </Expression>
     </Nodes>
     <Edges>
       <Edge From="1" To="2" Label="Source1" />
       <Edge From="1" To="3" Label="Source1" />
       <Edge From="1" To="4" Label="Source1" />
-      <Edge From="1" To="5" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

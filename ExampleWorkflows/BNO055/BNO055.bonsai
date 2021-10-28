@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.6.0"
+<WorkflowBuilder Version="2.6.2"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:io="clr-namespace:Bonsai.IO;assembly=Bonsai.System"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -24,18 +26,24 @@
               <p1:Driver>riffa</p1:Driver>
               <p1:Index>0</p1:Index>
             </p1:HardwareSlot>
-            <p1:Address>258</p1:Address>
+            <p1:Address>257</p1:Address>
           </p1:DeviceAddress>
-          <p1:Hub>
-            <p1:Address>1</p1:Address>
-            <p1:HardwareID>3</p1:HardwareID>
-            <p1:FirmwareVersion>256</p1:FirmwareVersion>
-            <p1:ClockHz>40000000</p1:ClockHz>
-            <p1:DelayNanoSeconds>1</p1:DelayNanoSeconds>
-          </p1:Hub>
-          <p1:FrameClockHz>250000000</p1:FrameClockHz>
           <p1:EnableStream>true</p1:EnableStream>
         </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Timestamp" />
+      </Expression>
+      <Expression xsi:type="io:CsvWriter">
+        <io:FileName>bno055_.csv</io:FileName>
+        <io:Append>false</io:Append>
+        <io:Overwrite>false</io:Overwrite>
+        <io:Suffix>Timestamp</io:Suffix>
+        <io:IncludeHeader>false</io:IncludeHeader>
+        <io:Selector>Timestamp,Value.Clock,Value.Quaternion,Value.LinearAcceleration,Value.GravityVector,Value.Euler,Value.Temperature,Value.SystemCalibrated</io:Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Value</Selector>
       </Expression>
       <Expression xsi:type="MemberSelector">
         <Selector>AccelerometerCalibrated</Selector>
@@ -61,24 +69,19 @@
       <Expression xsi:type="MemberSelector">
         <Selector>Euler</Selector>
       </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>DataClock</Selector>
-      </Expression>
-      <Expression xsi:type="MemberSelector">
-        <Selector>FrameClock</Selector>
-      </Expression>
     </Nodes>
     <Edges>
       <Edge From="1" To="2" Label="Source1" />
-      <Edge From="1" To="3" Label="Source1" />
-      <Edge From="1" To="4" Label="Source1" />
-      <Edge From="1" To="5" Label="Source1" />
-      <Edge From="1" To="6" Label="Source1" />
-      <Edge From="1" To="7" Label="Source1" />
-      <Edge From="1" To="8" Label="Source1" />
-      <Edge From="1" To="9" Label="Source1" />
-      <Edge From="1" To="10" Label="Source1" />
-      <Edge From="1" To="11" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="4" To="6" Label="Source1" />
+      <Edge From="4" To="7" Label="Source1" />
+      <Edge From="4" To="8" Label="Source1" />
+      <Edge From="4" To="9" Label="Source1" />
+      <Edge From="4" To="10" Label="Source1" />
+      <Edge From="4" To="11" Label="Source1" />
+      <Edge From="4" To="12" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

@@ -62,8 +62,8 @@
   <DialogSettings>
     <Visible>true</Visible>
     <Location>
-      <X>640</X>
-      <Y>182</Y>
+      <X>647</X>
+      <Y>464</Y>
     </Location>
     <Size>
       <Width>788</Width>
@@ -75,8 +75,8 @@
       <MatVisualizer>
         <XMin>0</XMin>
         <XMax>10000</XMax>
-        <YMin>-1</YMin>
-        <YMax>2.5</YMax>
+        <YMin>1.97</YMin>
+        <YMax>2.04</YMax>
         <AutoScaleX>true</AutoScaleX>
         <AutoScaleY>true</AutoScaleY>
         <SelectedPage>0</SelectedPage>
@@ -87,18 +87,6 @@
         <WaveformBufferLength>1</WaveformBufferLength>
       </MatVisualizer>
     </VisualizerSettings>
-  </DialogSettings>
-  <DialogSettings>
-    <Visible>false</Visible>
-    <Location>
-      <X>0</X>
-      <Y>0</Y>
-    </Location>
-    <Size>
-      <Width>0</Width>
-      <Height>0</Height>
-    </Size>
-    <WindowState>Normal</WindowState>
   </DialogSettings>
   <DialogSettings>
     <Visible>false</Visible>
