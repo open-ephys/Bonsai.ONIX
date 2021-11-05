@@ -33,25 +33,28 @@ namespace Bonsai.ONIX
         [System.Xml.Serialization.XmlIgnore]
         public bool RefreshNeeded { get; set; } = true;
 
-        private ONIDeviceAddress dev_address = new ONIDeviceAddress();
+        private ONIDeviceAddress deviceAddress = new ONIDeviceAddress();
 
         public ONIDeviceAddress DeviceAddress
         {
             get
             {
-                return dev_address;
+                return deviceAddress;
             }
             set
             {
-                dev_address = value;
+                deviceAddress = value;
 
-                using (var flex = new NeuropixelsV1Flex(dev_address))
+                if (deviceAddress.Valid)
                 {
-                    FlexProbeSN = flex.ProbeSN;
-                    ProbePartNo = flex.ProbePartNo;
+                    using (var flex = new NeuropixelsV1Flex(deviceAddress))
+                    {
+                        FlexProbeSN = flex.ProbeSN;
+                        ProbePartNo = flex.ProbePartNo;
 
-                    FlexPartNo = flex.PartNo;
-                    FlexVersion = flex.Version;
+                        FlexPartNo = flex.PartNo;
+                        FlexVersion = flex.Version;
+                    }
                 }
             }
         }
