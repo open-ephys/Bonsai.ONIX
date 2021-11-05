@@ -5,7 +5,7 @@
     <Description>Bonsai design library for Bonsai.ONIX.</Description>
     <PackageTags>Bonsai Rx Open Ephys ONI Neural Interface ONIX Electrophysiology Miniscope</PackageTags>
     <TargetFramework>net472</TargetFramework>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Authors>Jon Newman</Authors>
     <Company>MIT</Company>
     <Copyright>Copyright © Jonathan Newman 2021</Copyright>
@@ -15,8 +15,8 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>onix_open_ephys_logo.png</PackageIcon>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/jonnew/Bonsai.ONIX</RepositoryUrl>
 	 <UseWindowsForms>true</UseWindowsForms>
@@ -82,10 +82,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Bonsai.Shaders" Version="0.24.0" />
-    <PackageReference Include="clroni" Version="4.3.4" />
+    <PackageReference Include="Bonsai.Shaders" Version="0.25.0" />
+    <PackageReference Include="clroni" Version="4.3.6" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
-    <PackageReference Include="TinyCsvParser" Version="2.6.0" />
+    <PackageReference Include="TinyCsvParser" Version="2.6.1" />
     <PackageReference Include="ZedGraph" Version="5.1.7" />
   </ItemGroup>
   

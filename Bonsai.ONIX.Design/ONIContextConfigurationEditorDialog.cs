@@ -108,12 +108,12 @@ namespace Bonsai.ONIX.Design
 
                     if (hubs.Count > 0)
                     {
-                        tabControlHubs.TabPages[0].Text = $@"0x{hubs.ElementAt(0).Address:X2} " + hubs[0].Description;
+                        tabControlHubs.TabPages[0].Text = $@"Hub 0x{hubs.ElementAt(0).Address:X2}: " + hubs[0].Description;
                         tabControlHubs.TabPages[0].Tag = hubs[0];
 
                         foreach (var h in hubs.GetRange(1, hubs.Count - 1))
                         {
-                            var text = $@"0x{h.Address:X2} " + h.Description;
+                            var text = $@"Hub 0x{h.Address:X2}: " + h.Description;
                             tabControlHubs.TabPages.Add(h.Address.ToString(), text);
                             tabControlHubs.TabPages[h.Address.ToString()].Tag = h;
                         }
