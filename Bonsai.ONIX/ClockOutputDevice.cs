@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.FMCClockInput)]
+    [ONIXDeviceID(ONIXDevices.ID.FMCClockOutput)]
     [Description("Controls the high performance output clock that is synchronized to the system " +
         "clock on the Open Ephys FMC Host. A boolean input can be used to toggle the Enable " +
         "register.")]
