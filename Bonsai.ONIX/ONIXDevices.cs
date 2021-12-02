@@ -32,7 +32,6 @@
             TS4231V1Array = 25,
             MAX10ADCCore = 26,
             LoadTest = 27,
-
             MemoryUsage = 28,
             HARPSyncInput = 30
         }
