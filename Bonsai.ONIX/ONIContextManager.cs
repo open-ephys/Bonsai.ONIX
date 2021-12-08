@@ -57,9 +57,7 @@ namespace Bonsai.ONIX
 
         public static ONIContextDisposable ReserveContext(ONIHardwareSlot slot, bool releaseWaiting = false, bool resetRunning = false)
         {
-#if DEBUG
-            Console.WriteLine("Context slot " + slot + " reserved by " + (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().DeclaringType);
-#endif
+
             var contextCounted = default(Tuple<ONIContextTask, RefCountDisposable>);
 
             lock (openContextLock)
@@ -118,6 +116,10 @@ namespace Bonsai.ONIX
                     // Will already be created if we in this portion of code.
                     contextWaitHandles[slot.MakeKey()].Set();
                 }
+
+#if DEBUG
+                Console.WriteLine("Context slot " + slot + " reserved by " + new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().DeclaringType);
+#endif
 
                 return new ONIContextDisposable(contextCounted.Item1, contextCounted.Item2.GetDisposable(), openContextLock);
             }
