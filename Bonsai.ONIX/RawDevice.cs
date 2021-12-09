@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.Null)]
+    [ONIXDeviceID(DeviceID.Null)]
     [Description("Capture unformated data frames from, and control, any device.")]
     public class RawDevice : ONIFrameReader<RawDataFrame, ushort>
     {
@@ -27,13 +27,10 @@ namespace Bonsai.ONIX
             {
                 deviceAddress = value;
                 RegisterIndex = 0;
-                if (deviceAddress.Valid)
+                using (var c = ONIContextManager.ReserveContext(deviceAddress.HardwareSlot))
                 {
-                    using (var c = ONIContextManager.ReserveContext(deviceAddress.HardwareSlot))
-                    {
 
-                        ID = (ONIXDevices.ID)c.Context.DeviceTable[(uint)deviceAddress.Address].ID;
-                    }
+                    ID = (DeviceID)c.Context.DeviceTable[(uint)deviceAddress.Address].ID;
                 }
             }
         }
@@ -42,7 +39,7 @@ namespace Bonsai.ONIX
         [Description("Device type to acquire raw data frames from.")]
         [Externalizable(false)]
         [ReadOnly(true)]
-        public ONIXDevices.ID DeviceType
+        public DeviceID DeviceType
         {
             get
             {

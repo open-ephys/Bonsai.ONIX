@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.BreakoutDigitalIO)]
+    [ONIXDeviceID(DeviceID.BreakoutDigitalIO)]
     [Description("Acquires digital data from, and sends digital data to, an ONIX " +
         "Breakout Board and controls the indication LED state. The least significant bits of " +
         "the integer input are used to determine the output port state.")]

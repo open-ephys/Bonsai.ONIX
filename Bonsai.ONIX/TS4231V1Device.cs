@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.TS4231V1Array)]
+    [ONIXDeviceID(DeviceID.TS4231V1Array)]
     [Description("Triad TS4231 optical to digital converter array for V1 SteamVR base stations.")]
     public class TS4231V1Device : ONIFrameReader<TS4231V1DataFrame, ushort>
     {

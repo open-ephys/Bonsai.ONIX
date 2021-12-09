@@ -2,56 +2,56 @@
 {
     internal static class ONIDeviceFactory
     {
-        public static ONIDevice Make(ONIXDevices.ID device)
+        public static ONIDevice Make(DeviceID device)
         {
             switch (device)
             {
-                //case ONIXDevices.ID.NULL:
-                //case ONIXDevices.ID.INFO:
-                //case ONIXDevices.ID.RHD2132:
-                case ONIXDevices.ID.RHD2164:
+                //case ID.NULL:
+                //case ID.INFO:
+                //case ID.RHD2132:
+                case DeviceID.RHD2164:
                     return new RHD2164Device();
-                case ONIXDevices.ID.ElectricalStimulator:
+                case DeviceID.ElectricalStimulator:
                     return new ElectricalStimulationDevice();
-                case ONIXDevices.ID.OpticalStimulator:
+                case DeviceID.OpticalStimulator:
                     return new OpticalStimulationDevice();
-                //case ONIXDevices.ID.TS4231:
-                //case ONIXDevices.ID.DINPUT32:
-                //case ONIXDevices.ID.DOUTPUT32:
-                case ONIXDevices.ID.BNO055:
+                //case ID.TS4231:
+                //case ID.DINPUT32:
+                //case ID.DOUTPUT32:
+                case DeviceID.BNO055:
                     return new BNO055Device();
-                case ONIXDevices.ID.Test:
+                case DeviceID.Test:
                     return new TestDevice();
-                case ONIXDevices.ID.NeuropixelsV1:
+                case DeviceID.NeuropixelsV1:
                     return new NeuropixelsV1Device();
-                case ONIXDevices.ID.Heartbeat:
+                case DeviceID.Heartbeat:
                     return new HeartbeatDevice();
-                //case ONIXDevices.ID.AD51X2:
-                //case ONIXDevices.ID.FMCVCTRL:
-                //case ONIXDevices.ID.AD7617:
-                //case ONIXDevices.ID.AD576X:
-                //case ONIXDevices.ID.TESTREG0:
-                case ONIXDevices.ID.BreakoutDigitalIO:
+                //case ID.AD51X2:
+                //case ID.FMCVCTRL:
+                //case ID.AD7617:
+                //case ID.AD576X:
+                //case ID.TESTREG0:
+                case DeviceID.BreakoutDigitalIO:
                     return new DigitalIODevice();
-                //case ONIXDevices.ID.FMCCLKIN1R3:
-                case ONIXDevices.ID.FMCClockOutput:
+                //case ID.FMCCLKIN1R3:
+                case DeviceID.FMCClockOutput:
                     return new ClockOutputDevice();
-                //case ONIXDevices.ID.TS4231V2ARR:
+                //case ID.TS4231V2ARR:
                 //    return new TS4231V2Device();
-                case ONIXDevices.ID.BreakoutAnalogIO:
+                case DeviceID.BreakoutAnalogIO:
                     return new AnalogIODevice();
-                case ONIXDevices.ID.FMCLinkController:
+                case DeviceID.FMCLinkController:
                     return new HeadstagePortControlDevice();
-                case ONIXDevices.ID.DS90UB9X:
+                case DeviceID.DS90UB9X:
                     return new DS90UB9xDevice();
-                case ONIXDevices.ID.TS4231V1Array:
+                case DeviceID.TS4231V1Array:
                     return new TS4231V1Device();
-                //case ONIXDevices.ID.MAX10ADCCORE:
-                case ONIXDevices.ID.LoadTest:
+                //case ID.MAX10ADCCORE:
+                case DeviceID.LoadTest:
                     return new LoadTestingDevice();
-                case ONIXDevices.ID.MemoryUsage:
+                case DeviceID.MemoryUsage:
                     return new MemoryUsageDevice();
-                case ONIXDevices.ID.HARPSyncInput:
+                case DeviceID.HARPSyncInput:
                     return new HARPSyncInputDevice();
                 default:
                     return null;

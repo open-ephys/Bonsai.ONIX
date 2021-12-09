@@ -246,51 +246,66 @@ namespace Bonsai.ONIX
             }
         }
 
-        internal uint ReadRegister(uint dev_index, uint register_address)
+        internal uint ReadRegister(uint deviceIndex, uint registerAddress)
         {
             lock (regLock)
             {
-                return ctx.ReadRegister(dev_index, register_address);
+                return ctx.ReadRegister(deviceIndex, registerAddress);
             }
         }
 
-        internal void WriteRegister(uint dev_index, uint register_address, uint value)
+        internal void WriteRegister(uint deviceIndex, uint registerAddress, uint value)
         {
             lock (regLock)
             {
-                ctx.WriteRegister(dev_index, register_address, value);
+                ctx.WriteRegister(deviceIndex, registerAddress, value);
             }
         }
 
         public oni.Frame ReadFrame()
         {
-            lock (readLock)
+            if (Monitor.TryEnter(readLock, new TimeSpan(0, 0, 1)))
             {
-                return ctx.ReadFrame();
+                try
+                {
+                    return ctx.ReadFrame();
+                }
+                finally
+                {
+                    Monitor.Exit(readLock);
+                }
+            } else
+            {
+                throw new Bonsai.WorkflowRuntimeException("Host lost heartbeat.");
             }
+
+            //lock (readLock)
+            //{
+                
+            //}
         }
 
-        public void Write<T>(uint dev_idx, T data) where T : unmanaged
+        public void Write<T>(uint deviceIndex, T data) where T : unmanaged
         {
             lock (writeLock)
             {
-                ctx.Write(dev_idx, data);
+                ctx.Write(deviceIndex, data);
             }
         }
 
-        public void Write<T>(uint dev_idx, T[] data) where T : unmanaged
+        public void Write<T>(uint deviceIndex, T[] data) where T : unmanaged
         {
             lock (writeLock)
             {
-                ctx.Write(dev_idx, data);
+                ctx.Write(deviceIndex, data);
             }
         }
 
-        public void Write(uint dev_idx, IntPtr data, int data_size)
+        public void Write(uint deviceIndex, IntPtr data, int dataSize)
         {
             lock (writeLock)
             {
-                ctx.Write(dev_idx, data, data_size);
+                ctx.Write(deviceIndex, data, dataSize);
             }
         }
 

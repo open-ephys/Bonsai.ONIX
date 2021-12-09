@@ -15,24 +15,17 @@ namespace Bonsai.ONIX
 
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(Driver))
-            {
-                return "";
-            }
-            else
-            {
-                return string.Format("({0},{1})", Driver, Index);
-            }
+            return string.IsNullOrEmpty(Driver) ? "" : string.Format("({0},{1})", Driver, Index);
         }
 
         public bool Equals(ONIHardwareSlot other)
         {
-            return this.MakeKey().Equals(other.MakeKey());
+            return MakeKey().Equals(other.MakeKey());
         }
 
         public override int GetHashCode()
         {
-            return this.MakeKey().GetHashCode();
+            return MakeKey().GetHashCode();
         }
     }
 }

@@ -5,15 +5,15 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+    [ONIXDeviceID(DeviceID.DS90UB9X)]
     [Description("Provides access to raw data from a DS90UB9x deserializer.")]
     public class DS90UB9xDevice : ONIFrameReader<RawDataFrame, ushort>
     {
-
         protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
             return source.Select(f => { return new RawDataFrame(f, frameOffset); });
         }
+
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Configuration")]
@@ -132,16 +132,14 @@ namespace Bonsai.ONIX
         {
             get
             {
-                if (!DeviceAddress.Valid) return DS90UB9xConfiguration.Mode.Raw12BitHighFrequency;
-                using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     return (DS90UB9xConfiguration.Mode)(i2c.ReadByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode) & 0x3);
                 }
             }
             set
             {
-                if (!DeviceAddress.Valid) return;
-                using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = 0x4 + (uint)value; // 0x4 maintains coax mode
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode, val);

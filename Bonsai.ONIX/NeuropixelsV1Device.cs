@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.NeuropixelsV1)]
+    [ONIXDeviceID(DeviceID.NeuropixelsV1)]
     [Description("Acquires a stream of \"ultra-frames\" from a single Neuropixels v1.0 probe.")]
     [DefaultProperty("Configuration")]
     public class NeuropixelsV1Device : ONIFrameReader<NeuropixelsV1DataFrame, ushort>

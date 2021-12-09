@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.FMCLinkController)]
+    [ONIXDeviceID(DeviceID.FMCLinkController)]
     [Description("Controls a digital communication link to a remote headstage on the Open Ephys FMC Host.")]
     public class HeadstagePortControlDevice : ONIFrameReader<HeadstagePortControlFrame, ushort>
     {

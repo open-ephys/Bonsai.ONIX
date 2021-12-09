@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.LoadTest)]
+    [ONIXDeviceID(DeviceID.LoadTest)]
     [Description("Variable load testing device and latency tester.")]
     public class LoadTestingDevice : ONIFrameReaderAndWriter<ulong, LoadTestingDataFrame, ushort>
     {

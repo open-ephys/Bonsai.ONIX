@@ -7,7 +7,7 @@ namespace Bonsai.ONIX
     [Description("Controls a dual channel optical (LED or Laser Diode) stimulator. A boolean input can be" +
         "used to trigger stimulation: True = Stimulation triggered, False = Stimulation untriggered.")]
     [DefaultProperty("DeviceAddress")]
-    [ONIXDeviceID(ONIXDevices.ID.OpticalStimulator)]
+    [ONIXDeviceID(DeviceID.OpticalStimulator)]
     public sealed class OpticalStimulationDevice : ONISink<bool>
     {
         private enum Register

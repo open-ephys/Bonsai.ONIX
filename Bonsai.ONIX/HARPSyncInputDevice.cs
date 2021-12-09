@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.HARPSyncInput)]
+    [ONIXDeviceID(DeviceID.HARPSyncInput)]
     [Description("Receives time input from a HARP synchronization source")]
     public class HARPSyncInputDevice : ONIFrameReader<HARPSyncInputDataFrame,ushort>
     {

@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+    [ONIXDeviceID(DeviceID.DS90UB9X)]
     [Description("Acquire image data from UCLA Miniscope V3.")]
     public class MiniscopeV3Device : ONIFrameReader<MiniscopeDataFrame, ushort>
     {
@@ -42,7 +42,6 @@ namespace Bonsai.ONIX
             set
             {
                 deviceAddress = value;
-                if (!deviceAddress.Valid) return;
 
                 // Deserializer triggering mode
                 WriteRegister((uint)DS90UB9xConfiguration.Register.TriggerOffset, 0);
@@ -53,7 +52,7 @@ namespace Bonsai.ONIX
                 WriteRegister((uint)DS90UB9xConfiguration.Register.MarkMode, (uint)DS90UB9xConfiguration.MarkMode.VsyncRising);
 
                 // Configuration I2C aliases
-                using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = 0x4 + (uint)DS90UB9xConfiguration.Mode.Raw12BitLowFrequency; // 0x4 maintains coax mode
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode, val);
@@ -78,7 +77,7 @@ namespace Bonsai.ONIX
                 }
 
                 // Camera sensor configuration
-                using (var i2c = new I2CConfiguration(DeviceAddress, CameraSensorAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     // Turn off automatic gain and exposure control
                     WriteCameraRegister(i2c, (uint)SensorAddress.AECAndAGC, 0);
@@ -109,7 +108,7 @@ namespace Bonsai.ONIX
         {
             set
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, LEDDriverAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, LEDDriverAddress))
                 {
                     dacValue = value;
                     WriteLEDDriver(i2c, (uint)(255 * (value / 100.0)));
@@ -129,14 +128,14 @@ namespace Bonsai.ONIX
         {
             set
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, CameraSensorAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     WriteCameraRegister(i2c, (uint)SensorAddress.AnalogGain, (uint)(value * 48 / 100 + 16));
                 }
             }
             get
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, CameraSensorAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     var reg = ReadCameraRegister(i2c, (uint)SensorAddress.AnalogGain);
                     return (reg - 16) * 100 / 48;
@@ -189,7 +188,7 @@ namespace Bonsai.ONIX
                         break;
                 }
 
-                using (var i2c = new I2CConfiguration(DeviceAddress, CameraSensorAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     WriteCameraRegister(i2c, (uint)SensorAddress.VerticalBlanking, vBlank);
                     WriteCameraRegister(i2c, (uint)SensorAddress.HorizontalBlanking, hBlank);
@@ -199,7 +198,7 @@ namespace Bonsai.ONIX
 
             get
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, CameraSensorAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     var reg = ReadCameraRegister(i2c, (uint)SensorAddress.HorizontalBlanking);
 
