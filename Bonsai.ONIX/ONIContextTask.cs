@@ -264,25 +264,10 @@ namespace Bonsai.ONIX
 
         public oni.Frame ReadFrame()
         {
-            if (Monitor.TryEnter(readLock, new TimeSpan(0, 0, 1)))
+            lock (regLock)
             {
-                try
-                {
-                    return ctx.ReadFrame();
-                }
-                finally
-                {
-                    Monitor.Exit(readLock);
-                }
-            } else
-            {
-                throw new Bonsai.WorkflowRuntimeException("Host lost heartbeat.");
+                return ctx.ReadFrame();
             }
-
-            //lock (readLock)
-            //{
-                
-            //}
         }
 
         public void Write<T>(uint deviceIndex, T data) where T : unmanaged
