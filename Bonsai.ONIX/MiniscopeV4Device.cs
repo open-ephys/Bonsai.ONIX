@@ -155,7 +155,7 @@ namespace Bonsai.ONIX
                 System.Threading.Thread.Sleep(100);
                 if (ReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus) == 0)
                 {
-                    throw new WorkflowBuildException("Unable to to connect to Miniscope.");
+                    throw new WorkflowBuildException("Unable to obtain lock when attempting to connect to Miniscope.");
                 }
             }
         }

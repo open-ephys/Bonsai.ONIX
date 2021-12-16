@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
     [ONIXDeviceID(DeviceID.HARPSyncInput)]
     [Description("Receives time input from a HARP synchronization source")]
-    public class HARPSyncInputDevice : ONIFrameReader<HARPSyncInputDataFrame,ushort>
+    public class HARPSyncInputDevice : ONIFrameReader<HARPSyncInputDataFrame, ushort>
     {
         private enum Register
         {

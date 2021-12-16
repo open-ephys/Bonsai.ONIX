@@ -20,12 +20,11 @@ namespace Bonsai.ONIX
         {
 
             object result = null;
-
             var stringValue = value as string;
 
             if (!string.IsNullOrEmpty(stringValue))
             {
-                var matches = ReverseStringFormat("({0},{1}): {2}", stringValue);
+                var matches = ReverseStringFormat("{0}/{1}/{2}", stringValue);
 
                 result = new ONIDeviceAddress
                 {

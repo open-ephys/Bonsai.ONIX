@@ -13,9 +13,11 @@ namespace Bonsai.ONIX
 
         public override string ToString()
         {
-            return string.IsNullOrEmpty(HardwareSlot.Driver)
-                ? ""
-                : string.Format("{0}: {1}", HardwareSlot.ToString(), Address);
+            return
+                string.Format("{0}/{1}/{2}",
+                !string.IsNullOrEmpty(HardwareSlot.Driver) ? HardwareSlot.Driver : "?",
+                !string.IsNullOrEmpty(HardwareSlot.Driver) ? HardwareSlot.Index.ToString() : "?",
+                Address.HasValue ? Address.ToString() : "?");
         }
     }
 }

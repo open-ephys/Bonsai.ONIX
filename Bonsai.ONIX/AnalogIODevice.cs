@@ -40,9 +40,9 @@ namespace Bonsai.ONIX
 
         protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<short>> source, ulong frameOffset)
         {
-             return Observable
-                .Return(scale.Copy())
-                .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, frameOffset, s, DataType); });
+            return Observable
+               .Return(scale.Copy())
+               .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, frameOffset, s, DataType); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
