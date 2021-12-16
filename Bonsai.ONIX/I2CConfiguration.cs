@@ -14,10 +14,11 @@ namespace Bonsai.ONIX
         private readonly uint? deviceAddress;
 
         public readonly uint I2CAddress;
+        public readonly bool Valid;
 
         public I2CConfiguration(ONIDeviceAddress address, DeviceID id, uint i2cAddress)
         {
-            ONIXDeviceDescriptor.Verify(id, address);
+            Valid = ONIXDeviceDescriptor.IsValid(id, address);
             context = ONIContextManager.ReserveContext(address.HardwareSlot);
             deviceAddress = address.Address;
             I2CAddress = i2cAddress;
@@ -29,6 +30,12 @@ namespace Bonsai.ONIX
 
         private uint? ReadRegister(uint? deviceIndex, uint registerAddress)
         {
+            if (!Valid)
+            {
+                Console.Error.WriteLine("I2C read attempted with an invalid device descriptor.");
+                return null;
+            }
+
             if (deviceIndex == null)
             {
                 throw new ArgumentNullException(nameof(deviceIndex), "Attempt to read register from invalid device.");
@@ -47,6 +54,12 @@ namespace Bonsai.ONIX
 
         private void WriteRegister(uint? deviceIndex, uint registerAddress, uint? value)
         {
+            if (!Valid)
+            {
+                Console.Error.WriteLine("I2C write attempted with an invalid device descriptor.");
+                return;
+            }
+
             if (value == null)
             {
                 throw new ArgumentNullException(nameof(value), "Attempt to write null value to register.");
@@ -75,14 +88,7 @@ namespace Bonsai.ONIX
             uint reg_addr = (address << 7) | (I2CAddress & 0x7F);
             var val = ReadRegister(deviceAddress, reg_addr);
 
-            if (val != null && val <= byte.MaxValue)
-            {
-                return (byte?)val;
-            }
-            else
-            {
-                return null;
-            }
+            return val != null && val <= byte.MaxValue ? (byte?)val : null;
         }
 
         public void WriteByte(uint address, uint value)

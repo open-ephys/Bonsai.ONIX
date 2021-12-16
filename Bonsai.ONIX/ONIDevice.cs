@@ -26,7 +26,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                ONIXDeviceDescriptor.Verify(ID, DeviceAddress);
+                ONIXDeviceDescriptor.IsValid(ID, DeviceAddress);
 
                 using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
                 {
@@ -70,13 +70,17 @@ namespace Bonsai.ONIX
             //DeviceAddress = new ONIDeviceAddress();
         }
 
-        // NB: Write/ReadRegister are used extensively in node property settings.
-        // This means they cannot throw or there will be a variety of consequences
-        // such as errors loading XML descriptions of workflows and terrible performance
-        // if a valid device is not yet selected. As an intermediate solution,
-        // I'm just dumping errors to the Console and returning 0 or doing nothing.
         protected uint ReadRegister(uint address, bool silent = true)
         {
+            // NB: This is a redundant check but is here even throwing and catching within the
+            // function body results in a huge UI performance hit.
+            if (silent && !ONIXDeviceDescriptor.IsValid(ID, DeviceAddress))
+            {
+                Console.Error.WriteLine("Register read was attempted with an invalid device " +
+                    "descriptor. Device ID: " + ID + ", Address: " + DeviceAddress.ToString() + ".");
+                return 0;
+            }
+
             try
             {
                 return ReadRegister(new ONIXDeviceDescriptor(ID, DeviceAddress), address);
@@ -90,6 +94,14 @@ namespace Bonsai.ONIX
 
         protected void WriteRegister(uint address, uint value, bool silent = true)
         {
+            // NB: This is a redundant check but is here even throwing and catching within the
+            // function body results in a huge UI performance hit.
+            if (silent && !ONIXDeviceDescriptor.IsValid(ID, DeviceAddress))
+            {
+                Console.Error.WriteLine("Register write was attempted with an invalid device " +
+                    "descriptor. Device ID: " + ID + ", Address: " + DeviceAddress.ToString() + ".");
+            }
+
             try
             {
                 WriteRegister(new ONIXDeviceDescriptor(ID, DeviceAddress), address, value);
