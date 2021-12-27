@@ -20,12 +20,11 @@ namespace Bonsai.ONIX
         {
 
             object result = null;
-
             var stringValue = value as string;
 
             if (!string.IsNullOrEmpty(stringValue))
             {
-                var matches = ReverseStringFormat("({0},{1}): {2}", stringValue);
+                var matches = ReverseStringFormat("{0}/{1}/{2}", stringValue);
 
                 result = new ONIDeviceAddress
                 {
@@ -72,7 +71,7 @@ namespace Bonsai.ONIX
 
                     // This device
                     var deviceattribute = context.PropertyDescriptor.ComponentType.GetCustomAttributes(typeof(ONIXDeviceIDAttribute), true).FirstOrDefault() as ONIXDeviceIDAttribute;
-                    ONIXDevices.ID deviceID = deviceattribute == null ? ONIXDevices.ID.Null : deviceattribute.deviceID;
+                    DeviceID deviceID = deviceattribute == null ? DeviceID.Null : deviceattribute.deviceID;
 
                     // To fill after inspecting hardware
                     var deviceAddresses = new List<ONIDeviceAddress>();
@@ -88,8 +87,8 @@ namespace Bonsai.ONIX
                                     //.Where(dev => dev.Value.ID == (uint)device.ID)
                                     .Where(dev =>
                                     {
-                                        return deviceID == ONIXDevices.ID.Null ?
-                                            dev.Value.ID != (uint)ONIXDevices.ID.Null :
+                                        return deviceID == DeviceID.Null ?
+                                            dev.Value.ID != (uint)DeviceID.Null :
                                             dev.Value.ID == (uint)deviceID;
                                     })
                                     .Select(x =>

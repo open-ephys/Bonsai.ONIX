@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.MemoryUsage)]
+    [ONIXDeviceID(DeviceID.MemoryUsage)]
     [Description("Memory usage monitoring device.")]
     public class MemoryUsageDevice : ONIFrameReader<MemoryUsageDataFrame, ushort>
     {

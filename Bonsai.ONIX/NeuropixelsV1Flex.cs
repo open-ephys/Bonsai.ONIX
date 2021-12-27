@@ -4,7 +4,7 @@ namespace Bonsai.ONIX
 {
     public class NeuropixelsV1Flex : I2CConfiguration
     {
-        public NeuropixelsV1Flex(ONIDeviceAddress device) : base(device, 0x50)
+        public NeuropixelsV1Flex(ONIDeviceAddress device) : base(device, DeviceID.NeuropixelsV1, 0x50)
         {
             var sn = ReadBytes((uint)EEPROM.OFFSET_ID, 8);
             ProbeSN = (sn == null) ? null : (ulong?)BitConverter.ToUInt64(sn, 0);

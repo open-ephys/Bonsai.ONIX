@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+    [ONIXDeviceID(DeviceID.DS90UB9X)]
     [Description("Acquire image data from UCLA Miniscope V4.")]
     public class MiniscopeV4Device : ONIFrameReader<MiniscopeDataFrame, ushort>
     {
@@ -41,13 +41,13 @@ namespace Bonsai.ONIX
             running = true;
 
             // Turn on EWL
-            using (var i2c = new I2CConfiguration(DeviceAddress, MAX14574Address))
+            using (var i2c = new I2CConfiguration(DeviceAddress, ID, MAX14574Address))
             {
                 i2c.WriteByte(0x03, 0x03);
             }
 
             // Turn on LED
-            using (var i2c = new I2CConfiguration(DeviceAddress, ATMegaAddress))
+            using (var i2c = new I2CConfiguration(DeviceAddress, ID, ATMegaAddress))
             {
                 i2c.WriteByte(1, (uint)(LEDBrightness == 0 ? 0xFF : 0x00));
             }
@@ -59,13 +59,13 @@ namespace Bonsai.ONIX
             .Finally(() =>
                 {
                     // Turn off EWL
-                    using (var i2c = new I2CConfiguration(DeviceAddress, MAX14574Address))
+                    using (var i2c = new I2CConfiguration(DeviceAddress, ID, MAX14574Address))
                     {
                         i2c.WriteByte(0x03, 0x00);
                     }
 
                     // Turn off LED
-                    using (var i2c = new I2CConfiguration(DeviceAddress, ATMegaAddress))
+                    using (var i2c = new I2CConfiguration(DeviceAddress, ID, ATMegaAddress))
                     {
                         i2c.WriteByte(1, 0xFF);
                     }
@@ -95,7 +95,6 @@ namespace Bonsai.ONIX
             set
             {
                 deviceAddress = value;
-                if (!deviceAddress.Valid) return;
 
                 // Deserializer triggering mode
                 WriteRegister((uint)DS90UB9xConfiguration.Register.TriggerOffset, 0);
@@ -106,7 +105,7 @@ namespace Bonsai.ONIX
                 WriteRegister((uint)DS90UB9xConfiguration.Register.MarkMode, (uint)DS90UB9xConfiguration.MarkMode.VsyncRising);
 
                 // Configuration I2C aliases
-                using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = 0x4 + (uint)DS90UB9xConfiguration.Mode.Raw12BitLowFrequency; // 0x4 maintains coax mode
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode, val);
@@ -125,14 +124,14 @@ namespace Bonsai.ONIX
                 }
 
                 // Set up potentiometer
-                using (var i2c = new I2CConfiguration(DeviceAddress, TPL0102Address))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, TPL0102Address))
                 {
                     i2c.WriteByte(0x00, 0x72);
                     i2c.WriteByte(0x01, 0x00);
                 }
 
                 // Turn on EWL
-                using (var i2c = new I2CConfiguration(DeviceAddress, MAX14574Address))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, MAX14574Address))
                 {
                     //i2c.WriteByte(0x03, 0x03);
                     i2c.WriteByte(0x08, 0x7F);
@@ -140,7 +139,7 @@ namespace Bonsai.ONIX
                 }
 
                 // Turn on LED and Setup Python480
-                using (var i2c = new I2CConfiguration(DeviceAddress, ATMegaAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, ATMegaAddress))
                 {
                     WriteCameraRegister(i2c, 16, 3); // Turn on PLL
                     WriteCameraRegister(i2c, 32, 0x7007); // Turn on clock managment
@@ -156,7 +155,7 @@ namespace Bonsai.ONIX
                 System.Threading.Thread.Sleep(100);
                 if (ReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus) == 0)
                 {
-                    throw new WorkflowBuildException("Unable to to connect to Miniscope.");
+                    throw new WorkflowBuildException("Unable to obtain lock when attempting to connect to Miniscope.");
                 }
             }
         }
@@ -171,18 +170,18 @@ namespace Bonsai.ONIX
         {
             set
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, ATMegaAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, ATMegaAddress))
                 {
                     i2c.WriteByte(0x01, (uint)((value == 0 || !running) ? 0xFF : 0x08));
                 }
-                using (var i2c = new I2CConfiguration(DeviceAddress, TPL0102Address))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, TPL0102Address))
                 {
                     i2c.WriteByte(0x01, (uint)(255 * ((100 - value) / 100.0)));
                 }
             }
             get
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, TPL0102Address))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, TPL0102Address))
                 {
                     var val = i2c.ReadByte(1) ?? 0;
                     return 100 - 100.0 * val / 255.0;
@@ -219,7 +218,7 @@ namespace Bonsai.ONIX
                         break;
                 }
 
-                using (var i2c = new I2CConfiguration(DeviceAddress, ATMegaAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, ATMegaAddress))
                 {
                     WriteCameraRegister(i2c, 200, totalShutterWidth);
                 }
@@ -240,7 +239,7 @@ namespace Bonsai.ONIX
             set
             {
                 gain = value;
-                using (var i2c = new I2CConfiguration(DeviceAddress, ATMegaAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, ATMegaAddress))
                 {
                     WriteCameraRegister(i2c, 204, (uint)value);
                 }
@@ -272,7 +271,7 @@ namespace Bonsai.ONIX
         {
             set
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, MAX14574Address))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, MAX14574Address))
                 {
                     i2c.WriteByte(0x08, (uint)((value - 24.4) / 0.0445) >> 2);
                     i2c.WriteByte(0x09, 0x02); // Update output
@@ -280,7 +279,7 @@ namespace Bonsai.ONIX
             }
             get
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, MAX14574Address))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, MAX14574Address))
                 {
                     return 0.0445 * (i2c.ReadByte(0x08) << 2 ?? 0) + 24.4;
                 }
@@ -294,7 +293,7 @@ namespace Bonsai.ONIX
         {
             set
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, ATMegaAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, ATMegaAddress))
                 {
                     i2c.WriteByte(0x04, (uint)(value ? 0x00 : 0x03));
                 }

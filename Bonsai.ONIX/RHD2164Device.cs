@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.RHD2164)]
+    [ONIXDeviceID(DeviceID.RHD2164)]
     [Description("Acquires data from a single RHD2164 bioamplifier chip. Ephys data is acquired at 30 kHz/channel.")]
     public class RHD2164Device : ONIFrameReader<RHD2164DataFrame, ushort>
     {

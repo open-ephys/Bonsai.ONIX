@@ -48,7 +48,7 @@ namespace Bonsai.ONIX
             PROBE_SN_MSB = 0x00008192
         }
 
-        public NeuropixelsV1Probe(ONIDeviceAddress device) : base(device, 0x70)
+        public NeuropixelsV1Probe(ONIDeviceAddress device) : base(device, DeviceID.NeuropixelsV1, 0x70)
         { }
 
         public static int ElectrodeToChannel(int electrode)

@@ -5,14 +5,15 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.LoadTest)]
+    [ONIXDeviceID(DeviceID.LoadTest)]
     [Description("Variable load testing device, block version")]
     public class LoadTestingBlockDevice : ONIFrameReader<LoadTestingBlockDataFrame, ushort>
     {
         private enum Register
         {
             ENABLE = 0,
-            CLK_DIV = 1,  // Heartbeat clock divider ratio. Default results in 10 Hz heartbeat. Values less than CLK_HZ / 10e6 Hz will result in 1kHz.
+            CLK_DIV = 1,  // Heartbeat clock divider ratio. Default results in 10 Hz heartbeat.
+                          // Values less than CLK_HZ / 10e6 Hz will result in 1kHz.
             CLK_HZ = 2, // The frequency parameter, CLK_HZ, used in the calculation of CLK_DIV
             TX16_WORDS = 3, // Number of repetitions of 16-bit unsigned integer 42 sent with each frame. 
                             // Note: max here depends of CLK_HZ and CLK_DIV. There needs to be enough clock

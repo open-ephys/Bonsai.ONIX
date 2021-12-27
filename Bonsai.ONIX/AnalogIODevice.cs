@@ -10,7 +10,7 @@ namespace Bonsai.ONIX
         "Optionally, sends data to the 16-bit analog outputs on the Open Ephys Host bpard, if those " +
         "channels are selected to be outputs. The output range is fixed to +/-10V. Usually these signals" +
         "are accessed via the ONIX breakout board.")]
-    [ONIXDeviceID(ONIXDevices.ID.BreakoutAnalogIO)]
+    [ONIXDeviceID(DeviceID.BreakoutAnalogIO)]
     public class AnalogIODevice : ONIFrameReaderAndWriter<Arr, AnalogInputDataFrame, short>
     {
         private enum Register
@@ -40,9 +40,9 @@ namespace Bonsai.ONIX
 
         protected override IObservable<AnalogInputDataFrame> Process(IObservable<ONIManagedFrame<short>> source, ulong frameOffset)
         {
-             return Observable
-                .Return(scale.Copy())
-                .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, frameOffset, s, DataType); });
+            return Observable
+               .Return(scale.Copy())
+               .CombineLatest(source.Buffer(BlockSize), (s, block) => { return new AnalogInputDataFrame(block, frameOffset, s, DataType); });
         }
 
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
