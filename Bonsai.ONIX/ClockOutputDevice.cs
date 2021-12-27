@@ -37,9 +37,6 @@ namespace Bonsai.ONIX
             return 100.0 * h / (h + l);
         }
 
-        public ClockOutputDevice() { }
-
-
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         [Category("Acquisition")]
@@ -96,8 +93,8 @@ namespace Bonsai.ONIX
             {
                 var h = ReadRegister((uint)Register.HIGH_CYCLES);
                 var l = ReadRegister((uint)Register.LOW_CYCLES);
-                h = h == 0 ? 1 : h; // the firmware does this as well
-                l = l == 0 ? 1 : l; // the firmware does this as well
+                h = h == 0 ? 1 : h; // The firmware does this as well
+                l = l == 0 ? 1 : l; // The firmware does this as well
                 duty = GetDuty(h, l);
                 return duty;
             }

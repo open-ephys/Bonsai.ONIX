@@ -67,7 +67,6 @@ namespace Bonsai.ONIX
         {
             ID = !(GetType().GetCustomAttributes(typeof(ONIXDeviceIDAttribute), true).FirstOrDefault() is ONIXDeviceIDAttribute devID) ?
                 DeviceID.Null : devID.deviceID;
-            //DeviceAddress = new ONIDeviceAddress();
         }
 
         protected uint ReadRegister(uint address, bool silent = true)

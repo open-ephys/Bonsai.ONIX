@@ -82,10 +82,6 @@ namespace Bonsai.ONIX
             false, false, false, true  // axis 1, station 1
         };
 
-        // Max seconds it should take to receive an entire valid template
-        // TODO: Figure out the correct value...
-        //const double max_packet_duration = 0.03;
-
         private readonly Queue<double> pulseTimes;
         private readonly Queue<double> pulseWidths;
         private readonly Queue<bool> pulseParse;
