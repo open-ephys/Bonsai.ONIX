@@ -88,7 +88,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        private ONIDeviceAddress deviceAddress;
+        private ONIDeviceAddress deviceAddress = new ONIDeviceAddress();
         public override ONIDeviceAddress DeviceAddress
         {
             get { return deviceAddress; }

@@ -13,7 +13,7 @@ namespace Bonsai.ONIX
     {
         private const int BNO055Address = 0x28;
 
-        private ONIDeviceAddress deviceAddress;
+        private ONIDeviceAddress deviceAddress = new ONIDeviceAddress();
         public override ONIDeviceAddress DeviceAddress
         {
             get { return deviceAddress; }

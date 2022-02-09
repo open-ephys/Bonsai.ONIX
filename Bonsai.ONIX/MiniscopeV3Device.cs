@@ -35,7 +35,7 @@ namespace Bonsai.ONIX
                 .Select(block => { return new MiniscopeDataFrame(block, frameOffset, Rows, Columns); });
         }
 
-        private ONIDeviceAddress deviceAddress;
+        private ONIDeviceAddress deviceAddress = new ONIDeviceAddress();
         public override ONIDeviceAddress DeviceAddress
         {
             get { return deviceAddress; }
