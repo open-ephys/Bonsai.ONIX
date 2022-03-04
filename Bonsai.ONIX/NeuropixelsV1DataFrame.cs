@@ -28,6 +28,11 @@ namespace Bonsai.ONIX
                                                          5, 12, 19, 26, 33,
                                                          6, 13 };
 
+        // ADC number to starting channel number
+        private static readonly int[] adcToChannel = {0, 1, 24, 25, 48, 49, 72, 73, 96, 97, 120,
+            121, 144, 145, 168, 169, 192, 193, 216, 217, 240, 241, 264, 265, 288, 289, 312, 313,
+            336, 337, 360, 361};
+
         public NeuropixelsV1DataFrame(IList<ONIManagedFrame<ushort>> frameBlock, ulong frameOffset)
             : base(frameBlock, frameOffset)
         {
@@ -82,17 +87,17 @@ namespace Bonsai.ONIX
 
                         for (int adc = 0; adc < 32; adc++)
                         {
-                            lfpData[adc + super_cnt_circ * 32, ultraCount] = (ushort)(data[adcToFrameIndex[adc] + data_offset] >> 5); // Q11.5 -> Q11.0
+                            lfpData[adcToChannel[adc] + super_cnt_circ * 2, ultraCount] = (ushort)(data[adcToFrameIndex[adc] + data_offset] >> 5); // Q11.5 -> Q11.0
                         }
 
                     }
                     else // Spike data
                     {
 
-                        var spike_frame_cnt = i - 1;
-                        for (int chan = 0; chan < 32; chan++)
+                        var channelOffset = 2 * (i - 1);
+                        for (int adc = 0; adc < 32; adc++)
                         {
-                            spikeData[chan + spike_frame_cnt * 32, superCount] = (ushort)(data[adcToFrameIndex[chan] + data_offset] >> 5); // Q11.5 -> Q11.0
+                            spikeData[adcToChannel[adc] + channelOffset, superCount] = (ushort)(data[adcToFrameIndex[adc] + data_offset] >> 5); // Q11.5 -> Q11.0
                         }
 
                     }
