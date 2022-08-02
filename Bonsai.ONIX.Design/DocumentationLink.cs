@@ -19,7 +19,7 @@ namespace Bonsai.ONIX.Design
             {
                 var deviceString = context.Instance.GetType().ToString();
                 var page = deviceString.Split('.').ToList().Last();
-                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai/" + page + ".html");
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai.ONIX/" + page + ".html");
             }
             catch (Exception)
             {

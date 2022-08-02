@@ -235,7 +235,7 @@ namespace Bonsai.ONIX.Design
         {
             try
             {
-                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai/ONIContext.html");
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai.ONIX/ONIContext.html");
             }
             catch (Exception)
             {

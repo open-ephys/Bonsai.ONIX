@@ -14,7 +14,7 @@ namespace Bonsai.ONIX
         [Externalizable(false)]
         public ONIContextConfiguration ContextConfiguration { get; set; } = new ONIContextConfiguration();
 
-        public string Name => "ONI Context " + ContextConfiguration.Slot.ToString();
+        public string Name => "ONI Context (" + ContextConfiguration.Slot.ToString() + ")";
 
         public ONIContext()
         {

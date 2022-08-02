@@ -15,7 +15,7 @@ namespace Bonsai.ONIX
 
         public override string ToString()
         {
-            return string.IsNullOrEmpty(Driver) ? "" : string.Format("({0},{1})", Driver, Index);
+            return string.IsNullOrEmpty(Driver) ? "" : string.Format("{0}/{1}", Driver, Index);
         }
 
         public bool Equals(ONIHardwareSlot other) => MakeKey().Equals(other.MakeKey());

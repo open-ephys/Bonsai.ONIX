@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 
 namespace Bonsai.ONIX
 {
@@ -114,6 +115,7 @@ namespace Bonsai.ONIX
             }
         }
 
+        [XmlIgnore]
         [Category("Configuration")]
         [Description("Link lock status")]
         public bool LockState

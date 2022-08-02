@@ -138,7 +138,7 @@ namespace Bonsai.ONIX.Design
             try
             {
                 var page = device.GetType().Name;
-                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai/" + page + ".html");
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai.ONIX/" + page + ".html");
             }
             catch (Exception)
             {

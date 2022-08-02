@@ -27,7 +27,7 @@ namespace Bonsai.ONIX
         private Task readFrames;
         private Task distributeFrames;
         private BlockingCollection<oni.Frame> FrameQueue;
-        private CancellationTokenSource TokenSource;
+        private CancellationTokenSource CollectFramesTokenSource;
         private CancellationToken CollectFramesToken;
         internal event EventHandler<FrameReceivedEventArgs> FrameReceived;
 
@@ -102,31 +102,38 @@ namespace Bonsai.ONIX
                     ctx.ResetFrameClock();
                     ctx.Start(false);
                 }
-                TokenSource = new CancellationTokenSource();
-                CollectFramesToken = TokenSource.Token;
+
+                CollectFramesTokenSource = new CancellationTokenSource();
+                CollectFramesToken = CollectFramesTokenSource.Token;
 
                 FrameQueue = new BlockingCollection<oni.Frame>(MaxQueuedFrames);
 
                 readFrames = Task.Factory.StartNew(() =>
                 {
-                    while (!CollectFramesToken.IsCancellationRequested)
+                    try
                     {
-                        oni.Frame frame = ReadFrame();
-
-                        // TODO: This should not be needed since we are calling Dispose()
-                        // But somehow it seems to improve performance (coupled with GC.RemovePressure)
-                        // More investigation might be needed
-                        GC.AddMemoryPressure(frame.DataSize);
-
-                        try
+                        while (!CollectFramesToken.IsCancellationRequested)
                         {
+                            // NB: This is a blocking call and there is no safe way to terminate it
+                            // other than ending the process. For this reason, it is the job of the 
+                            // hardware to provide enough data (e.g. through a HeartbeatDevice") for
+                            // this call to return.
+                            oni.Frame frame = ReadFrame();
+
+                            // TODO: This should not be needed since we are calling Dispose()
+                            // But somehow it seems to improve performance (coupled with GC.RemovePressure)
+                            // More investigation might be needed
+                            GC.AddMemoryPressure(frame.DataSize);
                             FrameQueue.Add(frame, CollectFramesToken);
                         }
-                        catch (OperationCanceledException)
-                        {
-                            DisposeFrame(frame);
-                        };
-                    }
+                    } catch (OperationCanceledException)
+                    {
+#if DEBUG
+                        // NB: If FrameQueue.Add has not been called, frame has ref count 0 when it exits
+                        // while loop context and will be disposed.
+                        Console.WriteLine("Frame collection task has been cancelled by " + this.GetType());
+#endif
+                    };
                 },
                 CollectFramesToken,
                 TaskCreationOptions.LongRunning,
@@ -134,27 +141,28 @@ namespace Bonsai.ONIX
 
                 distributeFrames = Task.Factory.StartNew(() =>
                 {
-
-                    while (!CollectFramesToken.IsCancellationRequested)
+                    try
                     {
-
-                        try
+                        while (!CollectFramesToken.IsCancellationRequested)
                         {
                             if (FrameQueue.TryTake(out oni.Frame frame, QueueTimeoutMilliseconds, CollectFramesToken))
                             {
                                 OnFrameReceived(new FrameReceivedEventArgs(frame));
                             }
                         }
-                        catch (OperationCanceledException)
-                        {
-                            // If the thread stops no frame has been collected
-                        }
+                    } catch (OperationCanceledException)
+                    {
+#if DEBUG
+                        // NB: If the thread stops no frame has been collected
+                        Console.WriteLine("Frame distribution task has been cancelled by " + this.GetType());
+#endif
                     }
                 },
                 CollectFramesToken,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
             }
+
             running = true;
         }
 
@@ -165,11 +173,11 @@ namespace Bonsai.ONIX
                 if (!running) return;
                 if ((distributeFrames != null || readFrames != null) && !distributeFrames.IsCanceled)
                 {
-                    TokenSource.Cancel();
+                    CollectFramesTokenSource.Cancel();
                     Task.WaitAll(new Task[] { distributeFrames, readFrames });
                 }
-                TokenSource?.Dispose();
-                TokenSource = null;
+                CollectFramesTokenSource?.Dispose();
+                CollectFramesTokenSource = null;
 
                 // Clear queue and free memory
                 while (FrameQueue?.Count > 0)
