@@ -49,7 +49,12 @@ namespace Bonsai.ONIX
         {
             contextDriver = driver;
             contextIndex = index;
-            Initialize();
+            lock (readLock)
+                lock (writeLock)
+                    lock (regLock)
+                    {
+                        Initialize();
+                    }
         }
 
         private void Initialize()
