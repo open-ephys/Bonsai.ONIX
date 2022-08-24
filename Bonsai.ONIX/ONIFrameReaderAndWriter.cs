@@ -50,13 +50,13 @@ namespace Bonsai.ONIX
             {
                 var cd = await ONIContextManager.ReserveOpenContextAsync(DeviceAddress.HardwareSlot);
 
-                var in_table = cd.Context.DeviceTable.TryGetValue((uint)DeviceAddress.Address, out var device);
-                if (!in_table || device.ID != (int)ID)
+                var inTable = cd.Context.DeviceTable.TryGetValue((uint)DeviceAddress.Address, out var device);
+                if (!inTable || device.ID != (int)ID)
                 {
                     throw new WorkflowException("Selected device address is invalid.");
                 }
 
-                var source_sub = source.Subscribe(
+                var sourceSubscription = source.Subscribe(
                     input =>
                     {
                         try
@@ -76,7 +76,7 @@ namespace Bonsai.ONIX
                     Disposable.Create(() =>
                     {
                         cd.Dispose();
-                        source_sub.Dispose();
+                        sourceSubscription.Dispose();
                     })
                 );
             });

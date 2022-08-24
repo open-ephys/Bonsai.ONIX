@@ -56,7 +56,6 @@
             this.tabControlHubs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
-            this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeviceID = new System.Windows.Forms.DataGridViewLinkColumn();
             this.FirmwareVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -85,9 +84,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(136, 6);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(36, 13);
+            this.label3.Size = new System.Drawing.Size(28, 13);
             this.label3.TabIndex = 7;
-            this.label3.Text = "Index:";
+            this.label3.Text = "Slot:";
             // 
             // numericUpDownPCIeIndex
             // 
@@ -266,7 +265,6 @@
             this.dataGridViewDeviceTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridViewDeviceTable.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
             this.dataGridViewDeviceTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Index,
             this.Address,
             this.DeviceID,
             this.FirmwareVersion,
@@ -356,13 +354,6 @@
             this.linkLabelDocumentation.TabStop = true;
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDocumentation_LinkClicked);
-            // 
-            // Index
-            // 
-            this.Index.HeaderText = "Address";
-            this.Index.Name = "Index";
-            this.Index.ReadOnly = true;
-            this.Index.Width = 70;
             // 
             // Address
             // 
@@ -469,7 +460,6 @@
         private System.Windows.Forms.ToolStripMenuItem boardSyncToolStripMenuItem;
         private System.Windows.Forms.Button buttonBlockMin;
         private System.Windows.Forms.LinkLabel linkLabelDocumentation;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
         private System.Windows.Forms.DataGridViewTextBoxColumn Address;
         private System.Windows.Forms.DataGridViewLinkColumn DeviceID;
         private System.Windows.Forms.DataGridViewTextBoxColumn FirmwareVersion;

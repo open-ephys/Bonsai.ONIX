@@ -4,7 +4,7 @@ using System.Drawing.Design;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.ElectricalStimulator)]
+    [ONIXDeviceID(DeviceID.ElectricalStimulator)]
     [Description("Controls a single microstimulator circuit. A boolean input can be" +
         "used to trigger stimulation: True = Stimulation triggered, False = Stimulation untriggered.")]
     [DefaultProperty("DeviceAddress")]

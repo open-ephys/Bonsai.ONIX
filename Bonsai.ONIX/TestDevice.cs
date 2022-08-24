@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 namespace Bonsai.ONIX
 {
     [Description("ONI Test device.")]
-    [ONIXDeviceID(ONIXDevices.ID.Test)]
+    [ONIXDeviceID(DeviceID.Test)]
     public class TestDevice : ONIFrameReader<TestDataFrame, ushort>
     {
         private enum Register

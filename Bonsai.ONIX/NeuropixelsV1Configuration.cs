@@ -34,7 +34,6 @@ namespace Bonsai.ONIX
         public bool RefreshNeeded { get; set; } = true;
 
         private ONIDeviceAddress deviceAddress = new ONIDeviceAddress();
-
         public ONIDeviceAddress DeviceAddress
         {
             get
@@ -45,16 +44,13 @@ namespace Bonsai.ONIX
             {
                 deviceAddress = value;
 
-                if (deviceAddress.Valid)
+                using (var flex = new NeuropixelsV1Flex(deviceAddress))
                 {
-                    using (var flex = new NeuropixelsV1Flex(deviceAddress))
-                    {
-                        FlexProbeSN = flex.ProbeSN;
-                        ProbePartNo = flex.ProbePartNo;
+                    FlexProbeSN = flex.ProbeSN;
+                    ProbePartNo = flex.ProbePartNo;
 
-                        FlexPartNo = flex.PartNo;
-                        FlexVersion = flex.Version;
-                    }
+                    FlexPartNo = flex.PartNo;
+                    FlexVersion = flex.Version;
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
@@ -7,20 +8,14 @@ namespace Bonsai.ONIX
     [DefaultProperty("DeviceAddress")]
     public abstract class ONIDevice
     {
-        [Description("The device type/ID.")]
-        internal ONIXDevices.ID ID { get; set; } = ONIXDevices.ID.Null;
+        [Description("The ONIX device type/ID.")]
+        internal DeviceID ID { get; set; } = DeviceID.Null;
 
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
         [Editor("Bonsai.ONIX.Design.DocumentationLink, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         public abstract ONIDeviceAddress DeviceAddress { get; set; }
-
-        // Keep a local copy until address changes to avoid accessing the register interface a million times for already-known information
-        private oni.Hub deviceHub = null;
-        private ONIDeviceAddress oldAddressHub = null;
-        private ONIDeviceAddress oldAddressHz = null;
-        private double? contextHz = null;
 
         [Category("ONI Configuration")]
         [Description("The hub that this device belongs to.")]
@@ -31,19 +26,12 @@ namespace Bonsai.ONIX
         {
             get
             {
-                if (DeviceAddress.Valid)
+                ONIXDeviceDescriptor.IsValid(ID, DeviceAddress);
+
+                using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
                 {
-                    if (deviceHub == null || oldAddressHub == null || oldAddressHub != DeviceAddress)
-                    {
-                        using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
-                        {
-                            deviceHub = c.Context.GetHub((uint)DeviceAddress.Address);
-                        }
-                        oldAddressHub = DeviceAddress;
-                    }
-                    return deviceHub;
+                    return c.Context.GetHub((uint)DeviceAddress.Address);
                 }
-                else return null;
             }
         }
 
@@ -55,80 +43,87 @@ namespace Bonsai.ONIX
         {
             get
             {
-                if (DeviceAddress.Valid)
+                // NB: Frame clock only requires a valid hardware slot
+                if (!string.IsNullOrEmpty(DeviceAddress.HardwareSlot.Driver))
                 {
-                    if (contextHz == null || oldAddressHz == null || oldAddressHz != DeviceAddress)
+                    using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
                     {
-                        using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
-                        {
-                            contextHz = c.Context.AcquisitionClockHz;
-                        }
-                        oldAddressHz = DeviceAddress;
+                        return c.Context.AcquisitionClockHz;
                     }
-                    return contextHz;
                 }
-                else return null;
+                else
+                {
+                    return null;
+                }
             }
         }
 
         protected ulong FrameClockOffset
         {
-            get { return (ulong)System.Math.Round(((double)(deviceHub == null ? 0 : deviceHub.DelayNanoSeconds) * 1E-9 * (contextHz ?? 0))); }
+            get { return (ulong)Math.Round((Hub == null ? 0 : Hub.DelayNanoSeconds) * 1E-9 * (FrameClockHz ?? 0)); }
         }
 
         public ONIDevice()
         {
             ID = !(GetType().GetCustomAttributes(typeof(ONIXDeviceIDAttribute), true).FirstOrDefault() is ONIXDeviceIDAttribute devID) ?
-                ONIXDevices.ID.Null : devID.deviceID;
-            DeviceAddress = new ONIDeviceAddress();
+                DeviceID.Null : devID.deviceID;
         }
 
-        // NB: Write/ReadRegister are used extensively in node property settings.
-        // This means they cannot throw or there will be a variety of consequences
-        // such as errors loading XML descriptions of workflows and terrible performance
-        // if a valid device is not yet selected. As an intermediate solution,
-        // I'm just dumping errors to the Console and returning 0 or doing nothing.
-        protected uint ReadRegister(uint address)
+        protected uint ReadRegister(uint address, bool silent = true)
         {
-            if (DeviceAddress == null || !DeviceAddress.Valid)
+            // NB: This is a redundant check but is here even throwing and catching within the
+            // function body results in a huge UI performance hit.
+            if (silent && !ONIXDeviceDescriptor.IsValid(ID, DeviceAddress))
             {
-                System.Console.Error.WriteLine("Device is not valid.");
+                Console.Error.WriteLine("Register read was attempted with an invalid device " +
+                    "descriptor. Device ID: " + ID + ", Address: " + DeviceAddress.ToString() + ".");
                 return 0;
             }
 
             try
             {
-                using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
-                {
-                    return c.Context.ReadRegister((uint)DeviceAddress.Address, address);
-                }
+                return ReadRegister(new ONIXDeviceDescriptor(ID, DeviceAddress), address);
             }
-            catch (oni.ONIException ex)
+            catch (Exception ex) when (silent && (ex is ArgumentException || ex is oni.ONIException))
             {
                 System.Console.Error.WriteLine(ex.Message);
                 return 0;
             }
         }
 
-        protected void WriteRegister(uint address, uint value)
+        protected void WriteRegister(uint address, uint value, bool silent = true)
         {
-            if (DeviceAddress == null || !DeviceAddress.Valid)
+            // NB: This is a redundant check but is here even throwing and catching within the
+            // function body results in a huge UI performance hit.
+            if (silent && !ONIXDeviceDescriptor.IsValid(ID, DeviceAddress))
             {
-                System.Console.Error.WriteLine("Device is not valid.");
-                return;
+                Console.Error.WriteLine("Register write was attempted with an invalid device " +
+                    "descriptor. Device ID: " + ID + ", Address: " + DeviceAddress.ToString() + ".");
             }
 
             try
             {
-                using (var c = ONIContextManager.ReserveContext(DeviceAddress.HardwareSlot))
-                {
-                    c.Context.WriteRegister((uint)DeviceAddress.Address, address, value);
-                }
+                WriteRegister(new ONIXDeviceDescriptor(ID, DeviceAddress), address, value);
             }
-            catch (oni.ONIException ex)
+            catch (Exception ex) when (silent && (ex is ArgumentException || ex is oni.ONIException))
             {
                 System.Console.Error.WriteLine(ex.Message);
-                return;
+            }
+        }
+
+        static public uint ReadRegister(ONIXDeviceDescriptor descriptor, uint address)
+        {
+            using (var c = ONIContextManager.ReserveContext(descriptor.Address.HardwareSlot))
+            {
+                return c.Context.ReadRegister((uint)descriptor.Address.Address, address);
+            }
+        }
+
+        static public void WriteRegister(ONIXDeviceDescriptor descriptor, uint address, uint value)
+        {
+            using (var c = ONIContextManager.ReserveContext(descriptor.Address.HardwareSlot))
+            {
+                c.Context.WriteRegister((uint)descriptor.Address.Address, address, value);
             }
         }
     }

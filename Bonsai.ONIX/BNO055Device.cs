@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [ONIXDeviceID(ONIXDevices.ID.BNO055)]
+    [ONIXDeviceID(DeviceID.BNO055)]
     [Description("BNO055 inertial measurement unit.")]
     public class BNO055Device : ONIFrameReader<BNO055DataFrame, ushort>
     {

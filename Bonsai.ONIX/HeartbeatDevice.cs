@@ -7,7 +7,7 @@ namespace Bonsai.ONIX
 {
     using HeartbeatDataFrame = U16DataFrame;
 
-    [ONIXDeviceID(ONIXDevices.ID.Heartbeat)]
+    [ONIXDeviceID(DeviceID.Heartbeat)]
     [Description("Heartbeat device that periodically produces samples containing only a clock counter.")]
     public class HeartbeatDevice : ONIFrameReader<HeartbeatDataFrame, ushort>
     {

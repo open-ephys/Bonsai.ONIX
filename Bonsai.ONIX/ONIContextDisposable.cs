@@ -10,11 +10,11 @@ namespace Bonsai.ONIX
         private IDisposable resource;
         private readonly object lockObject;
 
-        public ONIContextDisposable(ONIContextTask contextTask, IDisposable disposable, object ctx_lock)
+        public ONIContextDisposable(ONIContextTask contextTask, IDisposable disposable, object contextLock)
         {
             Context = contextTask ?? throw new ArgumentNullException(nameof(contextTask));
             resource = disposable ?? throw new ArgumentNullException(nameof(disposable));
-            lockObject = ctx_lock ?? throw new ArgumentNullException(nameof(ctx_lock));
+            lockObject = contextLock ?? throw new ArgumentNullException(nameof(contextLock));
         }
 
         public ONIContextTask Context { get; private set; }
@@ -39,7 +39,9 @@ namespace Bonsai.ONIX
 
         private static async Task DelayDisposeAsync(IDisposable disposable, object ctx_lock)
         {
-            // TODO: This may be causing big issues when the workflow is restarted and somehow prevents Context.Stop() from being called because this is part of the Dispose() procedure.
+            // TODO: This may be causing big issues when the workflow is restarted and somehow
+            // prevents Context.Stop() from being called because this is part of the Dispose()
+            // procedure.
             await Task.Delay(100);
             lock (ctx_lock)
             {

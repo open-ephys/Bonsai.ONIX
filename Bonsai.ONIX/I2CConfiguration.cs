@@ -5,20 +5,23 @@ using System.Text;
 namespace Bonsai.ONIX
 {
     /// <summary>
-    /// Device configuration using the bus_to_i2c_raw.vhd core. Converts the ONI configuration programming interface into I2C.
+    /// Device configuration using the bus_to_i2c_raw.vhd core. Converts the ONI configuration
+    /// programming interface into I2C.
     /// </summary>
     public class I2CConfiguration : IDisposable
     {
-        private readonly ONIContextDisposable ctx;
-        private readonly uint? dev_idx;
+        private readonly ONIContextDisposable context;
+        private readonly uint? deviceAddress;
 
-        public readonly uint I2C_ADDR;
+        public readonly uint I2CAddress;
+        public readonly bool Valid;
 
-        public I2CConfiguration(ONIDeviceAddress device, uint i2c_addr)
+        public I2CConfiguration(ONIDeviceAddress address, DeviceID id, uint i2cAddress)
         {
-            ctx = ONIContextManager.ReserveContext(device.HardwareSlot);
-            dev_idx = device.Address;
-            I2C_ADDR = i2c_addr;
+            Valid = ONIXDeviceDescriptor.IsValid(id, address);
+            context = ONIContextManager.ReserveContext(address.HardwareSlot);
+            deviceAddress = address.Address;
+            I2CAddress = i2cAddress;
 
 #if DEBUG
             Console.WriteLine("I2C context reserved by " + this.GetType());
@@ -27,6 +30,12 @@ namespace Bonsai.ONIX
 
         private uint? ReadRegister(uint? deviceIndex, uint registerAddress)
         {
+            if (!Valid)
+            {
+                Console.Error.WriteLine("I2C read attempted with an invalid device descriptor.");
+                return null;
+            }
+
             if (deviceIndex == null)
             {
                 throw new ArgumentNullException(nameof(deviceIndex), "Attempt to read register from invalid device.");
@@ -34,7 +43,7 @@ namespace Bonsai.ONIX
 
             try
             {
-                return ctx.Context.ReadRegister((uint)deviceIndex, registerAddress);
+                return context.Context.ReadRegister((uint)deviceIndex, registerAddress);
             }
             catch (oni.ONIException ex)
             {
@@ -45,6 +54,12 @@ namespace Bonsai.ONIX
 
         private void WriteRegister(uint? deviceIndex, uint registerAddress, uint? value)
         {
+            if (!Valid)
+            {
+                Console.Error.WriteLine("I2C write attempted with an invalid device descriptor.");
+                return;
+            }
+
             if (value == null)
             {
                 throw new ArgumentNullException(nameof(value), "Attempt to write null value to register.");
@@ -55,38 +70,31 @@ namespace Bonsai.ONIX
                 throw new ArgumentNullException(nameof(deviceIndex), "Attempt to write to register of invalid device.");
             }
 
-            ctx.Context.WriteRegister((uint)deviceIndex, registerAddress, (uint)value);
+            context.Context.WriteRegister((uint)deviceIndex, registerAddress, (uint)value);
         }
 
         public uint? ReadManagedRegister(uint register_address)
         {
-            return ReadRegister(dev_idx, register_address);
+            return ReadRegister(deviceAddress, register_address);
         }
 
         public void WriteManagedRegister(uint register_address, uint value)
         {
-            WriteRegister(dev_idx, register_address, value);
+            WriteRegister(deviceAddress, register_address, value);
         }
 
-        public byte? ReadByte(uint addr)
+        public byte? ReadByte(uint address)
         {
-            uint reg_addr = (addr << 7) | (I2C_ADDR & 0x7F);
-            var val = ReadRegister(dev_idx, reg_addr);
+            uint reg_addr = (address << 7) | (I2CAddress & 0x7F);
+            var val = ReadRegister(deviceAddress, reg_addr);
 
-            if (val != null && val <= byte.MaxValue)
-            {
-                return (byte?)val;
-            }
-            else
-            {
-                return null;
-            }
+            return val != null && val <= byte.MaxValue ? (byte?)val : null;
         }
 
-        public void WriteByte(uint addr, uint value)
+        public void WriteByte(uint address, uint value)
         {
-            uint reg_addr = (addr << 7) | (I2C_ADDR & 0x7F);
-            WriteRegister(dev_idx, reg_addr, value);
+            uint reg_addr = (address << 7) | (I2CAddress & 0x7F);
+            WriteRegister(deviceAddress, reg_addr, value);
         }
 
         public byte[] ReadBytes(uint offset, int size)
@@ -95,8 +103,8 @@ namespace Bonsai.ONIX
 
             for (uint i = 0; i < size; i++)
             {
-                uint reg_addr = ((offset + i) << 7) | (I2C_ADDR & 0x7F);
-                var val = ReadRegister(dev_idx, reg_addr);
+                uint reg_addr = ((offset + i) << 7) | (I2CAddress & 0x7F);
+                var val = ReadRegister(deviceAddress, reg_addr);
 
                 if (val != null && val <= byte.MaxValue)
                 {
@@ -130,7 +138,7 @@ namespace Bonsai.ONIX
 #if DEBUG
             Console.WriteLine("I2C context disposed by " + this.GetType());
 #endif
-            ctx?.Dispose();
+            context?.Dispose();
             GC.SuppressFinalize(this);
         }
     }

@@ -21,7 +21,7 @@ namespace Bonsai.ONIX.Design
                 var context = c.Context;
                 if (context.DeviceTable.TryGetValue((uint)address.Address, out oni.Device dev))
                 {
-                    device = ONIDeviceFactory.Make((ONIXDevices.ID)dev.ID);
+                    device = ONIDeviceFactory.Make((DeviceID)dev.ID);
                     if (device != null)
                     {
                         device.DeviceAddress = address;
@@ -138,7 +138,7 @@ namespace Bonsai.ONIX.Design
             try
             {
                 var page = device.GetType().Name;
-                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai/" + page + ".html");
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai.ONIX/" + page + ".html");
             }
             catch (Exception)
             {

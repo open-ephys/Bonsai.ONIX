@@ -54,12 +54,11 @@ namespace Bonsai.ONIX.Design
                     var idx = context.DeviceTable.Keys.ElementAt(i);
                     var hub = (idx & 0x0000FF00) >> 8;
 
-                    if (dev.ID != (int)ONIXDevices.ID.Null && hub == selectedHub)
+                    if (dev.ID != (int)ONIX.DeviceID.Null && hub == selectedHub)
                     {
                         var ri = dataGridViewDeviceTable.Rows.Add(
-                            idx,
-                            $@" 0x{(byte)(idx >> 8):X2}.0x{(byte)(idx >> 0):X2}",
-                            (ONIXDevices.ID)dev.ID,
+                            idx + $@" ({(byte)(idx >> 8):X2}.{(byte)(idx >> 0):X2})",
+                            (DeviceID)dev.ID,
                             dev.Version,
                             dev.ReadSize,
                             dev.WriteSize,
@@ -91,7 +90,7 @@ namespace Bonsai.ONIX.Design
 
                     foreach (var d in context.DeviceTable.Values)
                     {
-                        if (d.ID != (int)ONIXDevices.ID.Null)
+                        if (d.ID != (int)ONIX.DeviceID.Null)
                         {
                             try
                             {
@@ -177,7 +176,8 @@ namespace Bonsai.ONIX.Design
             }
 
             var row = dataGridViewDeviceTable.SelectedRows[0];
-            var deviceIndex = (uint)row.Cells[0].Value;
+            var deviceIndexStr = (row.Cells[0].Value as string).Split(' ')[0];
+            var deviceIndex = uint.Parse(deviceIndexStr);
 
             using (var c = ONIContextManager.ReserveContext(Configuration.Slot))
             {
@@ -185,7 +185,7 @@ namespace Bonsai.ONIX.Design
                 var context = c.Context;
                 if (context.DeviceTable.TryGetValue(deviceIndex, out oni.Device dev))
                 {
-                    var device = ONIDeviceFactory.Make((ONIXDevices.ID)dev.ID);
+                    var device = ONIDeviceFactory.Make((DeviceID)dev.ID);
                     if (device != null)
                     {
                         // Hacky "back door" into ONIDeviceIndexTypeConverter's functionality
@@ -235,7 +235,7 @@ namespace Bonsai.ONIX.Design
         {
             try
             {
-                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai/ONIContext.html");
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai.ONIX/ONIContext.html");
             }
             catch (Exception)
             {
@@ -247,7 +247,7 @@ namespace Bonsai.ONIX.Design
         {
             if (dataGridViewDeviceTable.Columns[e.ColumnIndex].Name == "DeviceID")
             {
-                var uri = ONIDeviceDataSheetURIFactory.Make((ONIXDevices.ID)dataGridViewDeviceTable[e.ColumnIndex, e.RowIndex].Value);
+                var uri = ONIDeviceDataSheetURIFactory.Make((DeviceID)dataGridViewDeviceTable[e.ColumnIndex, e.RowIndex].Value);
 
                 if (uri == null)
                 {

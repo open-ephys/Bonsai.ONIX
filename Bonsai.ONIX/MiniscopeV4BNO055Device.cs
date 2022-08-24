@@ -7,23 +7,22 @@ namespace Bonsai.ONIX
     [Source]
     [Combinator(MethodName = "Generate")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    [ONIXDeviceID(ONIXDevices.ID.DS90UB9X)]
+    [ONIXDeviceID(DeviceID.DS90UB9X)]
     [Description("Acquire image data from UCLA Miniscope V4's integrated BNO055 inertial measurement unit.")]
     public class MiniscopeV4BNO055Device : ONIDevice
     {
         private const int BNO055Address = 0x28;
 
-        private ONIDeviceAddress deviceAddress;
+        private ONIDeviceAddress deviceAddress = new ONIDeviceAddress();
         public override ONIDeviceAddress DeviceAddress
         {
             get { return deviceAddress; }
             set
             {
                 deviceAddress = value;
-                if (!deviceAddress.Valid) return;
 
                 // Configuration I2C aliases
-                using (var i2c = new I2CConfiguration(DeviceAddress, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = BNO055Address << 1;
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveID4, val);
@@ -31,7 +30,7 @@ namespace Bonsai.ONIX
                 }
 
                 // Setup BNO055
-                using (var i2c = new I2CConfiguration(DeviceAddress, BNO055Address))
+                using (var i2c = new I2CConfiguration(DeviceAddress, ID, BNO055Address))
                 {
                     i2c.WriteByte(0x3E, 0x00); // Power mode normal
                     i2c.WriteByte(0x07, 0x00);// Page ID address 0
@@ -49,7 +48,7 @@ namespace Bonsai.ONIX
             var source = Observable.Interval(TimeSpan.FromSeconds(0.01));
 
             return Observable.Using(
-                () => new I2CConfiguration(DeviceAddress, BNO055Address),
+                () => new I2CConfiguration(DeviceAddress, ID, BNO055Address),
                 i2c => source.Select(_ =>
                 {
                     var data = new byte[28];
