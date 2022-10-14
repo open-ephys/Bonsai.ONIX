@@ -85,5 +85,11 @@
             Raw12BitHighFrequency = 2,
             Raw10Bit = 3,
         }
+
+        public enum Direction
+        {
+            Input = 0,
+            Output = 1
+        }
     }
 }

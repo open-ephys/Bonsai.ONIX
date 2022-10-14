@@ -6,10 +6,13 @@ using System.Xml.Serialization;
 
 namespace Bonsai.ONIX
 {
+    using IO = DS90UB9xConfiguration.Direction;
+
     [ONIXDeviceID(DeviceID.DS90UB9X)]
     [Description("Provides access to raw data from a DS90UB9x deserializer.")]
     public class DS90UB9xDevice : ONIFrameReader<RawDataFrame, ushort>
     {
+
         protected override IObservable<RawDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
             return source.Select(f => { return new RawDataFrame(f, frameOffset); });
@@ -112,6 +115,52 @@ namespace Bonsai.ONIX
             set
             {
                 WriteRegister((uint)DS90UB9xConfiguration.Register.MarkMode, (uint)value);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("GPIO direction.")]
+        public IO[] GPIODirection
+        {
+            get
+            {
+                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.GPIODirection);
+                return new IO [] { (val & 0x01) > 0 ? IO.Input : IO.Output,
+                                   (val & 0x02) > 0 ? IO.Input : IO.Output,
+                                   (val & 0x04) > 0 ? IO.Input : IO.Output,
+                                   (val & 0x08) > 0 ? IO.Input : IO.Output};
+            }
+            set
+            {
+                uint val = 0;
+                val = value[0] == IO.Input ? val | 1 << 0 : val;
+                val = value[1] == IO.Input ? val | 1 << 1 : val;
+                val = value[2] == IO.Input ? val | 1 << 2 : val;
+                val = value[3] == IO.Input ? val | 1 << 3 : val;
+                WriteRegister((uint)DS90UB9xConfiguration.Register.GPIODirection, val);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("GPIO value.")]
+        public bool[] GPIOValue
+        {
+            get
+            {
+                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.GPIOValue);
+                return new bool[] { ((val >> 0) & 1) == 1,
+                                    ((val >> 1) & 1) == 1,
+                                    ((val >> 2) & 1) == 1,
+                                    ((val >> 3) & 1) == 1};
+            }
+            set
+            {
+                uint val = 0;
+                val = value[0] ? val | 1 << 0 : val;
+                val = value[1] ? val | 1 << 1 : val;
+                val = value[2] ? val | 1 << 2 : val;
+                val = value[3] ? val | 1 << 3 : val;
+                WriteRegister((uint)DS90UB9xConfiguration.Register.GPIOValue, val);
             }
         }
 
