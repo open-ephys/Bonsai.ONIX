@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <Title>Bonsai - ONIX Library</Title>
-    <Description>Bonsai Library for controlling ONIX hardware.</Description>
+    <Description>Bonsai library for controlling ONIX hardware.</Description>
     <PackageTags>Bonsai Rx Open Ephys ONI Neural Interface ONIX Electrophysiology Miniscope</PackageTags>
     <TargetFramework>net472</TargetFramework>
-    <Version>1.1.5</Version>
+    <Version>1.2.1</Version>
     <Authors>Jon Newman</Authors>
-    <Company>MIT</Company>
-    <Copyright>Copyright © Jonathan Newman 2021</Copyright>
-    <AssemblyVersion>1.1.5.0</AssemblyVersion>
-    <FileVersion>1.1.5.0</FileVersion>
-    <PackageProjectUrl>https://github.com/jonnew/Bonsai.ONIX</PackageProjectUrl>
+    <Company>Open Ephys, Inc.</Company>
+    <Copyright>Copyright © Open Ephys, Inc.</Copyright>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion></FileVersion>
+    <PackageProjectUrl>https://open-ephys.github.io/onix-docs/index.html</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Platforms>AnyCPU;x64</Platforms>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -19,7 +19,7 @@
     <PackageId>Bonsai.ONIX</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>onix_open_ephys_logo.png</PackageIcon>
-    <RepositoryUrl>https://github.com/jonnew/Bonsai.ONIX</RepositoryUrl>
+    <RepositoryUrl>https://github.com/open-ephys/Bonsai.ONIX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -42,7 +42,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="KiloscopeDevice.cs" />
     <Compile Remove="NeuropixelsV1DataFrameNew.cs" />
+    <Compile Remove="RHS2116Configuration.cs" />
+    <Compile Remove="RHS2116DataFrame.cs" />
+    <Compile Remove="RHS2116Device.cs" />
+    <Compile Remove="RHS2116StimulationDevice.cs" />
+    <Compile Remove="RHS2116StimulusSequence.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,9 +64,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bonsai.Core" Version="2.6.2" />
-    <PackageReference Include="clroni" Version="4.3.7" />
-    <PackageReference Include="OpenCV.Net" Version="3.3.1" />
+    <PackageReference Include="Bonsai.Core" Version="2.7.1" />
+    <PackageReference Include="clroni" Version="5.0.0" />
+    <PackageReference Include="OpenCV.Net" Version="3.4.1" />
   </ItemGroup>
 
   <ItemGroup>

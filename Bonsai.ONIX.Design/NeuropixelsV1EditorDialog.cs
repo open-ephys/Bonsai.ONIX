@@ -565,7 +565,7 @@ namespace Bonsai.ONIX.Design
         {
             try
             {
-                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai.ONIX/NeuropixelsV1.html");
+                System.Diagnostics.Process.Start("https://open-ephys.github.io/onix-docs/Software%20Guide/Bonsai.ONIX/Nodes/NeuropixelsV1.html");
             }
             catch (Exception)
             {

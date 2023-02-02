@@ -10,9 +10,9 @@
         {
             Clock = frame.FrameClock - offset;
             HubSyncCounter = ((ulong)frame.Sample[0] << 48) |
-                        ((ulong)frame.Sample[1] << 32) |
-                        ((ulong)frame.Sample[2] << 16) |
-                        ((ulong)frame.Sample[3] << 0);
+                             ((ulong)frame.Sample[1] << 32) |
+                             ((ulong)frame.Sample[2] << 16) |
+                             ((ulong)frame.Sample[3] << 0);
         }
 
         /// <summary>

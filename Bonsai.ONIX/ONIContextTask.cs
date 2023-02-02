@@ -124,12 +124,8 @@ namespace Bonsai.ONIX
                             // hardware to provide enough data (e.g. through a HeartbeatDevice") for
                             // this call to return.
                             oni.Frame frame = ReadFrame();
-
-                            // TODO: This should not be needed since we are calling Dispose()
-                            // But somehow it seems to improve performance (coupled with GC.RemovePressure)
-                            // More investigation might be needed
-                            GC.AddMemoryPressure(frame.DataSize);
                             FrameQueue.Add(frame, CollectFramesToken);
+
                         }
                     } catch (OperationCanceledException)
                     {
@@ -318,9 +314,7 @@ namespace Bonsai.ONIX
 
         private static void DisposeFrame(oni.Frame frame)
         {
-            long dataSize = frame.DataSize;
             frame.Dispose();
-            GC.RemoveMemoryPressure(dataSize);
         }
 
         public void Dispose()

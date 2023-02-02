@@ -37,15 +37,16 @@ namespace Bonsai.ONIX
 
         private uint CurrentK(double currentuA)
         {
-            double k = 3000 / (Math.Pow(2, DACResolution) - 1);
-            return (uint)((currentuA + 1500) / k);
+            double k = 5000 / (Math.Pow(2, DACResolution) - 1);
+            return (uint)((currentuA + 2500) / k);
         }
 
         private double InvCurrent(uint current_k)
         {
-            double k = 3000 / (Math.Pow(2, DACResolution) - 1);
-            return Math.Round(current_k * k - 1500, 2);
+            double k = 5000 / (Math.Pow(2, DACResolution) - 1);
+            return Math.Round(current_k * k - 2500, 2);
         }
+
 
         [System.Xml.Serialization.XmlIgnore]
         [Category("Configuration")]
@@ -60,8 +61,9 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Description("Phase 1 pulse current (uA).")]
-        [Range(-1500, 1500)]
+        [Range(-2500, 2500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
+        [Precision(3, 1)]
         public double PhaseOneCurrent
         {
             get
@@ -77,8 +79,9 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Description("Phase 2 pulse current (uA).")]
-        [Range(-1500, 1500)]
+        [Range(-2500, 2500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
+        [Precision(3, 1)]
         public double PhaseTwoCurrent
         {
             get
@@ -97,8 +100,9 @@ namespace Bonsai.ONIX
 
         [Category("Acquisition")]
         [Description("Resting current between pulse phases(uA).")]
-        [Range(-1500, 1500)]
+        [Range(-2500, 2500)]
         [Editor(DesignTypes.SliderEditor, typeof(UITypeEditor))]
+        [Precision(3, 1)]
         public double InterPhaseCurrent
         {
             get
@@ -199,7 +203,8 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return 0.001 * ReadRegister((int)Register.PULSEPERIOD);
+                var pulseDuration = PhaseOneDuration + InterPhaseDuration + PhaseTwoDuration;
+                return 0.001 * ReadRegister((int)Register.PULSEPERIOD) + pulseDuration;
             }
             set
             {
@@ -207,11 +212,12 @@ namespace Bonsai.ONIX
 
                 if (value > pulseDuration)
                 {
-                    WriteRegister((int)Register.PULSEPERIOD, (uint)(1000 * value));
+
+                    WriteRegister((int)Register.PULSEPERIOD, (uint)(1000 * (value - pulseDuration)));
                 }
                 else
                 {
-                    WriteRegister((int)Register.PULSEPERIOD, (uint)(1000 * pulseDuration + 1));
+                    WriteRegister((int)Register.PULSEPERIOD, 1);
                 }
             }
         }

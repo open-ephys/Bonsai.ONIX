@@ -22,7 +22,7 @@ namespace Bonsai.ONIX
                 deviceAddress = value;
 
                 // Configuration I2C aliases
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = BNO055Address << 1;
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveID4, val);
@@ -30,7 +30,7 @@ namespace Bonsai.ONIX
                 }
 
                 // Setup BNO055
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, BNO055Address))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, BNO055Address))
                 {
                     i2c.WriteByte(0x3E, 0x00); // Power mode normal
                     i2c.WriteByte(0x07, 0x00);// Page ID address 0
@@ -48,7 +48,7 @@ namespace Bonsai.ONIX
             var source = Observable.Interval(TimeSpan.FromSeconds(0.01));
 
             return Observable.Using(
-                () => new I2CConfiguration(DeviceAddress, ID, BNO055Address),
+                () => new I2CRegisterConfiguration(DeviceAddress, ID, BNO055Address),
                 i2c => source.Select(_ =>
                 {
                     var data = new byte[28];

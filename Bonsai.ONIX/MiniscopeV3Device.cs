@@ -52,7 +52,7 @@ namespace Bonsai.ONIX
                 WriteRegister((uint)DS90UB9xConfiguration.Register.MarkMode, (uint)DS90UB9xConfiguration.MarkMode.VsyncRising);
 
                 // Configuration I2C aliases
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = 0x4 + (uint)DS90UB9xConfiguration.Mode.Raw12BitLowFrequency; // 0x4 maintains coax mode
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode, val);
@@ -77,7 +77,7 @@ namespace Bonsai.ONIX
                 }
 
                 // Camera sensor configuration
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     // Turn off automatic gain and exposure control
                     WriteCameraRegister(i2c, (uint)SensorAddress.AECAndAGC, 0);
@@ -108,7 +108,7 @@ namespace Bonsai.ONIX
         {
             set
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, LEDDriverAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, LEDDriverAddress))
                 {
                     dacValue = value;
                     WriteLEDDriver(i2c, (uint)(255 * (value / 100.0)));
@@ -128,14 +128,14 @@ namespace Bonsai.ONIX
         {
             set
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     WriteCameraRegister(i2c, (uint)SensorAddress.AnalogGain, (uint)(value * 48 / 100 + 16));
                 }
             }
             get
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     var reg = ReadCameraRegister(i2c, (uint)SensorAddress.AnalogGain);
                     return (reg - 16) * 100 / 48;
@@ -188,7 +188,7 @@ namespace Bonsai.ONIX
                         break;
                 }
 
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     WriteCameraRegister(i2c, (uint)SensorAddress.VerticalBlanking, vBlank);
                     WriteCameraRegister(i2c, (uint)SensorAddress.HorizontalBlanking, hBlank);
@@ -198,7 +198,7 @@ namespace Bonsai.ONIX
 
             get
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, CameraSensorAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, CameraSensorAddress))
                 {
                     var reg = ReadCameraRegister(i2c, (uint)SensorAddress.HorizontalBlanking);
 
@@ -230,12 +230,12 @@ namespace Bonsai.ONIX
             AECAndAGC = 0xAF,
         }
 
-        private static int ReadCameraRegister(I2CConfiguration i2c, uint reg)
+        private static int ReadCameraRegister(I2CRegisterConfiguration i2c, uint reg)
         {
             return (int)(i2c.ReadByte(reg) << 8 | i2c.ReadByte(0xF0));
         }
 
-        private static void WriteCameraRegister(I2CConfiguration i2c, uint reg, uint value)
+        private static void WriteCameraRegister(I2CRegisterConfiguration i2c, uint reg, uint value)
         {
             uint byte0 = value & 0xFF;
             uint byte1 = (value >> 8) & 0xFF;
@@ -243,7 +243,7 @@ namespace Bonsai.ONIX
             i2c.WriteByte(0xF0, byte0);
         }
 
-        private static void WriteLEDDriver(I2CConfiguration i2c, uint value)
+        private static void WriteLEDDriver(I2CRegisterConfiguration i2c, uint value)
         {
             uint byte0 = (0xF0 & value) >> 4;
             uint byte1 = (0x0F & value) << 4;

@@ -50,7 +50,7 @@ namespace Bonsai.ONIX
         private static Mat GetClock(ulong[] data)
         {
             // TODO: abusing double to fit ulong
-            // NB: OpenCV does not have a Depth.U64 which would allow to user Mat.Header and Mat.Convert for zero-copy
+            // NB: OpenCV does not have a Depth.U64 which would allow to use of Mat.Header and Mat.Convert for zero-copy
             return Mat.FromArray(data, 1, data.Length, Depth.F64, 1);
         }
 

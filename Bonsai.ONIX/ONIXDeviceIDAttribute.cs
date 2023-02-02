@@ -31,7 +31,8 @@
         MAX10ADCCore = 26,
         LoadTest = 27,
         MemoryUsage = 28,
-        HARPSyncInput = 30
+        HARPSyncInput = 30,
+        RHS2116 = 31,
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]

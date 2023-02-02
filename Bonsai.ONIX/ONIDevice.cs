@@ -14,7 +14,7 @@ namespace Bonsai.ONIX
         [Category("ONI Configuration")]
         [Description("The full device hardware address consisting of a hardware slot and device table index.")]
         [TypeConverter(typeof(ONIDeviceAddressTypeConverter))]
-        [Editor("Bonsai.ONIX.Design.DocumentationLink, Bonsai.ONIX.Design", typeof(UITypeEditor))]
+        [Editor("Bonsai.ONIX.Design.DeviceNodeDocumentationLink, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         public abstract ONIDeviceAddress DeviceAddress { get; set; }
 
         [Category("ONI Configuration")]

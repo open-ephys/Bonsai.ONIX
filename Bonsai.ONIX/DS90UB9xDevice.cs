@@ -183,14 +183,14 @@ namespace Bonsai.ONIX
         {
             get
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     return (DS90UB9xConfiguration.Mode)(i2c.ReadByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode) & 0x3);
                 }
             }
             set
             {
-                using (var i2c = new I2CConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
+                using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = 0x4 + (uint)value; // 0x4 maintains coax mode
                     i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode, val);

@@ -5,7 +5,6 @@
         public TS4231V1DataFrame(ONIManagedFrame<ushort> frame, ulong frameOffset)
             : base(frame, frameOffset)
         {
-            // Data
             Index = frame.Sample[4];
             PulseWidth = ((uint)frame.Sample[5] << 16) | ((uint)frame.Sample[6] << 0);
             PulseType = (short)frame.Sample[7];

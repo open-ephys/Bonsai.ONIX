@@ -18,7 +18,7 @@ namespace Bonsai.ONIX
         {
             if (frameBlock.Count == 0)
             {
-                throw new Bonsai.WorkflowRuntimeException("RHD2164 frame buffer is empty.");
+                throw new WorkflowRuntimeException("RHD2164 frame buffer is empty.");
             }
 
             NumberOfSamples = frameBlock.Count;

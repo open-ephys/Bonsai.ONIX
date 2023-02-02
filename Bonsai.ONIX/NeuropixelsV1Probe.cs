@@ -8,7 +8,7 @@ namespace Bonsai.ONIX
 {
     using Channel = NeuropixelsV1Channel;
 
-    public class NeuropixelsV1Probe : I2CConfiguration
+    public class NeuropixelsV1Probe : I2CRegisterConfiguration
     {
         // Exposed parameters
         public const int CHANNEL_COUNT = 384;
@@ -412,7 +412,7 @@ namespace Bonsai.ONIX
                 var gain_fixed0 = (uint)(config.Channels[i].LFPGainCorrection * (1 << 14));
                 var gain_fixed1 = (uint)(config.Channels[i + 1].LFPGainCorrection * (1 << 14));
                 var val = gain_fixed1 << 16 | gain_fixed0;
-                WriteManagedRegister(addr, val);
+                WriteRegister(addr, val);
             }
         }
 
@@ -424,7 +424,7 @@ namespace Bonsai.ONIX
                 var gain_fixed0 = (uint)(config.Channels[i].APGainCorrection * (1 << 14));
                 var gain_fixed1 = (uint)(config.Channels[i + 1].APGainCorrection * (1 << 14));
                 var val = gain_fixed1 << 16 | gain_fixed0;
-                WriteManagedRegister(addr, val);
+                WriteRegister(addr, val);
             }
         }
 
@@ -436,7 +436,7 @@ namespace Bonsai.ONIX
                 var adc0 = (uint)config.ADCs[i].Offset << 10 | (uint)config.ADCs[i].Threshold;
                 var adc1 = (uint)config.ADCs[i + 1].Offset << 10 | (uint)config.ADCs[i].Threshold;
                 var val = adc1 << 16 | adc0;
-                WriteManagedRegister(addr, val);
+                WriteRegister(addr, val);
             }
         }
 
@@ -445,7 +445,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadManagedRegister((uint)Register.PROBE_SN_MSB) << 32 | ReadManagedRegister((uint)Register.PROBE_SN_LSB);
+                return ReadRegister((uint)Register.PROBE_SN_MSB) << 32 | ReadRegister((uint)Register.PROBE_SN_LSB);
             }
             private set
             {
@@ -455,8 +455,8 @@ namespace Bonsai.ONIX
                     val = (ulong)value;
                 }
 
-                WriteManagedRegister((uint)Register.PROBE_SN_LSB, (uint)(val & 0x00000000FFFFFFFF));
-                WriteManagedRegister((uint)Register.PROBE_SN_MSB, (uint)(val >> 32 & 0x00000000FFFFFFFF));
+                WriteRegister((uint)Register.PROBE_SN_LSB, (uint)(val & 0x00000000FFFFFFFF));
+                WriteRegister((uint)Register.PROBE_SN_MSB, (uint)(val >> 32 & 0x00000000FFFFFFFF));
             }
         }
 

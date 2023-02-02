@@ -2,7 +2,7 @@
 
 namespace Bonsai.ONIX
 {
-    public class NeuropixelsV1Flex : I2CConfiguration
+    public class NeuropixelsV1Flex : I2CRegisterConfiguration
     {
         public NeuropixelsV1Flex(ONIDeviceAddress device) : base(device, DeviceID.NeuropixelsV1, 0x50)
         {
