@@ -33,6 +33,7 @@
         MemoryUsage = 28,
         HARPSyncInput = 30,
         RHS2116 = 31,
+        RHS2116Trigger = 32,
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]

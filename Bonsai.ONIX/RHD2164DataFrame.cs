@@ -5,6 +5,21 @@ namespace Bonsai.ONIX
 {
     public class RHD2164DataFrame : U16DataBlockFrame
     {
+        // Position in raw frame data (16-bit words) of corresponding Intan ephys channel
+        // i.e. 0 -> 4
+        //      1 -> 6
+        //      ...
+        //      63 -> 67
+       private readonly static int[] EphysChannelMap = new[] {4 ,  6,  8, 10, 12, 14, 16, 18,
+                                                              20, 22, 24, 26, 28, 30, 32, 34,
+                                                              36, 38, 40, 42, 44, 46, 48, 50,
+                                                              52, 54, 56, 58, 60, 62, 64, 66,
+                                                              5 , 7 , 9 , 11, 13, 15, 17, 19,
+                                                              21, 23, 25, 27, 29, 31, 33, 35,
+                                                              37, 39, 41, 43, 45, 47, 49, 51,
+                                                              53, 55, 57, 59, 61, 63, 65, 67};
+        private readonly static int[] AuxChannelMap = new[] {68, 69, 70};
+
         public const int NumberOfEphysChannels = 64;
         public const int NumberOfAuxChannels = 3;
         public readonly int NumberOfSamples;
@@ -32,17 +47,15 @@ namespace Bonsai.ONIX
 
                 for (int i = 0; i < NumberOfSamples; i++)
                 {
-                    int chan = 4; // Data starts at index 4
-
-                    for (int j = 0; j < NumberOfEphysChannels; j++, chan++)
+                    
+                    for (int j = 0; j < NumberOfEphysChannels; j++)
                     {
-                        ephysData[j, i] = frameBlock[i].Sample[chan];
+                        ephysData[j, i] = frameBlock[i].Sample[EphysChannelMap[j]];
                     }
 
-                    for (int j = 0; j < NumberOfAuxChannels; j++, chan++)
-                    {
-                        auxiliaryData[j, i] = frameBlock[i].Sample[chan];
-                    }
+                    auxiliaryData[0, i] = frameBlock[i].Sample[AuxChannelMap[0]];
+                    auxiliaryData[1, i] = frameBlock[i].Sample[AuxChannelMap[1]];
+                    auxiliaryData[2, i] = frameBlock[i].Sample[AuxChannelMap[2]];
                 }
 
                 EphysData = GetEphysDataU16(ephysData);
@@ -56,17 +69,15 @@ namespace Bonsai.ONIX
 
                 for (int i = 0; i < NumberOfSamples; i++)
                 {
-                    int chan = 4; // Data starts at index 4
 
-                    for (int j = 0; j < NumberOfEphysChannels; j++, chan++)
+                    for (int j = 0; j < NumberOfEphysChannels; j++)
                     {
-                        ephysData[j, i] = (short)frameBlock[i].Sample[chan];
+                        ephysData[j, i] = (short)frameBlock[i].Sample[EphysChannelMap[j]];
                     }
 
-                    for (int j = 0; j < NumberOfAuxChannels; j++, chan++)
-                    {
-                        auxiliaryData[j, i] = frameBlock[i].Sample[chan];
-                    }
+                    auxiliaryData[0, i] = frameBlock[i].Sample[AuxChannelMap[0]];
+                    auxiliaryData[1, i] = frameBlock[i].Sample[AuxChannelMap[1]];
+                    auxiliaryData[2, i] = frameBlock[i].Sample[AuxChannelMap[2]];
                 }
 
                 EphysData = EphysFormat == RHD2164Configuration.EphysDataFormat.TwosCompliment ? GetEphysDataS16(ephysData) : GetEphysDataF32(ephysData);

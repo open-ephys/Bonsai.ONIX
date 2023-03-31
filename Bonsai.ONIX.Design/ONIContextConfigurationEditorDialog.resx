@@ -126,13 +126,13 @@
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>262, 18</value>
   </metadata>
-  <metadata name="Address.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
   <metadata name="DeviceID.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="FirmwareVersion.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="Description.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="Address.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="ReadSize.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -141,7 +141,7 @@
   <metadata name="WriteSize.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="Description.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="FirmwareVersion.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -151,17 +151,17 @@
   <data name="toolStripSplitButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         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
-        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
+        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
 </value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

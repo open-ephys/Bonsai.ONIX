@@ -5,7 +5,7 @@
     <Description>Bonsai design library for Bonsai.ONIX.</Description>
     <PackageTags>Bonsai Rx Open Ephys ONI Neural Interface ONIX Electrophysiology Miniscope</PackageTags>
     <TargetFramework>net472</TargetFramework>
-    <Version>1.2.1</Version>
+    <Version>1.2.3</Version>
     <Authors>Jon Newman</Authors>
     <Company>Open Ephys, Inc.</Company>
     <Copyright>Copyright © Open Ephys, Inc.</Copyright>
@@ -87,7 +87,7 @@
   
   <ItemGroup>
     <PackageReference Include="Bonsai.Shaders" Version="0.25.0" />
-    <PackageReference Include="clroni" Version="5.0.0" />
+    <PackageReference Include="clroni" Version="5.0.1" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="TinyCsvParser" Version="2.7.0" />
     <PackageReference Include="ZedGraph" Version="5.1.7" />

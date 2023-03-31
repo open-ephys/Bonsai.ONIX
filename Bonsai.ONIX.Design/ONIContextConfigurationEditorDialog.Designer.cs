@@ -56,12 +56,12 @@
             this.tabControlHubs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
-            this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeviceID = new System.Windows.Forms.DataGridViewLinkColumn();
-            this.FirmwareVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ReadSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.WriteSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FirmwareVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPCIeIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReadSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWriteAlloc)).BeginInit();
@@ -265,12 +265,12 @@
             this.dataGridViewDeviceTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridViewDeviceTable.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
             this.dataGridViewDeviceTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Address,
             this.DeviceID,
-            this.FirmwareVersion,
+            this.Description,
+            this.Address,
             this.ReadSize,
             this.WriteSize,
-            this.Description});
+            this.FirmwareVersion});
             this.dataGridViewDeviceTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewDeviceTable.Location = new System.Drawing.Point(3, 3);
             this.dataGridViewDeviceTable.MultiSelect = false;
@@ -355,13 +355,6 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDocumentation_LinkClicked);
             // 
-            // Address
-            // 
-            this.Address.HeaderText = "Address (Hub.Dev)";
-            this.Address.Name = "Address";
-            this.Address.ReadOnly = true;
-            this.Address.Width = 122;
-            // 
             // DeviceID
             // 
             this.DeviceID.HeaderText = "Device";
@@ -369,12 +362,19 @@
             this.DeviceID.ReadOnly = true;
             this.DeviceID.Width = 47;
             // 
-            // FirmwareVersion
+            // Description
             // 
-            this.FirmwareVersion.HeaderText = "Firmware Version";
-            this.FirmwareVersion.Name = "FirmwareVersion";
-            this.FirmwareVersion.ReadOnly = true;
-            this.FirmwareVersion.Width = 112;
+            this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Description.HeaderText = "Description";
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            // 
+            // Address
+            // 
+            this.Address.HeaderText = "Address (Hub.Dev)";
+            this.Address.Name = "Address";
+            this.Address.ReadOnly = true;
+            this.Address.Width = 122;
             // 
             // ReadSize
             // 
@@ -390,12 +390,12 @@
             this.WriteSize.ReadOnly = true;
             this.WriteSize.Width = 115;
             // 
-            // Description
+            // FirmwareVersion
             // 
-            this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Description.HeaderText = "Description";
-            this.Description.Name = "Description";
-            this.Description.ReadOnly = true;
+            this.FirmwareVersion.HeaderText = "Firmware Version";
+            this.FirmwareVersion.Name = "FirmwareVersion";
+            this.FirmwareVersion.ReadOnly = true;
+            this.FirmwareVersion.Width = 112;
             // 
             // ONIContextConfigurationEditorDialog
             // 
@@ -460,11 +460,11 @@
         private System.Windows.Forms.ToolStripMenuItem boardSyncToolStripMenuItem;
         private System.Windows.Forms.Button buttonBlockMin;
         private System.Windows.Forms.LinkLabel linkLabelDocumentation;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Address;
         private System.Windows.Forms.DataGridViewLinkColumn DeviceID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn FirmwareVersion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Description;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Address;
         private System.Windows.Forms.DataGridViewTextBoxColumn ReadSize;
         private System.Windows.Forms.DataGridViewTextBoxColumn WriteSize;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Description;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FirmwareVersion;
     }
 }

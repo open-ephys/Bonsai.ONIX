@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StimulatorEditorDialog));
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.propertyGridStimulator = new System.Windows.Forms.PropertyGrid();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -120,9 +119,9 @@
             this.Controls.Add(this.linkLabelDocumentation);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "StimulatorEditorDialog";
+            this.ShowIcon = false;
             this.Text = "Stimulus Configuration";
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);

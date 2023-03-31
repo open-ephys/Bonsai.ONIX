@@ -57,12 +57,12 @@ namespace Bonsai.ONIX.Design
                     if (dev.ID != (int)ONIX.DeviceID.Null && hub == selectedHub)
                     {
                         var ri = dataGridViewDeviceTable.Rows.Add(
-                            idx + $@" ({(byte)(idx >> 8):X2}.{(byte)(idx >> 0):X2})",
                             (DeviceID)dev.ID,
-                            dev.Version,
+                            dev.Description,
+                            idx + $@" ({(byte)(idx >> 8):X2}.{(byte)(idx >> 0):X2})",
                             dev.ReadSize,
                             dev.WriteSize,
-                            dev.Description);
+                            dev.Version);
 
                         dataGridViewDeviceTable.Rows[ri].HeaderCell.Value = ri.ToString();
                     }
@@ -176,7 +176,7 @@ namespace Bonsai.ONIX.Design
             }
 
             var row = dataGridViewDeviceTable.SelectedRows[0];
-            var deviceIndexStr = (row.Cells[0].Value as string).Split(' ')[0];
+            var deviceIndexStr = (row.Cells["Address"].Value as string).Split(' ')[0];
             var deviceIndex = uint.Parse(deviceIndexStr);
 
             using (var c = ONIContextManager.ReserveContext(Configuration.Slot))

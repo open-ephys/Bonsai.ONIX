@@ -109,5 +109,53 @@ namespace Bonsai.ONIX.Design
             return waveform;
         }
         #endregion
+
+        #region RHS2116StimulationDevice
+
+
+        //public static string[] WaveformAxisLabels(this RHS2116Device _)
+        //{
+        //    return new[] { "Time (msec)", "Current (mA)" };
+        //}
+
+        //public static int NumberOfChannels(this RHS2116Device _)
+        //{
+        //    return RHS2116StimulusSequence.Channels;
+        //}
+
+        //public static PointPairList Waveform(this RHS2116Device device, int channel)
+        //{
+        //    // Get the current sequence
+        //    var stimulus = device.StimulusSequence[channel];
+
+        //    // Initial delay
+        //    var waveform = new PointPairList { new PointPair(0, 0), new PointPair(stimulus.Delay, 0) };
+
+        //    // Stimulus train
+        //    for (int i = 0; i < stimulus.NumberOfStimuli; i++)
+        //    {
+        //            var amp = stimulus.AnodicFirst ? stimulus.AnodicAmplitude : -stimulus.CathodicAmplitude;
+        //            var width = stimulus.AnodicFirst ? stimulus.AnodicWidth : stimulus.CathodicWidth;
+
+        //            waveform.Add(new PointPair(waveform.Last().X, amp));
+        //            waveform.Add(new PointPair(waveform.Last().X + width, amp));
+        //            waveform.Add(new PointPair(waveform.Last().X, 0));
+
+        //            waveform.Add(new PointPair(waveform.Last().X + stimulus.Dwell, 0));
+
+        //            amp = stimulus.AnodicFirst ? -stimulus.CathodicAmplitude : stimulus.AnodicAmplitude;
+        //            width = stimulus.AnodicFirst ? stimulus.CathodicWidth : stimulus.AnodicWidth;
+
+        //            waveform.Add(new PointPair(waveform.Last().X, amp));
+        //            waveform.Add(new PointPair(waveform.Last().X + width, amp));
+        //            waveform.Add(new PointPair(waveform.Last().X, 0));
+
+        //            waveform.Add(new PointPair(waveform.Last().X + stimulus.InterStimulusInterval, 0));
+
+        //    }
+
+        //    return waveform;
+        //}
+        #endregion
     }
 }

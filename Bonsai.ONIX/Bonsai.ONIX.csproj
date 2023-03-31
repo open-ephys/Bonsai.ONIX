@@ -5,7 +5,7 @@
     <Description>Bonsai library for controlling ONIX hardware.</Description>
     <PackageTags>Bonsai Rx Open Ephys ONI Neural Interface ONIX Electrophysiology Miniscope</PackageTags>
     <TargetFramework>net472</TargetFramework>
-    <Version>1.2.1</Version>
+    <Version>1.2.3</Version>
     <Authors>Jon Newman</Authors>
     <Company>Open Ephys, Inc.</Company>
     <Copyright>Copyright © Open Ephys, Inc.</Copyright>
@@ -47,8 +47,8 @@
     <Compile Remove="RHS2116Configuration.cs" />
     <Compile Remove="RHS2116DataFrame.cs" />
     <Compile Remove="RHS2116Device.cs" />
-    <Compile Remove="RHS2116StimulationDevice.cs" />
     <Compile Remove="RHS2116StimulusSequence.cs" />
+    <Compile Remove="RHS2116TriggerDevice.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,7 +65,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.7.1" />
-    <PackageReference Include="clroni" Version="5.0.0" />
+    <PackageReference Include="clroni" Version="5.0.1" />
     <PackageReference Include="OpenCV.Net" Version="3.4.1" />
   </ItemGroup>
 

@@ -3,15 +3,18 @@ using System.Text;
 
 namespace Bonsai.ONIX
 {
-    /// <summary>
-    /// Device configuration using the bus_to_i2c_raw.vhd core, which converts the ONI register
-    /// programming interface into I2C.
-    /// </summary>
     public class I2CRegisterConfiguration : RegisterConfiguration
     {
 
         public readonly uint I2CAddress;
 
+        /// <summary>
+        /// Device configuration using the bus_to_i2c_raw.vhd core, which converts the ONI register
+        /// programming interface into I2C.
+        /// </summary>
+        /// <param name="address">Device Address</param>
+        /// <param name="id">Device ID</param>
+        /// <param name="i2cAddress">7-bit I2C address</param>
         public I2CRegisterConfiguration(ONIDeviceAddress address, DeviceID id, uint i2cAddress) 
             : base(address, id)
         {
