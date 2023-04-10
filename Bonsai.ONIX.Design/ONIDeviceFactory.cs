@@ -53,8 +53,10 @@
                     return new MemoryUsageDevice();
                 case DeviceID.HARPSyncInput:
                     return new HARPSyncInputDevice();
-                //case DeviceID.RHS2116:
-                //    return new RHS2116Device();
+                case DeviceID.RHS2116:
+                    return new RHS2116Device();
+                case DeviceID.RHS2116Trigger:
+                    return new RHS2116TriggerDevice();
                 default:
                     return null;
             }

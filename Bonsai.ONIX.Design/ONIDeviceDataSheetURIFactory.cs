@@ -55,8 +55,10 @@ namespace Bonsai.ONIX.Design
                 case DeviceID.MemoryUsage:
                     return new Uri(baseUri + "memory-usage.html");
                 //case DeviceID.HARPSyncInput:
-                //case DeviceID.RHS2116:
-                    //return new Uri(baseUri + "rhs2116.html");
+                case DeviceID.RHS2116:
+                    return new Uri(baseUri + "rhs2116.html");
+                case DeviceID.RHS2116Trigger:
+                    return new Uri(baseUri + "rhs2116-trigger.html");
                 default:
                     return null;
             }
