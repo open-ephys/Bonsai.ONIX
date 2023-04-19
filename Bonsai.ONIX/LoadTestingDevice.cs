@@ -66,7 +66,7 @@ namespace Bonsai.ONIX
             }
             set
             {
-                var max_size = ValidSize();
+                var max_size = ValidSize() * 4;
                 var bounded = value > max_size ? max_size : value;
                 WriteRegister((int)Register.DT0H16_WORDS, bounded);
             }
