@@ -66,7 +66,7 @@ namespace Bonsai.ONIX
             }
             set
             {
-                var max_size = ValidSize() * 4;
+                var max_size = ValidSize();
                 var bounded = value > max_size ? max_size : value;
                 WriteRegister((int)Register.DT0H16_WORDS, bounded);
             }
@@ -112,7 +112,7 @@ namespace Bonsai.ONIX
         private uint ValidSize()
         {
             var clk_div = ReadRegister((int)Register.CLK_DIV);
-            return clk_div - 4 - 10; // -10 is overhead hack
+            return (clk_div - 4 - 10)*4; // -10 is overhead hack
         }
 
     }
