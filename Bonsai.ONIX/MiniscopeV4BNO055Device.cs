@@ -4,7 +4,8 @@ using System.Reactive.Linq;
 
 namespace Bonsai.ONIX
 {
-    [Source]
+    // TODO: If you double click on this node to show a visualizer during operation,
+    // the I2C interface stops and it hangs. No clue why.
     [Combinator(MethodName = "Generate")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [ONIXDeviceID(DeviceID.DS90UB9X)]
@@ -25,8 +26,8 @@ namespace Bonsai.ONIX
                 using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = BNO055Address << 1;
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveID4, val);
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveAlias4, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.SlaveID4, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.SlaveAlias4, val);
                 }
 
                 // Setup BNO055

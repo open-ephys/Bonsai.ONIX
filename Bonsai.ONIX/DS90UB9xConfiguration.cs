@@ -58,7 +58,7 @@
         public const uint DeserializerDefaultAddress = 0x30;
         public const uint SerializerDefaultAddress = 0x58;
 
-        public enum I2CRegister
+        public enum DesI2CRegister
         {
             PortMode = 0x6D,
 
@@ -77,6 +77,12 @@
             SlaveAlias5 = 0x6A,
             SlaveAlias6 = 0x6B,
             SlaveAlias7 = 0x6C,
+        }
+
+        public enum SerI2CRegister
+        {
+            GPIO10 = 0x0D,
+            GPIO32 = 0x0E,
         }
 
         public enum Mode

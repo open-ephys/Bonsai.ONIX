@@ -273,7 +273,7 @@ namespace Bonsai.ONIX
 
         public oni.Frame ReadFrame()
         {
-            lock (regLock)
+            lock (readLock)
             {
                 return ctx.ReadFrame();
             }

@@ -29,6 +29,7 @@ namespace Bonsai.ONIX
             return val != null && val <= byte.MaxValue ? (byte?)val : null;
         }
 
+        // TODO: why is value not a byte?
         public void WriteByte(uint address, uint value)
         {
             uint reg_addr = (address << 7) | (I2CAddress & 0x7F);

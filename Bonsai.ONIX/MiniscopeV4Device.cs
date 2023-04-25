@@ -108,19 +108,19 @@ namespace Bonsai.ONIX
                 using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.DeserializerDefaultAddress))
                 {
                     uint val = 0x4 + (uint)DS90UB9xConfiguration.Mode.Raw12BitLowFrequency; // 0x4 maintains coax mode
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.PortMode, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.PortMode, val);
 
                     val = ATMegaAddress << 1;
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveID1, val);
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveAlias1, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.SlaveID1, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.SlaveAlias1, val);
 
                     val = TPL0102Address << 1;
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveID2, val);
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveAlias2, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.SlaveID2, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.SlaveAlias2, val);
 
                     val = MAX14574Address << 1;
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveID3, val);
-                    i2c.WriteByte((uint)DS90UB9xConfiguration.I2CRegister.SlaveAlias3, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.SlaveID3, val);
+                    i2c.WriteByte((uint)DS90UB9xConfiguration.DesI2CRegister.SlaveAlias3, val);
                 }
 
                 // Set up potentiometer
