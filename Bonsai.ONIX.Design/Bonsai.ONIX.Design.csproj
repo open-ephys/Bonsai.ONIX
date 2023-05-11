@@ -5,7 +5,7 @@
     <Description>Bonsai design library for Bonsai.ONIX.</Description>
     <PackageTags>Bonsai Rx Open Ephys ONI Neural Interface ONIX Electrophysiology Miniscope</PackageTags>
     <TargetFramework>net472</TargetFramework>
-    <Version>1.2.5</Version>
+    <Version>1.2.6</Version>
     <Authors>Jon Newman</Authors>
     <Company>Open Ephys, Inc.</Company>
     <Copyright>Copyright © Open Ephys, Inc.</Copyright>

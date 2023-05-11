@@ -1,0 +1,867 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.7.3"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:p1="clr-namespace:Bonsai.ONIX;assembly=Bonsai.ONIX"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:wie="clr-namespace:Bonsai.Windows.Input;assembly=Bonsai.Windows.Input"
+                 xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
+                 xmlns:dsp="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp"
+                 xmlns:viz="clr-namespace:Bonsai.Design.Visualizers;assembly=Bonsai.Design.Visualizers"
+                 xmlns:io="clr-namespace:Bonsai.IO;assembly=Bonsai.System"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:ONIContext">
+          <p1:ContextConfiguration>
+            <p1:Slot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:Slot>
+            <p1:ReadSize>2048</p1:ReadSize>
+            <p1:WriteSize>2048</p1:WriteSize>
+          </p1:ContextConfiguration>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:RHS2116Device">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>256</p1:Address>
+          </p1:DeviceAddress>
+          <p1:EnableStream>true</p1:EnableStream>
+          <p1:BlockSize>30</p1:BlockSize>
+          <p1:DataFormat>Volts</p1:DataFormat>
+          <p1:DSPCutoff>Off</p1:DSPCutoff>
+          <p1:Trigger>false</p1:Trigger>
+          <p1:AnalogLowCutoff>Low100mHz</p1:AnalogLowCutoff>
+          <p1:AnalogLowCutoffRecovery>Low250Hz</p1:AnalogLowCutoffRecovery>
+          <p1:AnalogHighCutoff>High10000Hz</p1:AnalogHighCutoff>
+          <p1:RespectExternalActiveStim>true</p1:RespectExternalActiveStim>
+          <p1:StimulusSequence>
+            <p1:Stimuli>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>5</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>10</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>3</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>10</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>3</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>100</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+            </p1:Stimuli>
+            <p1:CurrentStepSize>Step1000nA</p1:CurrentStepSize>
+          </p1:StimulusSequence>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="rx:PublishSubject">
+        <Name>FrameA</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:RHS2116Device">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>257</p1:Address>
+          </p1:DeviceAddress>
+          <p1:EnableStream>true</p1:EnableStream>
+          <p1:BlockSize>30</p1:BlockSize>
+          <p1:DataFormat>Volts</p1:DataFormat>
+          <p1:DSPCutoff>Off</p1:DSPCutoff>
+          <p1:Trigger>false</p1:Trigger>
+          <p1:AnalogLowCutoff>Low100mHz</p1:AnalogLowCutoff>
+          <p1:AnalogLowCutoffRecovery>Low250Hz</p1:AnalogLowCutoffRecovery>
+          <p1:AnalogHighCutoff>High10000Hz</p1:AnalogHighCutoff>
+          <p1:RespectExternalActiveStim>true</p1:RespectExternalActiveStim>
+          <p1:StimulusSequence>
+            <p1:Stimuli>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+              <p1:RHS2116Stimulus>
+                <p1:NumberOfStimuli>0</p1:NumberOfStimuli>
+                <p1:AnodicFirst>true</p1:AnodicFirst>
+                <p1:DelaySamples>0</p1:DelaySamples>
+                <p1:DwellSamples>0</p1:DwellSamples>
+                <p1:AnodicAmplitudeSteps>0</p1:AnodicAmplitudeSteps>
+                <p1:AnodicWidthSamples>0</p1:AnodicWidthSamples>
+                <p1:CathodicAmplitudeSteps>0</p1:CathodicAmplitudeSteps>
+                <p1:CathodicWidthSamples>0</p1:CathodicWidthSamples>
+                <p1:InterStimulusIntervalSamples>0</p1:InterStimulusIntervalSamples>
+              </p1:RHS2116Stimulus>
+            </p1:Stimuli>
+            <p1:CurrentStepSize>Step5000nA</p1:CurrentStepSize>
+          </p1:StimulusSequence>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="rx:PublishSubject">
+        <Name>FrameB</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:HeadstagePortControlDevice">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>1</p1:Address>
+          </p1:DeviceAddress>
+          <p1:EnableStream>true</p1:EnableStream>
+          <p1:LinkVoltage>6</p1:LinkVoltage>
+          <p1:GPO1>false</p1:GPO1>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="rx:PublishSubject">
+        <Name>PortStatus</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="wie:MouseButtonDown">
+          <wie:Filter>Middle</wie:Filter>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="BooleanProperty">
+          <Value>true</Value>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:RHS2116TriggerDevice">
+          <p1:DeviceAddress>
+            <p1:HardwareSlot>
+              <p1:Driver>riffa</p1:Driver>
+              <p1:Index>0</p1:Index>
+            </p1:HardwareSlot>
+            <p1:Address>258</p1:Address>
+          </p1:DeviceAddress>
+          <p1:TriggerSource>Local</p1:TriggerSource>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>Ephys Visualization</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>FrameA</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>FrameB</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="rx:Condition">
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="wie:KeyDown">
+                      <wie:Filter>Space Control</wie:Filter>
+                      <wie:SuppressRepetitions>true</wie:SuppressRepetitions>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="IntProperty">
+                      <Value>1</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="rx:Accumulate" />
+                  <Expression xsi:type="scr:ExpressionTransform">
+                    <scr:Expression>(it % 2) == 0</scr:Expression>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="BooleanProperty">
+                      <Value>true</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:Merge" />
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="5" Label="Source1" />
+                  <Edge From="4" To="5" Label="Source2" />
+                  <Edge From="5" To="6" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Item1.EphysData</Selector>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Item2.EphysData</Selector>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="dsp:Concat">
+                <dsp:Axis>0</dsp:Axis>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="VisualizerMapping" />
+            <Expression xsi:type="MemberSelector">
+              <Selector>Item1.DCData</Selector>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Item2.DCData</Selector>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="dsp:Concat">
+                <dsp:Axis>0</dsp:Axis>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="VisualizerMapping" />
+            <Expression xsi:type="viz:TableLayoutPanelBuilder">
+              <viz:Name>Ephys Visualizer</viz:Name>
+              <viz:ColumnCount>1</viz:ColumnCount>
+              <viz:RowCount>2</viz:RowCount>
+              <viz:ColumnStyles />
+              <viz:RowStyles />
+              <viz:CellSpans />
+            </Expression>
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="2" Label="Source1" />
+            <Edge From="1" To="2" Label="Source2" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="3" To="5" Label="Source1" />
+            <Edge From="3" To="9" Label="Source1" />
+            <Edge From="3" To="10" Label="Source1" />
+            <Edge From="4" To="6" Label="Source1" />
+            <Edge From="5" To="6" Label="Source2" />
+            <Edge From="6" To="7" Label="Source1" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="8" To="14" Label="Source1" />
+            <Edge From="9" To="11" Label="Source1" />
+            <Edge From="10" To="11" Label="Source2" />
+            <Edge From="11" To="12" Label="Source1" />
+            <Edge From="12" To="13" Label="Source1" />
+            <Edge From="13" To="14" Label="Source2" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>Data Writing</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>FrameA</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>EphysData</Selector>
+            </Expression>
+            <Expression xsi:type="rx:Sink">
+              <Name>EphysWriter</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixWriter">
+                      <dsp:Path>rhs2116-ephys_a_.raw</dsp:Path>
+                      <dsp:Suffix>Timestamp</dsp:Suffix>
+                      <dsp:Overwrite>true</dsp:Overwrite>
+                      <dsp:Layout>ColumnMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>DCData</Selector>
+            </Expression>
+            <Expression xsi:type="rx:Sink">
+              <Name>DCWriter</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixWriter">
+                      <dsp:Path>rhs2116-dc_a_.raw</dsp:Path>
+                      <dsp:Suffix>Timestamp</dsp:Suffix>
+                      <dsp:Overwrite>true</dsp:Overwrite>
+                      <dsp:Layout>ColumnMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Clock</Selector>
+            </Expression>
+            <Expression xsi:type="rx:Sink">
+              <Name>ClockWriter</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixWriter">
+                      <dsp:Path>rhs2116-clock_a_.raw</dsp:Path>
+                      <dsp:Suffix>Timestamp</dsp:Suffix>
+                      <dsp:Overwrite>true</dsp:Overwrite>
+                      <dsp:Layout>ColumnMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>HubSyncCounter</Selector>
+            </Expression>
+            <Expression xsi:type="rx:Sink">
+              <Name>ClockWriter</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixWriter">
+                      <dsp:Path>rhs2116-hub-clock_a_.raw</dsp:Path>
+                      <dsp:Suffix>Timestamp</dsp:Suffix>
+                      <dsp:Overwrite>true</dsp:Overwrite>
+                      <dsp:Layout>ColumnMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Take">
+                <rx:Count>1</rx:Count>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Timestamp" />
+            </Expression>
+            <Expression xsi:type="io:CsvWriter">
+              <io:FileName>start-time_.csv</io:FileName>
+              <io:Append>false</io:Append>
+              <io:Overwrite>false</io:Overwrite>
+              <io:Suffix>Timestamp</io:Suffix>
+              <io:IncludeHeader>false</io:IncludeHeader>
+              <io:Selector>Timestamp</io:Selector>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>FrameB</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>EphysData</Selector>
+            </Expression>
+            <Expression xsi:type="rx:Sink">
+              <Name>EphysWriter</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixWriter">
+                      <dsp:Path>rhs2116-ephys_b_.raw</dsp:Path>
+                      <dsp:Suffix>Timestamp</dsp:Suffix>
+                      <dsp:Overwrite>true</dsp:Overwrite>
+                      <dsp:Layout>ColumnMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>DCData</Selector>
+            </Expression>
+            <Expression xsi:type="rx:Sink">
+              <Name>DCWriter</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixWriter">
+                      <dsp:Path>rhs2116-dc_b_.raw</dsp:Path>
+                      <dsp:Suffix>Timestamp</dsp:Suffix>
+                      <dsp:Overwrite>true</dsp:Overwrite>
+                      <dsp:Layout>ColumnMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Clock</Selector>
+            </Expression>
+            <Expression xsi:type="rx:Sink">
+              <Name>ClockWriter</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixWriter">
+                      <dsp:Path>rhs2116-clock_b_.raw</dsp:Path>
+                      <dsp:Suffix>Timestamp</dsp:Suffix>
+                      <dsp:Overwrite>true</dsp:Overwrite>
+                      <dsp:Layout>ColumnMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>HubSyncCounter</Selector>
+            </Expression>
+            <Expression xsi:type="rx:Sink">
+              <Name>ClockWriter</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixWriter">
+                      <dsp:Path>rhs2116-hub-clock_b_.raw</dsp:Path>
+                      <dsp:Suffix>Timestamp</dsp:Suffix>
+                      <dsp:Overwrite>true</dsp:Overwrite>
+                      <dsp:Layout>ColumnMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>PortStatus</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Timestamp" />
+            </Expression>
+            <Expression xsi:type="io:CsvWriter">
+              <io:FileName>headstage-port-status_.csv</io:FileName>
+              <io:Append>false</io:Append>
+              <io:Overwrite>false</io:Overwrite>
+              <io:Suffix>Timestamp</io:Suffix>
+              <io:IncludeHeader>false</io:IncludeHeader>
+              <io:Selector>Timestamp,Value.Clock,Value.Lock,Value.Pass,Value.Code,Value.Message</io:Selector>
+            </Expression>
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="0" To="3" Label="Source1" />
+            <Edge From="0" To="5" Label="Source1" />
+            <Edge From="0" To="7" Label="Source1" />
+            <Edge From="0" To="9" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="9" To="10" Label="Source1" />
+            <Edge From="10" To="11" Label="Source1" />
+            <Edge From="12" To="13" Label="Source1" />
+            <Edge From="12" To="15" Label="Source1" />
+            <Edge From="12" To="17" Label="Source1" />
+            <Edge From="12" To="19" Label="Source1" />
+            <Edge From="13" To="14" Label="Source1" />
+            <Edge From="15" To="16" Label="Source1" />
+            <Edge From="17" To="18" Label="Source1" />
+            <Edge From="19" To="20" Label="Source1" />
+            <Edge From="21" To="22" Label="Source1" />
+            <Edge From="22" To="23" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="1" To="2" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="8" To="9" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

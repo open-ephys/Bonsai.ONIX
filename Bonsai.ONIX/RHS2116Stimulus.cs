@@ -9,7 +9,7 @@ namespace Bonsai.ONIX
         public uint NumberOfStimuli { get; set; } = 0;
 
         [DisplayName("Anodic First")]
-        public bool AnodicFirst { get; set; } = false;
+        public bool AnodicFirst { get; set; } = true;
 
         [DisplayName("Delay (samples)")]
         public uint DelaySamples { get; set; } = 0;

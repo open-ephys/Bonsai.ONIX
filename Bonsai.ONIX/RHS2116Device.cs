@@ -88,10 +88,11 @@ namespace Bonsai.ONIX
 
         protected override IObservable<RHS2116DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
-            var reg = RHS2116Configuration.StimulatorStepSizeToRegisters[StimulusSequence.CurrentStepSize];
-            SetRawRegister((uint) Register.STEPSZ, reg[2] << 13 & reg[1] << 7 & reg[0]);
-
+            // Save data formate because this involves hardware access
             var format = DataFormat;
+
+            // Force stimulus sequence update
+            StimulusSequence = stimulusSequence;
 
             return source
                 .Buffer(BlockSize)
@@ -120,24 +121,27 @@ namespace Bonsai.ONIX
         [Description("The number of frames making up a single data block that is propagated in the observable sequence.")]
         public int BlockSize { get; set; } = 30;
 
-        private RHS2116Configuration.DataFormat dataFormat = default;
+
+        // TODO: Setting to twos-compliment causes very strage behavior in DC results with values nominally sitting around 0. Not sure
+        // if this is a bug on the chip. For now, just force unsigned in hardware and do conversions here.
+        //private RHS2116Configuration.DataFormat dataFormat = default;
         [Category("Configuration")]
         [Description("Ephys and DC data format.")]
-        public RHS2116Configuration.DataFormat DataFormat
-        {
-            get
-            {
-                return dataFormat;
-            }
-            set
-            {
-                var reg = GetRawRegister((uint)Register.FORMAT);
-                reg &= ~(1 << 6); // clear bit 6
-                reg |= (value == RHS2116Configuration.DataFormat.Volts ? 1 : (int)value) << 6;
-                SetRawRegister((uint)Register.FORMAT, reg);
-                dataFormat = value;
-            }
-        }
+        public RHS2116Configuration.DataFormat DataFormat { get; set; }
+        //{
+        //    get
+        //    {
+        //        return dataFormat;
+        //    }
+        //    set
+        //    {
+        //        var reg = GetRawRegister((uint)Register.FORMAT);
+        //        reg &= ~(1 << 6); // clear bit 6
+        //        reg |= (value == RHS2116Configuration.DataFormat.Volts ? 1 : (int)value) << 6;
+        //        SetRawRegister((uint)Register.FORMAT, reg);
+        //        dataFormat = value;
+        //    }
+        //}
 
         [Category("Configuration")]
         [Description("High-pass digital filter (post-ADC offset removal).")]
@@ -308,6 +312,10 @@ namespace Bonsai.ONIX
 
                 using (var regIO = new RegisterConfiguration(DeviceAddress, ID))
                 {
+                    // Step size
+                    var reg = RHS2116Configuration.StimulatorStepSizeToRegisters[StimulusSequence.CurrentStepSize];
+                    regIO.WriteRegister((uint)Register.STEPSZ, (uint)(reg[2] << 13 | reg[1] << 7 | reg[0]));
+
                     // Anodic amplitudes
                     // TODO: cache last write and compare
                     var regAddr = (int)Register.POS00;

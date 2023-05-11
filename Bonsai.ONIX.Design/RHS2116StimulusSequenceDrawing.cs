@@ -77,7 +77,7 @@ namespace Bonsai.ONIX.Design
 
                 for (int j = 0; j < stimulus.NumberOfStimuli; j++)
                 {
-                    float amp = stimulus.AnodicFirst ? stimulus.AnodicAmplitudeSteps : -stimulus.CathodicAmplitudeSteps;
+                    float amp = -(stimulus.AnodicFirst ? stimulus.AnodicAmplitudeSteps : -stimulus.CathodicAmplitudeSteps); // Inverted y axis
                     float width = xScale * (stimulus.AnodicFirst ? stimulus.AnodicWidthSamples : stimulus.CathodicWidthSamples);
 
                     waveform.Add(new PointF(waveform.Last().X, amp + yZero));
@@ -86,7 +86,7 @@ namespace Bonsai.ONIX.Design
 
                     waveform.Add(new PointF(waveform.Last().X + xScale * stimulus.DwellSamples, yZero));
 
-                    amp = stimulus.AnodicFirst ? -stimulus.CathodicAmplitudeSteps : stimulus.AnodicAmplitudeSteps;
+                    amp = -(stimulus.AnodicFirst ? -stimulus.CathodicAmplitudeSteps : stimulus.AnodicAmplitudeSteps); // Inverted y axis
                     width = xScale * (stimulus.AnodicFirst ? stimulus.CathodicWidthSamples : stimulus.AnodicWidthSamples);
 
                     waveform.Add(new PointF(waveform.Last().X, amp + yZero));
