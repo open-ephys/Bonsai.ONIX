@@ -9,8 +9,8 @@ out vec4 fragColor;
 
 void main()
 {
-  // intensity value is stored in RED channel of texture [0-1023]
-  // Neuropixels data is 10-bit and R16 internal formation is 16 bit
+  // Intensity value is stored in RED channel of texture [0-1023]
+  // Neuropixels 1.0 data is 10-bit and R16 internal formation is 16 bit
   // So the incoming data need to be multipled by 64 to get it in 0-1 range.
   float texel = 64.0 * texture(uTexture, texCoord).r;
 

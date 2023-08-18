@@ -43,7 +43,7 @@ namespace Bonsai.ONIX
             }
         }
 
-        public IObservable<MiniscopeV4BNO055DataFrame> Generate()
+        public IObservable<RawBNO055DataFrame> Generate()
         {
             // Max of 100 Hz, but limited by I2C bus
             var source = Observable.Interval(TimeSpan.FromSeconds(0.01));
@@ -61,7 +61,7 @@ namespace Bonsai.ONIX
                     var words = new ushort[data.Length / 2];
                     Buffer.BlockCopy(data, 0, words, 0, data.Length);
 
-                    return new MiniscopeV4BNO055DataFrame(words);
+                    return new RawBNO055DataFrame(words);
                 })
             );
         }

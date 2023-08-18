@@ -53,12 +53,12 @@
             this.standbyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label_StepSelect = new System.Windows.Forms.Label();
             this.label_Info = new System.Windows.Forms.Label();
             this.comboBox_StimulatorStepSize = new System.Windows.Forms.ComboBox();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label_StepSelect = new System.Windows.Forms.Label();
             this.toolStripStatusLabel_numSlots = new System.Windows.Forms.ToolStripStatusLabel();
             this.contextMenuStrip_ChannelsGrid.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -288,10 +288,19 @@
             this.panel2.Size = new System.Drawing.Size(937, 32);
             this.panel2.TabIndex = 32;
             // 
+            // label_StepSelect
+            // 
+            this.label_StepSelect.AutoSize = true;
+            this.label_StepSelect.Location = new System.Drawing.Point(12, 11);
+            this.label_StepSelect.Name = "label_StepSelect";
+            this.label_StepSelect.Size = new System.Drawing.Size(55, 13);
+            this.label_StepSelect.TabIndex = 30;
+            this.label_StepSelect.Text = "Step Size:";
+            // 
             // label_Info
             // 
             this.label_Info.AutoSize = true;
-            this.label_Info.Location = new System.Drawing.Point(194, 11);
+            this.label_Info.Location = new System.Drawing.Point(200, 11);
             this.label_Info.Name = "label_Info";
             this.label_Info.Size = new System.Drawing.Size(25, 13);
             this.label_Info.TabIndex = 29;
@@ -300,7 +309,7 @@
             // comboBox_StimulatorStepSize
             // 
             this.comboBox_StimulatorStepSize.FormattingEnabled = true;
-            this.comboBox_StimulatorStepSize.Location = new System.Drawing.Point(67, 6);
+            this.comboBox_StimulatorStepSize.Location = new System.Drawing.Point(73, 6);
             this.comboBox_StimulatorStepSize.Name = "comboBox_StimulatorStepSize";
             this.comboBox_StimulatorStepSize.Size = new System.Drawing.Size(121, 21);
             this.comboBox_StimulatorStepSize.TabIndex = 28;
@@ -333,15 +342,6 @@
             this.toolStripStatusLabel.Image = global::Bonsai.ONIX.Design.Properties.Resources.StatusReadyImage;
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(16, 17);
-            // 
-            // label_StepSelect
-            // 
-            this.label_StepSelect.AutoSize = true;
-            this.label_StepSelect.Location = new System.Drawing.Point(6, 11);
-            this.label_StepSelect.Name = "label_StepSelect";
-            this.label_StepSelect.Size = new System.Drawing.Size(55, 13);
-            this.label_StepSelect.TabIndex = 30;
-            this.label_StepSelect.Text = "Step Size:";
             // 
             // toolStripStatusLabel_numSlots
             // 

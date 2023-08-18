@@ -12,9 +12,16 @@
             PixelGate = 0x00008004,
             IncludeSyncBits = 0x00008005,
             MarkMode = 0x00008006,
-            GPIODirection = 0x00008007,
-            GPIOValue = 0x00008008,
-            LinkStatus = 0x00008009,
+            MagicMask = 0x00008007,
+            Magic = 0x00008008,
+            MagicWait = 0x00008009,
+            DataMode = 0x0000800A,
+            DataLines0 = 0x0000800B,
+            DataLines1 = 0x0000800C,
+            // Reserved
+            GPIODirection = 0x00008010,
+            GPIOValue = 0x00008011,
+            LinkStatus = 0x00008012,
         }
 
         public enum TriggerMode

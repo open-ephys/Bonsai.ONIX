@@ -1,16 +1,14 @@
 ﻿using System.ComponentModel;
-using System.Drawing.Design;
-using System.Linq;
-using System.Reactive.Linq;
 
 
 namespace Bonsai.ONIX
 {
     [ONIXDeviceID(DeviceID.RHS2116Trigger)]
     [Description("Trigger circuit to sychronize application of stimulation patterns across multiple " +
-        "RHS2116 chips and headstages (when using inter-headstage sync cable).")]
+        "RHS2116 chips and headstages (when using inter-headstage sync cable). Takes a double indicating " +
+        "delay, in microseconds, that should be applied before stimulus is delivered.")]
     [DefaultProperty("DeviceAddress")]
-    public class RHS2116TriggerDevice : ONISink<bool>
+    public class RHS2116TriggerDevice : ONISink<double>
     {
         private enum Register
         {
@@ -41,9 +39,10 @@ namespace Bonsai.ONIX
         public override ONIDeviceAddress DeviceAddress { get; set; } = new ONIDeviceAddress();
 
         // TODO: think about using GPIO?
-        protected override void OnNext(ONIContextTask ctx, bool triggered)
+        protected override void OnNext(ONIContextTask ctx, double delayMicroSec)
         {
-            WriteRegister((int)Register.TRIGGER, (uint)(triggered ? 1 : 0));
+            var delaySamples = (int)(delayMicroSec / RHS2116Device.SamplePeriodMicroSeconds);
+            WriteRegister((int)Register.TRIGGER, (uint)(delaySamples << 12 | 0x1));
         }
 
         protected override void OnFinally(ONIContextTask ctx)

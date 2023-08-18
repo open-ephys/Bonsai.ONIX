@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
@@ -117,6 +118,130 @@ namespace Bonsai.ONIX
                 WriteRegister((uint)DS90UB9xConfiguration.Register.MarkMode, (uint)value);
             }
         }
+
+        [Category("Configuration")]
+        [Description("The bits that will be checked for magic word.")]
+        public bool[] MagicMask
+        {
+            get
+            {
+                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.MagicMask);
+                return new BitArray(new int[] { (int)val }).Cast<bool>().ToArray();
+            }
+            set
+            {
+                var array = new int[1];
+                new BitArray(value).CopyTo(array, 0);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.MagicMask, (uint)array[0]);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("If MagicMask is non-zero, the magic word that must appear on the stream to start frame.")]
+        public uint MagicWord
+        {
+            get
+            {
+                return ReadRegister((uint)DS90UB9xConfiguration.Register.Magic);
+            }
+            set
+            {
+                WriteRegister((uint)DS90UB9xConfiguration.Register.Magic, value);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("Max number of samples to wait from trigger to mask detection before cancelling and going " +
+            "back to trigger detection. 0 means wait indefinitely.")]
+        public uint MagicWait
+        {
+            get
+            {
+                return ReadRegister((uint)DS90UB9xConfiguration.Register.MagicWait);
+            }
+            set
+            {
+                WriteRegister((uint)DS90UB9xConfiguration.Register.MagicWait, value);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("Bit 0: '0' = Normal parallel mode. '1' = Serial mode, Bit 1: '1' = Include `index` field " +
+            "in normal mode, '0'= Do not include it in normal mode. Bit 2: Number of serial streams '0' = 1 stream, " +
+            "'1' = 2 streams., Bit 3: reserved. Bits 7-4: Number of bits per word - 1 (i.e.: '0x0' = 1bit, '0xF' = 16bits. " +
+            "Bits 9-8 number of lines per stream '00' = 1, '01' = 2. '10' = 4, '11' = 8. Bit 10: data order in " +
+            "serial mode '0' = MSB first, '1' = LSB first .")]
+        public bool[] DataMode
+        {
+            get
+            {
+                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.DataMode);
+                return new BitArray(new int[] { (int)val }).Cast<bool>().ToArray();
+            }
+            set
+            {
+                var array = new int[1];
+                new BitArray(value).CopyTo(array, 0);
+                WriteRegister((uint)DS90UB9xConfiguration.Register.DataMode, (uint)array[0]);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("TODO")]
+        public int[] DataLines0
+        {
+            get
+            {
+                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.DataLines0);
+                var lineMap = new int[8];
+
+                for (var i = 0; i < lineMap.Length; i++)
+                {
+                    lineMap[i] = ((int)val >> i * 4) & 0xF;
+                }
+
+                return lineMap;
+            }
+            set
+            {
+                int val = 0;
+                for (var i = 0; i < value.Length; i++)
+                {
+                    val |= value[i] << i * 4;
+                }
+
+                WriteRegister((uint)DS90UB9xConfiguration.Register.DataLines0, (uint)val);
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("TODO")]
+        public int[] DataLines1
+        {
+            get
+            {
+                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.DataLines1);
+                var lineMap = new int[8];
+
+                for (var i = 0; i < lineMap.Length; i++)
+                {
+                    lineMap[i] = ((int)val >> i * 4) & 0xF;
+                }
+
+                return lineMap;
+            }
+            set
+            {
+                int val = 0;
+                for (var i = 0; i < value.Length; i++)
+                {
+                    val |= value[i] << i * 4;
+                }
+
+                WriteRegister((uint)DS90UB9xConfiguration.Register.DataLines1, (uint)val);
+            }
+        }
+
 
         [Category("Configuration")]
         [Description("GPIO direction.")]

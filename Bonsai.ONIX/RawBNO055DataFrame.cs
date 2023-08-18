@@ -2,9 +2,9 @@
 
 namespace Bonsai.ONIX
 {
-    public class MiniscopeV4BNO055DataFrame
+    public class RawBNO055DataFrame
     {
-        public MiniscopeV4BNO055DataFrame(ushort[] sample)
+        public RawBNO055DataFrame(ushort[] sample)
         {
             Euler = GetEuler(sample, 0);
             Quaternion = GetQuat(sample, 3);
