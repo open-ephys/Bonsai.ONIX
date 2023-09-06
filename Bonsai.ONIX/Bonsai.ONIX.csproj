@@ -44,12 +44,9 @@
   <ItemGroup>
     <Compile Remove="KiloscopeDevice.cs" />
     <Compile Remove="NeuropixelsV1DataFrameNew.cs" />
-    <Compile Remove="NeuropixelsV1eDevice.cs" />
+    <Compile Remove="NeuropixelsV1eConfiguration.cs" />
     <Compile Remove="NeuropixelsV1eFlex.cs" />
-    <Compile Remove="NeuropixelsV2DataFrame.cs" />
-    <Compile Remove="NeuropixelsV2eBNO055Device.cs" />
-    <Compile Remove="NeuropixelsV2eDevice.cs" />
-    <Compile Remove="NeuropixelsV2Flex.cs" />
+    <Compile Remove="NeuropixelsV1eProbe.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,6 +13,14 @@ namespace Bonsai.ONIX
             DIGITAL_TEST,
         }
 
+        // TODO: HACK
+        // Resuse this for FPGA headstage and passthrough based
+        public enum Headstage
+        {
+            ONIXFPGA,
+            ONIXE
+        }
+
         public NeuropixelsV1Configuration()
         {
             InternalReferenceChannels = new int[] { NeuropixelsV1Probe.INTERNAL_REF_CHANNEL };
@@ -54,6 +62,9 @@ namespace Bonsai.ONIX
                 }
             }
         }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public Headstage HeadstageType { get; internal set; }
 
         [System.Xml.Serialization.XmlIgnore]
         public ulong? FlexProbeSN { get; internal set; } = null;

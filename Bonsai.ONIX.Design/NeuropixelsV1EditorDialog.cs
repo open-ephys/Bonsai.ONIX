@@ -18,7 +18,7 @@ namespace Bonsai.ONIX.Design
         private List<int> selectedElectrodes = new List<int>();
         private bool closeContextMenu = true;
 
-        public NeuropixelsV1EditorDialog(Bonsai.ONIX.NeuropixelsV1Configuration config)
+        public NeuropixelsV1EditorDialog(NeuropixelsV1Configuration config)
         {
             InitializeComponent();
 
@@ -572,5 +572,7 @@ namespace Bonsai.ONIX.Design
                 MessageBox.Show("Unable to open documentation link.");
             }
         }
+
+
     }
 }

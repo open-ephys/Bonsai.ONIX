@@ -48,7 +48,7 @@ namespace Bonsai.ONIX
             PROBE_SN_MSB = 0x00008192
         }
 
-        public NeuropixelsV1Probe(ONIDeviceAddress device) : base(device, DeviceID.NeuropixelsV1, 0x70)
+        public NeuropixelsV1Probe(ONIDeviceAddress device) : base(device, 0x70)
         { }
 
         public static int ElectrodeToChannel(int electrode)
@@ -91,7 +91,7 @@ namespace Bonsai.ONIX
             WriteByte((uint)RegAddr.REC_MOD, (uint)RecMod.ACTIVE);
         }
 
-        public void WriteConfiguration(NeuropixelsV1Configuration config, bool performReadCheck = false)
+        public void WriteConfiguration(NeuropixelsV1Configuration config)
         {
             if (config.Channels.ToList().GetRange(192, 192).Any(c => c.Bank == Channel.ElectrodeBank.TWO))
             {
@@ -125,16 +125,19 @@ namespace Bonsai.ONIX
             // NB: ASIC bug, read_check on SR_CHAIN1 ignored
             WriteShiftRegister((uint)RegAddr.SR_CHAIN1, GenerateShankBits(config), false);
 
-            // Gain and ADC corrections
-            WriteLFPGainCorrections(config);
-            WriteAPGainCorrections(config);
-            WriteADCCorrections(config);
-            ConfigProbeSN = config.ConfigProbeSN;
+            if (config.HeadstageType == NeuropixelsV1Configuration.Headstage.ONIXFPGA)
+            {
+                // Gain and ADC corrections
+                WriteLFPGainCorrections(config);
+                WriteAPGainCorrections(config);
+                WriteADCCorrections(config);
+                ConfigProbeSN = config.ConfigProbeSN;
+            }
 
             // Base configurations
             var base_configs = GenerateBaseBits(config);
-            WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], performReadCheck);
-            WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], performReadCheck);
+            WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], config.PerformReadCheck);
+            WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], config.PerformReadCheck);
 
             // Configuration has been uploaded
             config.RefreshNeeded = false;
@@ -179,20 +182,25 @@ namespace Bonsai.ONIX
                 WriteShiftRegister((uint)RegAddr.SR_CHAIN1, GenerateShankBits(config), false);
                 progress.Report(30);
 
-                // Gain and ADC corrections
-                WriteLFPGainCorrections(config);
-                progress.Report(50);
-                WriteAPGainCorrections(config);
-                progress.Report(60);
-                WriteADCCorrections(config);
-                progress.Report(70);
-                ConfigProbeSN = config.ConfigProbeSN;
+                if (config.HeadstageType == NeuropixelsV1Configuration.Headstage.ONIXFPGA)
+                {
+                    // Gain and ADC corrections
+                    WriteLFPGainCorrections(config);
+                    progress.Report(50);
+                    WriteAPGainCorrections(config);
+                    progress.Report(60);
+                    WriteADCCorrections(config);
+                    progress.Report(70);
+                    ConfigProbeSN = config.ConfigProbeSN;
+                } else { 
+                    progress.Report(70);
+                }
 
                 // Base configurations
                 var base_configs = GenerateBaseBits(config);
-                WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], performReadCheck);
+                WriteShiftRegister((uint)RegAddr.SR_CHAIN2, base_configs[0], config.PerformReadCheck);
                 progress.Report(80);
-                WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], performReadCheck);
+                WriteShiftRegister((uint)RegAddr.SR_CHAIN3, base_configs[1], config.PerformReadCheck);
                 progress.Report(100);
 
                 // Configuration has been uploaded

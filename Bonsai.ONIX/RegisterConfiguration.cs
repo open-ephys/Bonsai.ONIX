@@ -12,6 +12,17 @@ namespace Bonsai.ONIX
 
         public readonly ONIDeviceAddress DeviceAddress;
 
+        public RegisterConfiguration(ONIDeviceAddress address)
+        {
+            valid = true; // No check
+            context = ONIContextManager.ReserveContext(address.HardwareSlot);
+            DeviceAddress = address;
+
+#if DEBUG
+            Console.WriteLine("Context reserved by " + this.GetType());
+#endif
+        }
+
         public RegisterConfiguration(ONIDeviceAddress address, DeviceID id)
         {
             valid = ONIXDeviceDescriptor.IsValid(id, address);

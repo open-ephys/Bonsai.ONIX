@@ -30,11 +30,15 @@
     <Compile Remove="DeviceIndexSelectionControl.cs" />
     <Compile Remove="DeviceIndexSelectionControl.Designer.cs" />
     <Compile Remove="DeviceIndexSelectionEditorService.cs" />
+    <Compile Remove="NeuropixelsV1eEditor.cs" />
+    <Compile Remove="NeuropixelsV1eEditorDialog.cs" />
+    <Compile Remove="NeuropixelsV1eEditorDialog.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="ControllerSelectionControl.resx" />
     <EmbeddedResource Remove="DeviceIndexSelectionControl.resx" />
+    <EmbeddedResource Remove="NeuropixelsV1eEditorDialog.resx" />
   </ItemGroup>
 
   <ItemGroup>

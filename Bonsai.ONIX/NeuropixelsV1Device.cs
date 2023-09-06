@@ -32,7 +32,7 @@ namespace Bonsai.ONIX
                         if (Configuration.RefreshNeeded)
                         {
                             probe.FullReset();
-                            probe.WriteConfiguration(Configuration, PerformReadCheck);
+                            probe.WriteConfiguration(Configuration);
                         }
                         else
                         {
@@ -108,7 +108,7 @@ namespace Bonsai.ONIX
         [Description("Neuropixels probe hardware configuration.")]
         [Editor("Bonsai.ONIX.Design.NeuropixelsV1Editor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         [Externalizable(false)]
-        public NeuropixelsV1Configuration Configuration { get; set; } = new NeuropixelsV1Configuration();
+        public NeuropixelsV1Configuration Configuration { get; set; } = new NeuropixelsV1Configuration { HeadstageType = NeuropixelsV1Configuration.Headstage.ONIXFPGA };
 
         [Category("Configuration")]
         [Description("Write configuration twice to perform a bit-wise confirmation of configuration values on the probe.")]

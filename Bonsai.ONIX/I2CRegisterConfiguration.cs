@@ -8,6 +8,14 @@ namespace Bonsai.ONIX
 
         public readonly uint I2CAddress;
 
+
+        public I2CRegisterConfiguration(ONIDeviceAddress address,  uint i2cAddress)
+        : base(address)
+        {
+            I2CAddress = i2cAddress;
+        }
+
+
         /// <summary>
         /// Device configuration using the bus_to_i2c_raw.vhd core, which converts the ONI register
         /// programming interface into I2C.

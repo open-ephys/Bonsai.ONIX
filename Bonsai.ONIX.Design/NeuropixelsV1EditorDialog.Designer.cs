@@ -183,7 +183,7 @@
             this.operationModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxOperationMode});
             this.operationModeToolStripMenuItem.Name = "operationModeToolStripMenuItem";
-            this.operationModeToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.operationModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.operationModeToolStripMenuItem.Text = "Operation Mode";
             // 
             // toolStripComboBoxOperationMode
@@ -197,7 +197,7 @@
             this.performSRReadCheckToolStripMenuItem.CheckOnClick = true;
             this.performSRReadCheckToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.performSRReadCheckToolStripMenuItem.Name = "performSRReadCheckToolStripMenuItem";
-            this.performSRReadCheckToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.performSRReadCheckToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.performSRReadCheckToolStripMenuItem.Text = "Verify Upload";
             this.performSRReadCheckToolStripMenuItem.CheckedChanged += new System.EventHandler(this.performSRReadCheckToolStripMenuItem_CheckChanged);
             // 
