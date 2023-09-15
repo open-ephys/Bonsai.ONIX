@@ -125,7 +125,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.MagicMask);
+                var val = QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.MagicMask);
                 return new BitArray(new int[] { (int)val }).Cast<bool>().ToArray();
             }
             set
@@ -142,7 +142,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister((uint)DS90UB9xConfiguration.Register.Magic);
+                return QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.Magic);
             }
             set
             {
@@ -157,7 +157,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                return ReadRegister((uint)DS90UB9xConfiguration.Register.MagicWait);
+                return QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.MagicWait);
             }
             set
             {
@@ -175,7 +175,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.DataMode);
+                var val = QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.DataMode);
                 return new BitArray(new int[] { (int)val }).Cast<bool>().ToArray();
             }
             set
@@ -192,7 +192,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.DataLines0);
+                var val = QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.DataLines0);
                 var lineMap = new int[8];
 
                 for (var i = 0; i < lineMap.Length; i++)
@@ -220,7 +220,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.DataLines1);
+                var val = QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.DataLines1);
                 var lineMap = new int[8];
 
                 for (var i = 0; i < lineMap.Length; i++)
@@ -249,7 +249,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.GPIODirection);
+                var val = QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.GPIODirection);
                 return new IO [] { (val & 0x01) > 0 ? IO.Input : IO.Output,
                                    (val & 0x02) > 0 ? IO.Input : IO.Output,
                                    (val & 0x04) > 0 ? IO.Input : IO.Output,
@@ -272,7 +272,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                var val = ReadRegister((uint)DS90UB9xConfiguration.Register.GPIOValue);
+                var val = QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.GPIOValue);
                 return new bool[] { ((val >> 0) & 1) == 1,
                                     ((val >> 1) & 1) == 1,
                                     ((val >> 2) & 1) == 1,
@@ -296,7 +296,7 @@ namespace Bonsai.ONIX
         {
             get
             {
-                uint state = ReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus);
+                uint state = QuietlyReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus);
                 return (state & 0x01) != 0;
             }
             private set { }

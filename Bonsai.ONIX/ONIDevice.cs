@@ -69,6 +69,27 @@ namespace Bonsai.ONIX
                 DeviceID.Null : devID.deviceID;
         }
 
+        protected uint QuietlyReadRegister(uint address)
+        {
+            // NB: This is a redundant check but is here even throwing and catching within the
+            // function body results in a huge UI performance hit.
+            if (!ONIXDeviceDescriptor.IsValid(ID, DeviceAddress))
+            {
+                Console.Error.WriteLine("Register read was attempted with an invalid device " +
+                    "descriptor. Device ID: " + ID + ", Address: " + DeviceAddress.ToString() + ".");
+                return 0;
+            }
+
+            try
+            {
+                return ReadRegister(new ONIXDeviceDescriptor(ID, DeviceAddress), address);
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is oni.ONIException)
+            {
+                return 0;
+            }
+        }
+
         protected uint ReadRegister(uint address, bool silent = true)
         {
             // NB: This is a redundant check but is here even throwing and catching within the
@@ -86,7 +107,7 @@ namespace Bonsai.ONIX
             }
             catch (Exception ex) when (silent && (ex is ArgumentException || ex is oni.ONIException))
             {
-                System.Console.Error.WriteLine(ex.Message);
+                Console.Error.WriteLine(ex.Message);
                 return 0;
             }
         }
@@ -107,7 +128,7 @@ namespace Bonsai.ONIX
             }
             catch (Exception ex) when (silent && (ex is ArgumentException || ex is oni.ONIException))
             {
-                System.Console.Error.WriteLine(ex.Message);
+                Console.Error.WriteLine(ex.Message);
             }
         }
 
