@@ -12,6 +12,7 @@ namespace Bonsai.ONIX
     {
         private enum Register
         {
+           ENABLE, // NB: writes and reads to ENABLE are ignored without error
            TRIGGERSOURCE,
            TRIGGER
         }

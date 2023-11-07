@@ -16,7 +16,7 @@ namespace Bonsai.ONIX
 
             var data = new ushort[frame.Sample.Length - 8];
             Array.Copy(frame.Sample, 8, data, 0, data.Length);
-            Payload = Mat.FromArray(data, data.Length, 1, Depth.U16, 1);
+            Payload = Mat.FromArray(data, 1, data.Length, Depth.U16, 1);
         }
 
         /// <summary>

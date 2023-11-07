@@ -20,9 +20,10 @@ namespace Bonsai.ONIX
                             // cycles to push the data at the requested CLK_HZ. Specifically,
                             // CLK_HZ / CLK_DIV >= TX16_WORDS + 9. Going above this will result in 
                             // decreased bandwidth as samples will be skipped.
-            RX32_WORDS = 4  // Number of 32-bit words in a write-frame. All write frame data is ignored except
+            RX32_WORDS = 4,  // Number of 32-bit words in a write-frame. All write frame data is ignored except
                             // the first 64-bits, which are looped back into the device to host data frame for   
                             // testing loop latency. This value must be at least 2.
+            TX16_START = 5 //the start of the counter forsent words
         }
 
         protected override IObservable<LoadTestingBlockDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
@@ -87,6 +88,21 @@ namespace Bonsai.ONIX
                 {
                     FrameWords = max_size;
                 }
+            }
+        }
+
+        [Category("Configuration")]
+        [Description("Start value of the sent counter.")]
+        [Range(0, 5000)]
+        public uint TxStart
+        {
+            get
+            {
+                return ReadRegister((int)Register.TX16_START);
+            }
+            set
+            {
+                WriteRegister((int)Register.TX16_START, value);
             }
         }
 

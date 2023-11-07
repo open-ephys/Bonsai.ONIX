@@ -61,7 +61,11 @@ namespace Bonsai.ONIX
                     var words = new ushort[data.Length / 2];
                     Buffer.BlockCopy(data, 0, words, 0, data.Length);
 
-                    return new RawBNO055DataFrame(words);
+                    ulong clock;
+                    clock = (ulong)ReadRegister((uint)DS90UB9xConfiguration.Register.LastI2CL);
+                    clock += ((ulong)ReadRegister((uint)DS90UB9xConfiguration.Register.LastI2CH) << 32);
+
+                    return new RawBNO055DataFrame(words, clock);
                 })
             );
         }

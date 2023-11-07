@@ -4,7 +4,7 @@ namespace Bonsai.ONIX
 {
     public class RawBNO055DataFrame
     {
-        public RawBNO055DataFrame(ushort[] sample)
+        public RawBNO055DataFrame(ushort[] sample, ulong clock)
         {
             Euler = GetEuler(sample, 0);
             Quaternion = GetQuat(sample, 3);
@@ -16,7 +16,10 @@ namespace Bonsai.ONIX
             AccelerometerCalibrated = (sample[13] & 0x0C00) > 0;
             GyroscopeCalibrated = (sample[13] & 0x3000) > 0;
             MagnitometerCalibrated = (sample[13] & 0xC000) > 0;
+            Clock = clock;
         }
+
+        public ulong Clock { get; private set; }
 
         public byte Calibration { get; private set; }
 

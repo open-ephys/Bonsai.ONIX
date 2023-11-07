@@ -22,6 +22,8 @@
             GPIODirection = 0x00008010,
             GPIOValue = 0x00008011,
             LinkStatus = 0x00008012,
+            LastI2CL = 0x00008013,
+            LastI2CH = 0x00008014
         }
 
         public enum TriggerMode
