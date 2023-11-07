@@ -35,15 +35,30 @@ namespace Bonsai.ONIX
                 gpo10Config |= (1 << 3 | 1 << 7);
                 i2cSer.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO10, (uint)gpo10Config);
 
-                // TODO: Handle case where one or no probes are attached.
+                // Wait 20 milliseconds
+                System.Threading.Thread.Sleep(20);
 
-                SelectProbeA(i2cSer);
-                // TODO: Apply configuration to NP A
-                i2cNP.WriteByte(0, 0b0100_0000); // Activate recording mode on NP A
-                  
-                //SelectProbeB(i2cSer);
-                // TODO: Apply configuration to NP B
-                //i2cNP.WriteByte(0, 0b0100_0000); // Activate recording mode on NP B
+                // TODO: Handle case where one or no probes are attached.
+                if (ProbeAMetadata.ProbeSN == null && ProbeBMetadata.ProbeSN == null)
+                {
+                    throw new WorkflowRuntimeException("No neuropixel probes available.");
+                }
+
+                if (ProbeAMetadata.ProbeSN != null)
+                {
+                    SelectProbeA(i2cSer);
+
+                    // TODO: Apply configuration to NP A
+                    i2cNP.WriteByte(0, 0b0100_0000); // Activate recording mode on NP A
+                }
+
+                if (ProbeBMetadata.ProbeSN != null)
+                {
+                    SelectProbeB(i2cSer);
+
+                    // TODO: Apply configuration to NP B
+                    i2cNP.WriteByte(0, 0b0100_0000); // Activate recording mode on NP B
+                }
 
                 // Both probes are now streaming, hit them with a mux reset to (roughly) sync.
                 // NB: We have found that this gives PCLK-level synchronization MOST of the time.
@@ -195,12 +210,18 @@ namespace Bonsai.ONIX
         {
             gpo32Config |= (1 << 3);
             i2c.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO32, (uint)gpo32Config);
+
+            // Wait 20 milliseconds. Apparently the analog mux has some delay to settle. We need to check the values properly
+            System.Threading.Thread.Sleep(20);
         }
 
         void SelectProbeB(I2CRegisterConfiguration i2c)
         {
             gpo32Config &= ~(1 << 3);
             i2c.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO32, (uint)gpo32Config);
+
+            // Wait 20 milliseconds. Apparently the analog mux has some delay to settle. We need to check the values properly
+            System.Threading.Thread.Sleep(20);
         }
     }
 }

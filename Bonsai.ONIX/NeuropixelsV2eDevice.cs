@@ -20,6 +20,27 @@ namespace Bonsai.ONIX
 
         private int gpo10Config = DefaultGPO10Config;
 
+        private void ConfigureProbeStreaming(I2CRegisterConfiguration i2cNP)
+        {
+            // Write super sync bits into ASIC
+            i2cNP.WriteByte(0x15, 0b00011000);
+            i2cNP.WriteByte(0x14, 0b01100001);
+            i2cNP.WriteByte(0x13, 0b10000110);
+            i2cNP.WriteByte(0x12, 0b00011000);
+            i2cNP.WriteByte(0x11, 0b01100001);
+            i2cNP.WriteByte(0x10, 0b10000110);
+            i2cNP.WriteByte(0x0F, 0b00011000);
+            i2cNP.WriteByte(0x0E, 0b01100001);
+            i2cNP.WriteByte(0x0D, 0b10000110);
+            i2cNP.WriteByte(0x0C, 0b00011000);
+            i2cNP.WriteByte(0x0B, 0b01100001);
+            i2cNP.WriteByte(0x0A, 0b10111001);
+
+
+            // Activate recording mode on NP
+            i2cNP.WriteByte(0, 0b0100_0000);
+        }
+
         protected override IObservable<NeuropixelsV2DataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
             // Toggle LED and enable NPs (must be done before I2C communication with probes)
@@ -43,26 +64,24 @@ namespace Bonsai.ONIX
 
                 // TODO: Handle case where one or no probes are attached.
 
-                // Configure Probe A
-                SelectProbeA(i2cSer);
+                if (ProbeAMetadata.ProbeSN == null && ProbeBMetadata.ProbeSN == null)
+                {
+                    throw new WorkflowRuntimeException("No neuropixel probes available.");
+                }
 
-                // Write super sync bits into ASIC
-                i2cNP.WriteByte(0x15, 0b00011000);
-                i2cNP.WriteByte(0x14, 0b01100001);
-                i2cNP.WriteByte(0x13, 0b10000110);
-                i2cNP.WriteByte(0x12, 0b00011000);
-                i2cNP.WriteByte(0x11, 0b01100001);
-                i2cNP.WriteByte(0x10, 0b10000110);
-                i2cNP.WriteByte(0x0F, 0b00011000);
-                i2cNP.WriteByte(0x0E, 0b01100001);
-                i2cNP.WriteByte(0x0D, 0b10000110);
-                i2cNP.WriteByte(0x0C, 0b00011000);
-                i2cNP.WriteByte(0x0B, 0b01100001);
-                i2cNP.WriteByte(0x0A, 0b10111001);
+                if (ProbeAMetadata.ProbeSN != null)
+                {
+                    // Configure Probe A
+                    SelectProbeA(i2cSer);
+                    ConfigureProbeStreaming(i2cNP);
+                }
 
-
-                // Activate recording mode on NP A
-                i2cNP.WriteByte(0, 0b0100_0000);
+                if (ProbeBMetadata.ProbeSN != null)
+                {
+                    // Configure Probe B
+                    SelectProbeB(i2cSer);
+                    ConfigureProbeStreaming(i2cNP);
+                }
 
                 // TODO: Remove
                 //for (uint i = 0; i <= 0x1f; i++)
@@ -142,8 +161,8 @@ namespace Bonsai.ONIX
                     SelectProbeA(i2c);
                     ProbeAMetadata = new NeuropixelsV2Flex(DeviceAddress);
 
-                    //SelectProbeB(i2c);
-                    //ProbeBMetadata = new NeuropixelsV2Flex(DeviceAddress);
+                    SelectProbeB(i2c);
+                    ProbeBMetadata = new NeuropixelsV2Flex(DeviceAddress);
 
                 }
 
@@ -198,11 +217,13 @@ namespace Bonsai.ONIX
         static void SelectProbeA(I2CRegisterConfiguration i2c)
         {
             i2c.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO32, ProbeASelected);
+            System.Threading.Thread.Sleep(20);
         }
 
         static void SelectProbeB(I2CRegisterConfiguration i2c)
         {
             i2c.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO32, ProbeBSelected);
+            System.Threading.Thread.Sleep(20);
         }
 
         static void DeselectProbes(I2CRegisterConfiguration i2c)
