@@ -26,7 +26,7 @@ namespace Bonsai.ONIX
                     {
                         if (RequireSNMatch && Configuration.ConfigProbeSN != Configuration.FlexProbeSN)
                         {
-                            throw new Bonsai.WorkflowRuntimeException("Probe and configuration serial numbers do not match.");
+                            throw new WorkflowRuntimeException("Probe and configuration serial numbers do not match.");
                         }
 
                         if (Configuration.RefreshNeeded)

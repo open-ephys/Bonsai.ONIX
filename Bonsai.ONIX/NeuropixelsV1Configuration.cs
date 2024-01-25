@@ -63,8 +63,8 @@ namespace Bonsai.ONIX
             }
         }
 
-        [System.Xml.Serialization.XmlIgnore]
-        public Headstage HeadstageType { get; internal set; }
+
+        public Headstage HeadstageType { get; set; }
 
         [System.Xml.Serialization.XmlIgnore]
         public ulong? FlexProbeSN { get; internal set; } = null;

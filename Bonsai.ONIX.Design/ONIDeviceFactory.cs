@@ -57,6 +57,8 @@
                     return new RHS2116Device();
                 case DeviceID.RHS2116Trigger:
                     return new RHS2116TriggerDevice();
+                case DeviceID.NRIC1384:
+                    return new NRIC1384Device();
                 default:
                     return null;
             }

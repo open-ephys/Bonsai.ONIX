@@ -61,15 +61,24 @@ namespace Bonsai.ONIX
             return (Channel.ElectrodeBank)(electrode / CHANNEL_COUNT);
         }
 
+        internal void DumpRegisters()
+        {
+            for (uint i = 0; i < 0x12; i++)
+            {
+                var b = Convert.ToString((int)ReadByte(i), 2);
+                Console.WriteLine($"{i}: {b}");
+            }
+        }
+
         public void FullReset()
         {
             // Set memory map and test configuration registers to default values
             WriteByte((uint)RegAddr.CAL_MOD, (uint)CalMod.CAL_OFF);
-            WriteByte((uint)RegAddr.TEST_CONFIG1, 0);
-            WriteByte((uint)RegAddr.TEST_CONFIG2, 0);
-            WriteByte((uint)RegAddr.TEST_CONFIG3, 0);
-            WriteByte((uint)RegAddr.TEST_CONFIG4, 0);
-            WriteByte((uint)RegAddr.TEST_CONFIG5, 0);
+            //WriteByte((uint)RegAddr.TEST_CONFIG1, 0);
+            //WriteByte((uint)RegAddr.TEST_CONFIG2, 0);
+            //WriteByte((uint)RegAddr.TEST_CONFIG3, 0);
+            //WriteByte((uint)RegAddr.TEST_CONFIG4, 0);
+            //WriteByte((uint)RegAddr.TEST_CONFIG5, 0);
             WriteByte((uint)RegAddr.SYNC, 0);
 
             // Perform dig and channel reset

@@ -3,11 +3,13 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
+using System.Xml.Serialization;
 
 namespace Bonsai.ONIX
 {
     [ONIXDeviceID(DeviceID.DS90UB9X)]
-    [Description("Acquire data from two probes using Neuropixels 2.0e Headstage.")]
+    [Description("Acquire data from a single probe using Neuropixels 1.0e Headstage.")]
     [DefaultProperty("Configuration")]
     public class NeuropixelsV1eDevice : ONIFrameReader<NeuropixelsV1eDataFrame, ushort>
     {
@@ -21,7 +23,6 @@ namespace Bonsai.ONIX
         private int gpo10Config = DefaultGPO10Config;
         private int gpo32Config = DefaultGPO32Config;
 
-
         protected override IObservable<NeuropixelsV1eDataFrame> Process(IObservable<ONIManagedFrame<ushort>> source, ulong frameOffset)
         {
 
@@ -29,13 +30,9 @@ namespace Bonsai.ONIX
             // Constructor cannot take parameter. Making generic type or interface is too much work
             Configuration.HeadstageType = NeuropixelsV1Configuration.Headstage.ONIXE;
 
-            // Toggle LED and enable NPs (must be done before I2C communication with probes)
+            // Enable NPs (must be done before I2C communication with probes)
             using (var i2cSer = new I2CRegisterConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.SerializerDefaultAddress))
             {
-                // Toggle LED
-                gpo32Config &= 0b0111_1111;
-                i2cSer.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO32, (uint)gpo32Config);
-
                 // Hit probe with mux reset to restart PSB stream and frame counter
                 gpo10Config &= ~(1 << 3);
                 i2cSer.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO10, (uint)gpo10Config);
@@ -44,7 +41,7 @@ namespace Bonsai.ONIX
                 i2cSer.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO10, (uint)gpo10Config);
             }
 
-            // Configuration the probe itself
+            // Configure the probe itself
             using (var probe = new NeuropixelsV1Probe(DeviceAddress))
             {
                 if (RequireSNMatch && Configuration.ConfigProbeSN != Configuration.FlexProbeSN)
@@ -77,6 +74,13 @@ namespace Bonsai.ONIX
             var lfpGain = (ushort)(Configuration.Channels[0].LFPGainCorrection * (1 << 14)); 
             var threshold = Configuration.ADCs.Select(x => (ushort)x.Threshold).ToArray();
             var offset = Configuration.ADCs.Select(x => (ushort)x.Offset).ToArray();
+
+            using (var i2cSer = new I2CRegisterConfiguration(DeviceAddress, ID, DS90UB9xConfiguration.SerializerDefaultAddress))
+            {
+                // Toggle LED
+                gpo32Config &= 0b0111_1111;
+                i2cSer.WriteByte((uint)DS90UB9xConfiguration.SerI2CRegister.GPIO32, (uint)gpo32Config);
+            }
 
             return source
                 .Buffer(bufferSize)
@@ -144,11 +148,11 @@ namespace Bonsai.ONIX
                 // Read the probe metadata
                 Configuration.DeviceAddress = deviceAddress;
 
-                // TODO: EEPROM
+                // TODO: Headstage EEPROM
                 //using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, EEPROMAddress))
                 //{
-                //    // Change all the GPIOs to locally-controlled outputs; output state set to default
-                //    Console.WriteLine(i2c.ReadByte(0));
+                //    // TODO: i2c.WriteByte(0, 42, true);
+                //    // TODO: i2c.ReadByte(i, true)
                 //}
 
                 // Make sure that we have lock after all that config
@@ -182,11 +186,31 @@ namespace Bonsai.ONIX
         [Description("Neuropixels probe hardware configuration.")]
         [Editor("Bonsai.ONIX.Design.NeuropixelsV1Editor, Bonsai.ONIX.Design", typeof(UITypeEditor))]
         [Externalizable(false)]
-        public NeuropixelsV1Configuration Configuration { get; set; } = new NeuropixelsV1Configuration();
+        public NeuropixelsV1Configuration Configuration { get; set; } = new NeuropixelsV1Configuration() { HeadstageType = NeuropixelsV1Configuration.Headstage.ONIXE };
 
         [Category("Configuration")]
         [Description("Require configuration and probe serial numbers to match to start acqusition.")]
         public bool RequireSNMatch { get; set; } = true;
+
+        [Category("Configuration")]
+        [Description("The probe serial number.")]
+        [XmlIgnore]
+        public ulong? ProbeSN => Configuration.FlexProbeSN;
+
+        [Category("Configuration")]
+        [Description("The probe part number.")]
+        [XmlIgnore]
+        public string ProbePartNo => Configuration.ProbePartNo;
+
+        [Category("Configuration")]
+        [Description("The flex cable version.")]
+        [XmlIgnore]
+        public string FlexVersion => Configuration.FlexVersion;
+
+        [Category("Configuration")]
+        [Description("The probe part number.")]
+        [XmlIgnore]
+        public string FlexPartNo => Configuration.FlexPartNo;
 
     }
 }

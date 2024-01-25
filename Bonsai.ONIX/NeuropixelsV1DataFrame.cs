@@ -46,9 +46,8 @@ namespace Bonsai.ONIX
 
             if (frameBlock.Count % SuperframesPerUltraFrame != 0)
             {
-                throw new Bonsai.WorkflowRuntimeException("Neuropixels V1 frame buffer is not a multiple of ultraframe size.");
+                throw new WorkflowRuntimeException("Neuropixels V1 frame buffer is not a multiple of ultraframe size.");
             }
-
 
             var frameClock = new ulong[frameBlock.Count];
             var dataClock = new ulong[frameBlock.Count];

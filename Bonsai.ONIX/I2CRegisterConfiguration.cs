@@ -29,28 +29,31 @@ namespace Bonsai.ONIX
             I2CAddress = i2cAddress;
         }
 
-        public byte? ReadByte(uint address)
+        public byte? ReadByte(uint address, bool sixteenBitAddress = false)
         {
             uint reg_addr = (address << 7) | (I2CAddress & 0x7F);
+            reg_addr |= sixteenBitAddress ? 0x80000000 : 0;
             var val = ReadRegister(reg_addr);
 
             return val != null && val <= byte.MaxValue ? (byte?)val : null;
         }
 
         // TODO: why is value not a byte?
-        public void WriteByte(uint address, uint value)
+        public void WriteByte(uint address, uint value, bool sixteenBitAddress = false)
         {
             uint reg_addr = (address << 7) | (I2CAddress & 0x7F);
+            reg_addr |= sixteenBitAddress ? 0x80000000 : 0;
             WriteRegister(reg_addr, value);
         }
 
-        public byte[] ReadBytes(uint offset, int size)
+        public byte[] ReadBytes(uint offset, int size, bool sixteenBitAddress = false)
         {
             var data = new byte[size];
 
             for (uint i = 0; i < size; i++)
             {
                 uint reg_addr = ((offset + i) << 7) | (I2CAddress & 0x7F);
+                reg_addr |= sixteenBitAddress ? 0x80000000 : 0;
                 var val = ReadRegister(reg_addr);
 
                 if (val != null && val <= byte.MaxValue)
@@ -66,9 +69,9 @@ namespace Bonsai.ONIX
             return data;
         }
 
-        public string ReadASCIIString(uint offset, int size)
+        public string ReadASCIIString(uint offset, int size, bool sixteenBitAddress = false)
         {
-            var data = ReadBytes(offset, size);
+            var data = ReadBytes(offset, size, sixteenBitAddress);
             if (data != null)
             {
                 var len = data.TakeWhile(d => d != 0).Count();

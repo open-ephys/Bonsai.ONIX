@@ -34,6 +34,7 @@
         HARPSyncInput = 30,
         RHS2116 = 31,
         RHS2116Trigger = 32,
+        NRIC1384 = 33,
     }
 
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]

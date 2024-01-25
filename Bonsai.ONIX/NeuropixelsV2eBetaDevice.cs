@@ -11,6 +11,7 @@ namespace Bonsai.ONIX
     public class NeuropixelsV2eBetaDevice : ONIFrameReader<NeuropixelsV2BetaDataFrame, ushort>
     {
         private const int NeuropixelsAddress = 0x70;
+        private const int EEPROMAddress = 0x51;
 
         // All GPIO set to locally (I2C) controlled outputs
         private const byte DefaultGPO10Config = 0b0001_0001; // NPs in MUX reset, NPs in RST
@@ -158,10 +159,17 @@ namespace Bonsai.ONIX
                     ProbeBMetadata = new NeuropixelsV2Flex(DeviceAddress);
                 }
 
+
+                // TODO: Headstage EEPROM
+                //using (var i2c = new I2CRegisterConfiguration(DeviceAddress, ID, EEPROMAddress))
+                //{
+                //    var metadata = i2c.ReadByte(i, true)
+                //}
+
                 // Make sure that we have lock after all that config
                 if (ReadRegister((uint)DS90UB9xConfiguration.Register.LinkStatus) == 0)
                 {
-                    //throw new WorkflowBuildException("Unable to obtain data link with Neuropixels headstage.");
+                    throw new WorkflowBuildException("Unable to obtain data link with Neuropixels headstage.");
                 }
             }
         }
