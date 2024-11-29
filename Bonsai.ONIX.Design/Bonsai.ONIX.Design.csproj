@@ -88,7 +88,7 @@
   <ItemGroup>
     <PackageReference Include="Bonsai.Shaders" Version="0.26.0" />
     <PackageReference Include="clroni" Version="5.0.2" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
     <PackageReference Include="TinyCsvParser" Version="2.7.0" />
     <PackageReference Include="ZedGraph" Version="5.1.7" />
   </ItemGroup>
